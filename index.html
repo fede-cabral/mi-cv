@@ -1,81 +1,387 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta charset="UTF-8">
-  <title>Mi CV</title>
-  <link rel="stylesheet" href="./style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor Pro v2.0 - FORJAX</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+    </style>
 </head>
+<body class="min-h-screen pb-10">
 
-<body>
-
-  <!-- TARJETA PRINCIPAL -->
-  <div class="header">
-
-    <!-- FOTO -->
-    <img src="perfil.jpg" alt="Foto de Federico Cabral" class="foto-perfil">
-
-    <!-- INFO -->
-    <div class="info">
-
-      <h1>Federico Cabral</h1>
-
-      <h2>Oficial del Ejército Argentino | Desarrollador en formación</h2>
-
-      <p>
-        Soy militar con más de 12 años de experiencia en liderazgo y gestión,
-        actualmente en formación en desarrollo de software.
-      </p>
-
-      <!-- SOBRE MI -->
-      <h3>Sobre mí</h3>
-
-      <p>
-        Me especializo en trabajo en equipo, disciplina y mejora continua,
-        con interés en programación web y tecnología.
-      </p>
-
-      <!-- HABILIDADES -->
-      <h3>Habilidades</h3>
-
-      <ul class="skills">
-        <li>HTML5</li>
-        <li>CSS3</li>
-        <li>JavaScript (en formación)</li>
-        <li>Git y GitHub</li>
-        <li>Bases de datos (SQL)</li>
-        <li>Trabajo en equipo</li>
-        <li>Disciplina y liderazgo</li>
-      </ul>
-
-      <!-- OBJETIVO -->
-      <h3>Objetivo Profesional</h3>
-
-      <p>
-        Integrarme a un equipo de desarrollo donde pueda aportar compromiso,
-        responsabilidad y seguir creciendo como programador.
-      </p>
-
-      <!-- CONTACTO -->
-<h3>Contacto</h3>
-
-<div class="contacto">
-  <p>Email: federicocabral18@gmail.com</p>
-
-  <a href="https://linkedin.com" target="_blank">
-    LinkedIn: www.linkedin.com/in/federico-cabral-27660b221
-  </a>
-
-  <br><br>
-
-  <!-- BOTON CV -->
-  <a href="./cv.pdf" target="_blank" class="btn-cv">
-    📄 Descargar CV
-  </a>
+<div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950">
+    <div class="glass p-8 rounded-2xl w-full max-w-md shadow-2xl text-center">
+        <div class="mb-6 inline-flex p-4 bg-blue-600 rounded-full shadow-lg shadow-blue-500/50">
+            <i data-lucide="shield-check" class="w-8 h-8"></i>
+        </div>
+        <h2 class="text-3xl font-bold mb-2">Bienvenido a ProManager</h2>
+        <p class="text-slate-400 mb-8">Gestión financiera de alto rendimiento</p>
+        <input id="userInput" type="text" placeholder="Nombre de usuario" 
+               class="w-full bg-slate-800 border border-slate-700 p-3 rounded-lg mb-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+        <button onclick="app.initSession()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-all transform hover:scale-[1.02]">
+            Acceder al Sistema
+        </button>
+    </div>
 </div>
 
-    </div>
-  </div>
+<div id="mainApp" class="hidden">
+    <nav class="glass sticky top-0 z-40 px-6 py-4 mb-8 flex justify-between items-center border-b border-white/5">
+        <div class="flex items-center gap-2">
+            <div class="bg-blue-600 p-2 rounded-lg"><i data-lucide="trending-up" class="w-5 h-5"></i></div>
+            <span class="font-bold text-xl tracking-tight">FORJAX <span class="text-blue-500">PRO</span></span>
+        </div>
+        <div class="flex items-center gap-4">
+            <span id="userNameDisplay" class="text-slate-400 hidden md:block"></span>
+            <button onclick="app.logout()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-4 py-2 rounded-lg text-sm font-medium transition-all">
+                Cerrar Sesión
+            </button>
+        </div>
+    </nav>
 
+    <main class="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <div class="lg:col-span-4 space-y-6">
+            
+            <section class="glass p-6 rounded-2xl">
+                <h3 class="flex items-center gap-2 text-lg font-semibold mb-4 text-blue-400">
+                    <i data-lucide="target" class="w-5 h-5"></i> Presupuesto Mensual
+                </h3>
+                <div class="flex gap-2">
+                    <input id="budgetInput" type="number" placeholder="Ej: 50000" class="flex-1 bg-slate-800 border border-slate-700 p-2 rounded-lg outline-none">
+                    <button onclick="app.setBudget()" class="bg-blue-600 px-4 rounded-lg hover:bg-blue-700 transition-colors">Definir</button>
+                </div>
+                <div class="mt-4 grid grid-cols-2 gap-4">
+                    <div class="bg-slate-800/50 p-3 rounded-xl">
+                        <p class="text-xs text-slate-400">Objetivo</p>
+                        <p class="text-lg font-bold" id="budgetTotal">$0</p>
+                    </div>
+                    <div class="bg-slate-800/50 p-3 rounded-xl">
+                        <p class="text-xs text-slate-400">Disponible</p>
+                        <p class="text-lg font-bold" id="budgetAvailable">$0</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="glass p-6 rounded-2xl">
+                <h3 class="flex items-center gap-2 text-lg font-semibold mb-4 text-emerald-400">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i> Nueva Operación
+                </h3>
+                <div class="space-y-3">
+                    <input id="transDesc" type="text" placeholder="Descripción" class="w-full bg-slate-800 border border-slate-700 p-2 rounded-lg outline-none">
+                    <input id="transAmount" type="number" placeholder="Monto" class="w-full bg-slate-800 border border-slate-700 p-2 rounded-lg outline-none">
+                    <select id="transCategory" class="w-full bg-slate-800 border border-slate-700 p-2 rounded-lg outline-none">
+                        <option value="Ingreso">📈 Ingreso</option>
+                        <option value="Comida">🍔 Comida</option>
+                        <option value="Servicios">💡 Servicios</option>
+                        <option value="Transporte">🚗 Transporte</option>
+                        <option value="Estudio">📚 Estudio</option>
+                        <option value="Otros">📦 Otros</option>
+                    </select>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="app.addRecord('income')" class="bg-emerald-600 hover:bg-emerald-700 py-2 rounded-lg font-bold transition-all">Ingreso</button>
+                        <button onclick="app.addRecord('expense')" class="bg-rose-600 hover:bg-rose-700 py-2 rounded-lg font-bold transition-all">Gasto</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="glass p-6 rounded-2xl">
+                <h3 class="flex items-center gap-2 text-lg font-semibold mb-4 text-yellow-400">
+                    <i data-lucide="check-square" class="w-5 h-5"></i> Notas Críticas
+                </h3>
+                <div class="flex gap-2 mb-4">
+                    <input id="taskInput" type="text" placeholder="Recordatorio..." class="flex-1 bg-slate-800 border border-slate-700 p-2 rounded-lg outline-none text-sm">
+                    <button onclick="app.addTask()" class="bg-yellow-600 px-3 rounded-lg"><i data-lucide="plus" class="w-4 h-4"></i></button>
+                </div>
+                <ul id="taskList" class="space-y-2 max-h-40 overflow-y-auto custom-scroll"></ul>
+            </section>
+        </div>
+
+        <div class="lg:col-span-8 space-y-6">
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="glass p-5 rounded-2xl border-l-4 border-emerald-500">
+                    <p class="text-slate-400 text-sm">Ingresos Totales</p>
+                    <h2 class="text-2xl font-bold text-emerald-400" id="bIncome">$0</h2>
+                </div>
+                <div class="glass p-5 rounded-2xl border-l-4 border-rose-500">
+                    <p class="text-slate-400 text-sm">Gastos Totales</p>
+                    <h2 class="text-2xl font-bold text-rose-400" id="bExpense">$0</h2>
+                </div>
+                <div class="glass p-5 rounded-2xl border-l-4 border-blue-500">
+                    <p class="text-slate-400 text-sm">Balance Neto</p>
+                    <h2 class="text-2xl font-bold" id="bNet">$0</h2>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass p-6 rounded-2xl">
+                    <h4 class="text-sm font-semibold mb-4 text-slate-400 uppercase tracking-wider">Flujo de Caja</h4>
+                    <canvas id="barChart" height="200"></canvas>
+                </div>
+                <div class="glass p-6 rounded-2xl">
+                    <h4 class="text-sm font-semibold mb-4 text-slate-400 uppercase tracking-wider">Distribución de Gastos</h4>
+                    <canvas id="pieChart" height="200"></canvas>
+                </div>
+            </div>
+
+            <section class="glass rounded-2xl overflow-hidden">
+                <div class="p-6 border-b border-white/5 flex justify-between items-center">
+                    <h3 class="font-bold text-lg">Historial de Transacciones</h3>
+                    <button onclick="app.exportExcel()" class="flex items-center gap-2 bg-emerald-600/20 text-emerald-400 px-4 py-2 rounded-lg hover:bg-emerald-600/30 transition-all text-sm">
+                        <i data-lucide="download" class="w-4 h-4"></i> Exportar Excel
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-800/50 text-slate-400 text-xs uppercase">
+                            <tr>
+                                <th class="px-6 py-3">Fecha</th>
+                                <th class="px-6 py-3">Descripción</th>
+                                <th class="px-6 py-3">Categoría</th>
+                                <th class="px-6 py-3 text-right">Monto</th>
+                                <th class="px-6 py-3 text-center">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTable" class="divide-y divide-white/5 text-sm">
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="text-center mt-12 text-slate-500 text-sm">
+        <p>© 2026 FORJAX Premium Finance System. Todos los derechos reservados.</p>
+    </footer>
+</div>
+
+<script>
+/* ================= MÓDULO DE LA APLICACIÓN ================= */
+const app = {
+    user: localStorage.getItem("currentUser"),
+    data: {
+        tasks: [],
+        records: [], // {id, date, desc, category, amount, type}
+        budget: 0
+    },
+    charts: {},
+
+    init() {
+        if (!this.user) {
+            document.getElementById("loginScreen").classList.remove("hidden");
+        } else {
+            document.getElementById("loginScreen").classList.add("hidden");
+            document.getElementById("mainApp").classList.remove("hidden");
+            document.getElementById("userNameDisplay").textContent = `Agente: ${this.user.toUpperCase()}`;
+            this.loadData();
+            this.render();
+            lucide.createIcons();
+        }
+    },
+
+    initSession() {
+        const val = document.getElementById("userInput").value.trim();
+        if (val.length < 3) return Swal.fire("Error", "Usuario muy corto", "error");
+        localStorage.setItem("currentUser", val.toLowerCase());
+        location.reload();
+    },
+
+    logout() {
+        localStorage.removeItem("currentUser");
+        location.reload();
+    },
+
+    loadData() {
+        const prefix = this.user + "_";
+        this.data.tasks = JSON.parse(localStorage.getItem(prefix + "tasks")) || [];
+        this.data.records = JSON.parse(localStorage.getItem(prefix + "records")) || [];
+        this.data.budget = Number(localStorage.getItem(prefix + "budget")) || 0;
+    },
+
+    save() {
+        const prefix = this.user + "_";
+        localStorage.setItem(prefix + "tasks", JSON.stringify(this.data.tasks));
+        localStorage.setItem(prefix + "records", JSON.stringify(this.data.records));
+        localStorage.setItem(prefix + "budget", this.data.budget);
+        this.render();
+    },
+
+    /* Lógica de Negocio */
+    addRecord(type) {
+        const desc = document.getElementById("transDesc").value;
+        const amount = Number(document.getElementById("transAmount").value);
+        const category = document.getElementById("transCategory").value;
+
+        if (!desc || amount <= 0) return Swal.fire("Atención", "Completa los datos correctamente", "warning");
+
+        this.data.records.unshift({
+            id: Date.now(),
+            date: new Date().toLocaleDateString(),
+            desc,
+            amount,
+            category: type === 'income' ? 'Ingreso' : category,
+            type
+        });
+
+        document.getElementById("transDesc").value = "";
+        document.getElementById("transAmount").value = "";
+        this.save();
+        Swal.fire({ title: "Registrado", icon: "success", timer: 1000, showConfirmButton: false });
+    },
+
+    deleteRecord(id) {
+        this.data.records = this.data.records.filter(r => r.id !== id);
+        this.save();
+    },
+
+    addTask() {
+        const input = document.getElementById("taskInput");
+        if (!input.value) return;
+        this.data.tasks.push(input.value);
+        input.value = "";
+        this.save();
+    },
+
+    deleteTask(index) {
+        this.data.tasks.splice(index, 1);
+        this.save();
+    },
+
+    setBudget() {
+        const val = document.getElementById("budgetInput").value;
+        this.data.budget = Number(val);
+        this.save();
+    },
+
+    /* Renderizado de UI */
+    render() {
+        const formatter = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' });
+        
+        // Totales
+        const totalInc = this.data.records.filter(r => r.type === 'income').reduce((acc, curr) => acc + curr.amount, 0);
+        const totalExp = this.data.records.filter(r => r.type === 'expense').reduce((acc, curr) => acc + curr.amount, 0);
+        const balance = totalInc - totalExp;
+        const available = this.data.budget - totalExp;
+
+        document.getElementById("bIncome").textContent = formatter.format(totalInc);
+        document.getElementById("bExpense").textContent = formatter.format(totalExp);
+        document.getElementById("bNet").textContent = formatter.format(balance);
+        document.getElementById("bNet").className = balance >= 0 ? "text-2xl font-bold text-emerald-400" : "text-2xl font-bold text-rose-400";
+        
+        document.getElementById("budgetTotal").textContent = formatter.format(this.data.budget);
+        document.getElementById("budgetAvailable").textContent = formatter.format(available);
+        document.getElementById("budgetAvailable").style.color = available < 0 ? "#fb7185" : "#34d399";
+
+        // Alerta presupuesto
+        if(this.data.budget > 0 && available < 0) {
+            Swal.fire("Límite alcanzado", "Has superado tu presupuesto mensual", "warning");
+        }
+
+        // Tabla Historial
+        const tbody = document.getElementById("historyTable");
+        tbody.innerHTML = this.data.records.map(r => `
+            <tr class="hover:bg-white/5 transition-colors">
+                <td class="px-6 py-4 text-slate-500">${r.date}</td>
+                <td class="px-6 py-4 font-medium">${r.desc}</td>
+                <td class="px-6 py-4">
+                    <span class="px-2 py-1 rounded-md text-xs ${r.type === 'income' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-slate-700 text-slate-300'}">
+                        ${r.category}
+                    </span>
+                </td>
+                <td class="px-6 py-4 text-right font-bold ${r.type === 'income' ? 'text-emerald-400' : 'text-rose-400'}">
+                    ${r.type === 'income' ? '+' : '-'}${formatter.format(r.amount)}
+                </td>
+                <td class="px-6 py-4 text-center">
+                    <button onclick="app.deleteRecord(${r.id})" class="text-slate-500 hover:text-rose-500 transition-colors">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+
+        // Tareas
+        document.getElementById("taskList").innerHTML = this.data.tasks.map((t, i) => `
+            <li class="flex justify-between items-center bg-slate-800/40 p-2 rounded-lg border border-white/5 group">
+                <span class="text-sm">${t}</span>
+                <button onclick="app.deleteTask(${i})" class="opacity-0 group-hover:opacity-100 text-rose-400"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </li>
+        `).join('');
+
+        this.updateCharts(totalInc, totalExp);
+        lucide.createIcons();
+    },
+
+    updateCharts(inc, exp) {
+        const ctxBar = document.getElementById("barChart").getContext("2d");
+        const ctxPie = document.getElementById("pieChart").getContext("2d");
+
+        if (this.charts.bar) this.charts.bar.destroy();
+        if (this.charts.pie) this.charts.pie.destroy();
+
+        this.charts.bar = new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: ['Ingresos', 'Gastos'],
+                datasets: [{
+                    data: [inc, exp],
+                    backgroundColor: ['#10b981', '#f43f5e'],
+                    borderRadius: 8
+                }]
+            },
+            options: { plugins: { legend: { display: false } }, scales: { y: { display: false } } }
+        });
+
+        // Agrupar gastos por categoría para el Pie Chart
+        const catData = {};
+        this.data.records.filter(r => r.type === 'expense').forEach(r => {
+            catData[r.category] = (catData[r.category] || 0) + r.amount;
+        });
+
+        this.charts.pie = new Chart(ctxPie, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(catData),
+                datasets: [{
+                    data: Object.values(catData),
+                    backgroundColor: ['#3b82f6', '#8b5cf6', '#f59e0b', '#ec4899', '#64748b'],
+                    borderWidth: 0
+                }]
+            },
+            options: { plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 12 } } } }
+        });
+    },
+
+    exportExcel() {
+        const exportData = this.data.records.map(r => ({
+            Fecha: r.date,
+            Descripción: r.desc,
+            Categoría: r.category,
+            Tipo: r.type === 'income' ? 'Ingreso' : 'Gasto',
+            Monto: r.amount
+        }));
+
+        const ws = XLSX.utils.json_to_sheet(exportData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Finanzas");
+        XLSX.writeFile(wb, `Reporte_Financiero_${this.user}.xlsx`);
+    }
+};
+
+// Inicializar al cargar
+app.init();
+</script>
 </body>
 </html>
