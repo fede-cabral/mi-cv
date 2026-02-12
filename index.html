@@ -43,8 +43,12 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+        /* Inputs y Selects Contrastados */
         .dark input, .dark select { background: #1e293b; color: #fff; border: 1px solid #334155; }
         .dark input::placeholder { color: #94a3b8; }
+        /* CORRECCIÓN VISUAL: Forzar fondo oscuro en las opciones desplegables */
+        .dark option { background-color: #0f172a; color: white; }
+        
         .light input, .light select { background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; }
     </style>
 </head>
@@ -244,7 +248,7 @@
                     
                     <div class="flex-1 w-full">
                         <label class="text-xs text-slate-500 mb-1 block">De</label>
-                        <select id="calcFrom" onchange="app.calcCurrency()" class="w-full p-3 rounded-xl font-bold cursor-pointer outline-none focus:ring-2 focus:ring-blue-500">
+                        <select id="calcFrom" onchange="app.calcCurrency()" class="w-full p-3 rounded-xl font-bold cursor-pointer outline-none focus:ring-2 focus:ring-blue-500 text-white bg-slate-800">
                             </select>
                     </div>
 
@@ -256,7 +260,7 @@
 
                     <div class="flex-1 w-full">
                         <label class="text-xs text-slate-500 mb-1 block">A</label>
-                        <select id="calcTo" onchange="app.calcCurrency()" class="w-full p-3 rounded-xl font-bold cursor-pointer outline-none focus:ring-2 focus:ring-blue-500">
+                        <select id="calcTo" onchange="app.calcCurrency()" class="w-full p-3 rounded-xl font-bold cursor-pointer outline-none focus:ring-2 focus:ring-blue-500 text-white bg-slate-800">
                              </select>
                     </div>
 
@@ -303,6 +307,9 @@ const app = {
             
             this.loadData();
             this.render();
+            // CORRECCIÓN: Llenar la calculadora INMEDIATAMENTE, no esperar a la API
+            this.fillCalcSelects();
+            
             this.fetchDolarSimple();
             this.fetchFullMarket();
             lucide.createIcons();
@@ -437,8 +444,8 @@ const app = {
         const icon = document.getElementById("refreshIcon");
         icon.classList.add("animate-spin");
         
-        // Inicializar tasas base
-        this.rates = { 'USD': 1 }; 
+        // Inicializar tasas base (Por si falla la API, la calc al menos convierte 1 a 1)
+        this.rates = { 'USD': 1, 'EUR': 0.92, 'BRL': 5.0, 'ARS_BLUE': 0.001 }; 
 
         // 1. ARGENTINA
         try {
@@ -446,10 +453,9 @@ const app = {
             const data = await res.json();
             const filtered = data.filter(d => d.casa === "oficial" || d.casa === "blue");
             
-            // Guardar tasas para calculadora (Valor en pesos por 1 dólar)
-            // Para simplificar, usamos el valor de VENTA
+            // Actualizar tasas ARS reales
             filtered.forEach(d => {
-                if(d.casa === 'blue') this.rates['ARS_BLUE'] = 1/d.venta; // Inverso porque la base es USD
+                if(d.casa === 'blue') this.rates['ARS_BLUE'] = 1/d.venta; 
                 if(d.casa === 'oficial') this.rates['ARS_OFICIAL'] = 1/d.venta;
             });
 
@@ -511,9 +517,6 @@ const app = {
                 </div>`;
             }).join('');
             
-            // Llenar Selects de Calculadora
-            this.fillCalcSelects();
-
         } catch (e) { 
             console.error(e);
             gridWorld.innerHTML = `<div class="col-span-full text-center text-slate-500 p-4">Datos internacionales no disponibles momentáneamente.</div>`;
@@ -531,7 +534,7 @@ const app = {
         // Opciones customizadas
         const options = [
             {v: 'USD', t: '🇺🇸 Dólar (USD)'},
-            {v: 'ARS_BLUE', t: '🇦🇷 Peso Blue'}, // Invertimos lógica visualmente
+            {v: 'ARS_BLUE', t: '🇦🇷 Peso Blue'},
             {v: 'ARS_OFICIAL', t: '🇦🇷 Peso Oficial'},
             {v: 'EUR', t: '🇪🇺 Euro'},
             {v: 'BRL', t: '🇧🇷 Real'},
@@ -543,11 +546,9 @@ const app = {
 
         const html = options.map(o => `<option value="${o.v}">${o.t}</option>`).join('');
         
-        if(selFrom.innerHTML === "") { // Solo llenar si está vacío
-            selFrom.innerHTML = html;
-            selTo.innerHTML = html;
-            selTo.value = 'EUR'; // Default
-        }
+        selFrom.innerHTML = html;
+        selTo.innerHTML = html;
+        selTo.value = 'EUR'; // Default
     },
 
     calcCurrency() {
@@ -555,23 +556,21 @@ const app = {
         const from = document.getElementById("calcFrom").value;
         const to = document.getElementById("calcTo").value;
         const resEl = document.getElementById("calcResult");
-
-        // Lógica especial para ARS (Como guardamos 1/venta, hay que manejarlo)
-        // Base es USD. 
-        // Si tengo 100 USD y quiero EUR: 100 * RateEUR
-        // Si tengo 100 EUR y quiero USD: 100 / RateEUR
         
+        // Default rates in case API is super slow/fails on init
+        const safeRates = { ...this.rates }; 
+        if(!safeRates[from]) safeRates[from] = 1; 
+        if(!safeRates[to]) safeRates[to] = 1;
+
         // Normalizamos todo a USD primero
         let amountInUSD = 0;
 
         if (from === 'USD') {
             amountInUSD = amount;
         } else if (from.includes('ARS')) {
-            // Caso ARS: stored rate is (1 / venta). So ARS * rate = USD
-             amountInUSD = amount * this.rates[from];
+             amountInUSD = amount * safeRates[from];
         } else {
-            // Caso Forex: stored rate is per 1 USD. So Amount / Rate = USD
-            amountInUSD = amount / this.rates[from];
+            amountInUSD = amount / safeRates[from];
         }
 
         // Convertimos USD a Target
@@ -579,10 +578,9 @@ const app = {
         if (to === 'USD') {
             finalAmount = amountInUSD;
         } else if (to.includes('ARS')) {
-            // USD / Rate (que es chiquito) = USD * Venta
-             finalAmount = amountInUSD / this.rates[to];
+             finalAmount = amountInUSD / safeRates[to];
         } else {
-            finalAmount = amountInUSD * this.rates[to];
+            finalAmount = amountInUSD * safeRates[to];
         }
 
         resEl.textContent = finalAmount.toLocaleString(undefined, {maximumFractionDigits: 2});
