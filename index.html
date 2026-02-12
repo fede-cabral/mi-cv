@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FORJAX Terminal - CFO Edition</title>
+    <title>FORJAX Terminal - Global Forex</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -73,7 +73,7 @@
             <i data-lucide="wallet"></i> Mi Billetera
         </button>
         <button onclick="app.switchTab('market')" id="btnMarket" class="px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all text-slate-400 hover:text-white hover:bg-white/5">
-            <i data-lucide="bar-chart-4"></i> Mercado
+            <i data-lucide="globe"></i> Forex Global
         </button>
         <div class="w-px h-6 bg-white/10 mx-2"></div>
         <button onclick="app.toggleTheme()" class="p-2.5 rounded-xl text-slate-400 hover:text-yellow-400 hover:bg-white/5 transition-all">
@@ -161,7 +161,8 @@
                             
                             <div class="w-full bg-slate-700/50 rounded-full h-5 mb-4 overflow-hidden border border-white/5">
                                 <div id="budgetBar" class="bg-blue-500 h-5 rounded-full transition-all duration-1000 relative" style="width: 0%">
-                                    <div class="absolute inset-0 bg-white/20 animate-pulse"></div> </div>
+                                    <div class="absolute inset-0 bg-white/20 animate-pulse"></div>
+                                </div>
                             </div>
                             
                             <div class="flex items-center justify-between bg-black/20 p-3 rounded-xl border border-white/5">
@@ -219,8 +220,10 @@
         <div id="viewMarket" class="hidden fade-in">
             <div class="flex items-center justify-between mb-8">
                 <div>
-                    <h2 class="text-3xl font-black tracking-tight text-white">Mercado Cambiario</h2>
-                    <p class="text-slate-400">Cotizaciones en tiempo real • Argentina</p>
+                    <h2 class="text-3xl font-black tracking-tight text-white flex items-center gap-2">
+                        <i data-lucide="globe-2" class="text-blue-500"></i> Mercado Internacional
+                    </h2>
+                    <p class="text-slate-400">Cotizaciones vs Dólar (USD)</p>
                 </div>
                 <div class="text-right">
                     <button onclick="app.fetchFullMarket()" class="bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 p-3 rounded-xl transition-all">
@@ -229,12 +232,16 @@
                 </div>
             </div>
 
-            <div id="marketGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <div class="col-span-full text-center py-20">
-                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-                    <p class="mt-4 text-slate-500">Conectando con la Bolsa...</p>
+            <h3 class="text-xl font-bold text-white mb-4 pl-2 border-l-4 border-emerald-500">🇦🇷 Argentina</h3>
+            <div id="marketGridArg" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                <div class="col-span-full text-center py-10">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-emerald-500"></div>
                 </div>
             </div>
+
+            <h3 class="text-xl font-bold text-white mb-4 pl-2 border-l-4 border-blue-500">🌎 Divisas Mundiales (Forex)</h3>
+            <div id="marketGridWorld" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                 </div>
         </div>
 
     </div>
@@ -261,7 +268,7 @@ const app = {
             this.loadData();
             this.render();
             this.fetchDolarSimple();
-            this.fetchFullMarket(); // Carga inicial mercado
+            this.fetchFullMarket();
             lucide.createIcons();
         }
     },
@@ -387,72 +394,93 @@ const app = {
         } catch(e) {}
     },
 
-    // --- CORRECCIÓN CLAVE: SISTEMA DE FETCH ROBUSTO ---
+    // --- MERCADO FOREX GLOBAL ---
     async fetchFullMarket() {
-        const grid = document.getElementById("marketGrid");
+        const gridArg = document.getElementById("marketGridArg");
+        const gridWorld = document.getElementById("marketGridWorld");
         const icon = document.getElementById("refreshIcon");
         icon.classList.add("animate-spin");
 
-        let cardsHTML = '';
-
-        // 1. DÓLARES (Array)
+        // 1. ARGENTINA (Solo Blue y Oficial)
         try {
             const res = await fetch("https://dolarapi.com/v1/dolares");
-            if(res.ok) {
-                const data = await res.json();
-                cardsHTML += data.map(d => this.createCard(`Dólar ${d.nombre}`, d.compra, d.venta, d.fechaActualizacion, 'dollar-sign', 'emerald')).join('');
-            }
-        } catch (e) { console.error("Error Dolares"); }
+            const data = await res.json();
+            // Filtramos solo Oficial y Blue
+            const filtered = data.filter(d => d.casa === "oficial" || d.casa === "blue");
+            
+            gridArg.innerHTML = filtered.map(d => `
+                <div class="glass p-6 rounded-3xl relative overflow-hidden group hover:bg-white/5 transition-all border border-emerald-500/30">
+                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-3 rounded-xl bg-emerald-500/20 text-emerald-400"><i data-lucide="dollar-sign" class="w-6 h-6"></i></div>
+                        <h3 class="font-bold text-lg text-slate-200">Dólar ${d.nombre}</h3>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mb-2">
+                        <div class="bg-black/20 p-3 rounded-xl">
+                            <p class="text-[10px] uppercase font-bold text-slate-500 mb-1">Compra</p>
+                            <p class="text-xl font-black text-white">$${d.compra}</p>
+                        </div>
+                        <div class="bg-black/20 p-3 rounded-xl border border-emerald-500/20">
+                            <p class="text-[10px] uppercase font-bold text-slate-500 mb-1">Venta</p>
+                            <p class="text-xl font-black text-emerald-400">$${d.venta}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        } catch (e) { console.error(e); }
 
-        // 2. EURO (Objeto)
+        // 2. MUNDO (API FRANKFURTER - Gratis y sin Key)
         try {
-            const res = await fetch("https://dolarapi.com/v1/euros/blue");
-            if(res.ok) {
-                const d = await res.json();
-                cardsHTML += this.createCard('Euro Blue', d.compra, d.venta, d.fechaActualizacion, 'euro', 'blue');
-            }
-        } catch (e) { console.error("Error Euro"); }
+            // Base USD
+            const res = await fetch("https://api.frankfurter.app/latest?from=USD");
+            const data = await res.json();
+            const rates = data.rates;
+            
+            const currencies = [
+                {code: 'EUR', name: 'Euro', flag: '🇪🇺'},
+                {code: 'GBP', name: 'Libra Esterlina', flag: '🇬🇧'},
+                {code: 'JPY', name: 'Yen Japonés', flag: '🇯🇵'},
+                {code: 'BRL', name: 'Real Brasil', flag: '🇧🇷'},
+                {code: 'CLP', name: 'Peso Chileno', flag: '🇨🇱'},
+                {code: 'UYU', name: 'Peso Uruguayo', flag: '🇺🇾'}, // A veces no está en Frankfurter, depende disponibilidad
+                {code: 'MXN', name: 'Peso Mexicano', flag: '🇲🇽'},
+                {code: 'CAD', name: 'Dólar Canadá', flag: '🇨🇦'},
+                {code: 'AUD', name: 'Dólar Austral', flag: '🇦🇺'},
+                {code: 'CNY', name: 'Yuan Chino', flag: '🇨🇳'},
+                {code: 'CHF', name: 'Franco Suizo', flag: '🇨🇭'},
+                {code: 'KRW', name: 'Won Coreano', flag: '🇰🇷'},
+                {code: 'INR', name: 'Rupia India', flag: '🇮🇳'},
+                {code: 'RUB', name: 'Rublo Ruso', flag: '🇷🇺'},
+                {code: 'ZAR', name: 'Rand Sudaf.', flag: '🇿🇦'},
+                {code: 'NZD', name: 'Dólar NZ', flag: '🇳🇿'},
+                {code: 'SGD', name: 'Dólar Singapur', flag: '🇸🇬'},
+                {code: 'HKD', name: 'Dólar HK', flag: '🇭🇰'},
+                {code: 'TRY', name: 'Lira Turca', flag: '🇹🇷'},
+                {code: 'ILS', name: 'Shekel Israel', flag: '🇮🇱'}
+            ];
 
-        // 3. REAL (Objeto)
-        try {
-            const res = await fetch("https://dolarapi.com/v1/reales/blue");
-            if(res.ok) {
-                const d = await res.json();
-                cardsHTML += this.createCard('Real Blue', d.compra, d.venta, d.fechaActualizacion, 'coins', 'yellow');
-            }
-        } catch (e) { console.error("Error Real"); }
+            gridWorld.innerHTML = currencies.map(c => {
+                const val = rates[c.code];
+                if(!val) return ''; 
+                return `
+                <div class="glass p-4 rounded-2xl hover:bg-white/5 transition-all border border-blue-500/10 hover:border-blue-500/40 group">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-2xl">${c.flag}</span>
+                        <span class="text-xs font-bold text-slate-500 bg-black/30 px-2 py-1 rounded">${c.code}</span>
+                    </div>
+                    <p class="text-sm font-bold text-slate-300 truncate">${c.name}</p>
+                    <p class="text-lg font-mono font-bold text-blue-400 mt-1">${val.toFixed(2)}</p>
+                    <p class="text-[10px] text-slate-600">1 USD = ${val.toFixed(2)} ${c.code}</p>
+                </div>`;
+            }).join('');
 
-        // Si no se cargó nada, mostrar error, si no, mostrar lo que hay
-        if (cardsHTML === '') {
-            grid.innerHTML = `<div class="col-span-full text-center text-rose-400 p-10 glass rounded-3xl">⚠️ Sin conexión al Mercado Financiero</div>`;
-        } else {
-            grid.innerHTML = cardsHTML;
+        } catch (e) { 
+            console.error(e);
+            gridWorld.innerHTML = `<div class="col-span-full text-center text-slate-500 p-4">Datos internacionales no disponibles momentáneamente.</div>`;
         }
 
         setTimeout(() => icon.classList.remove("animate-spin"), 1000);
         lucide.createIcons();
-    },
-
-    createCard(nombre, compra, venta, fecha, icon, color) {
-        return `
-            <div class="glass p-6 rounded-3xl relative overflow-hidden group hover:bg-white/5 transition-all border border-${color}-500/30">
-                <div class="absolute -right-4 -top-4 w-24 h-24 bg-${color}-500/10 rounded-full blur-2xl group-hover:bg-${color}-500/20 transition-all"></div>
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="p-3 rounded-xl bg-${color}-500/20 text-${color}-400"><i data-lucide="${icon}" class="w-6 h-6"></i></div>
-                    <h3 class="font-bold text-lg text-slate-200">${nombre}</h3>
-                </div>
-                <div class="grid grid-cols-2 gap-4 mb-4">
-                    <div class="bg-black/20 p-3 rounded-xl">
-                        <p class="text-[10px] uppercase font-bold text-slate-500 mb-1">Compra</p>
-                        <p class="text-xl font-black text-white">$${compra}</p>
-                    </div>
-                    <div class="bg-black/20 p-3 rounded-xl border border-${color}-500/20">
-                        <p class="text-[10px] uppercase font-bold text-slate-500 mb-1">Venta</p>
-                        <p class="text-xl font-black text-${color}-400">$${venta}</p>
-                    </div>
-                </div>
-                <p class="text-xs text-slate-500 text-center font-mono">Act: ${new Date(fecha).toLocaleTimeString()}</p>
-            </div>`;
     },
 
     exportProExcel() {
@@ -462,14 +490,12 @@ const app = {
         const moneyGreen = { numFmt: "$ #,##0", font: { color: { rgb: "10B981" } } };
         const moneyRed = { numFmt: "$ #,##0", font: { color: { rgb: "EF4444" } } };
 
-        // HOJA 1
         const totalInc = this.data.records.filter(r => r.type === 'income').reduce((acc, curr) => acc + curr.amount, 0);
         const totalExp = this.data.records.filter(r => r.type === 'expense').reduce((acc, curr) => acc + curr.amount, 0);
         const wsDash = XLSX.utils.aoa_to_sheet([["REPORTE CFO"],["Generado por:", this.user],[""],["Ingresos", totalInc],["Gastos", totalExp],["Balance", totalInc - totalExp]]);
         wsDash['A1'].s = titleStyle;
         XLSX.utils.book_append_sheet(wb, wsDash, "Resumen");
 
-        // HOJA 2
         const transData = [["FECHA", "DESCRIPCIÓN", "CATEGORÍA", "TIPO", "MONTO"], ...this.data.records.map(r => [r.date, r.desc, r.category, r.type.toUpperCase(), r.amount])];
         const wsTrans = XLSX.utils.aoa_to_sheet(transData);
         wsTrans['A1'].s = wsTrans['B1'].s = wsTrans['C1'].s = wsTrans['D1'].s = wsTrans['E1'].s = headerStyle;
