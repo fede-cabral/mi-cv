@@ -43,12 +43,9 @@
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Inputs y Selects Contrastados */
         .dark input, .dark select { background: #1e293b; color: #fff; border: 1px solid #334155; }
         .dark input::placeholder { color: #94a3b8; }
-        /* CORRECCIÓN VISUAL: Forzar fondo oscuro en las opciones desplegables */
         .dark option { background-color: #0f172a; color: white; }
-        
         .light input, .light select { background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; }
     </style>
 </head>
@@ -197,8 +194,8 @@
                             <h3 class="font-bold flex items-center gap-2"><i data-lucide="list"></i> Movimientos</h3>
                             <div class="flex gap-2">
                                 <input id="searchInput" onkeyup="app.render()" type="text" placeholder="Buscar..." class="bg-black/20 border-none rounded-lg px-3 py-1.5 text-sm w-32 focus:w-48 transition-all outline-none">
-                                <button onclick="app.exportProExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 shadow-lg shadow-emerald-600/20">
-                                    <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> EXCEL CFO
+                                <button onclick="app.exportProExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 shadow-lg shadow-emerald-600/20 transition-all hover:scale-105">
+                                    <i data-lucide="file-spreadsheet" class="w-5 h-5"></i> REPORTE CFO
                                 </button>
                             </div>
                         </div>
@@ -293,7 +290,7 @@ const app = {
     theme: localStorage.getItem("theme") || 'dark',
     currentTab: 'wallet',
     data: { records: [], budget: 0 },
-    rates: {}, // Almacén de cotizaciones para la calculadora
+    rates: {}, 
     charts: {},
 
     init() {
@@ -307,9 +304,7 @@ const app = {
             
             this.loadData();
             this.render();
-            // CORRECCIÓN: Llenar la calculadora INMEDIATAMENTE, no esperar a la API
             this.fillCalcSelects();
-            
             this.fetchDolarSimple();
             this.fetchFullMarket();
             lucide.createIcons();
@@ -444,7 +439,6 @@ const app = {
         const icon = document.getElementById("refreshIcon");
         icon.classList.add("animate-spin");
         
-        // Inicializar tasas base (Por si falla la API, la calc al menos convierte 1 a 1)
         this.rates = { 'USD': 1, 'EUR': 0.92, 'BRL': 5.0, 'ARS_BLUE': 0.001 }; 
 
         // 1. ARGENTINA
@@ -453,7 +447,6 @@ const app = {
             const data = await res.json();
             const filtered = data.filter(d => d.casa === "oficial" || d.casa === "blue");
             
-            // Actualizar tasas ARS reales
             filtered.forEach(d => {
                 if(d.casa === 'blue') this.rates['ARS_BLUE'] = 1/d.venta; 
                 if(d.casa === 'oficial') this.rates['ARS_OFICIAL'] = 1/d.venta;
@@ -485,21 +478,14 @@ const app = {
             const res = await fetch("https://api.frankfurter.app/latest?from=USD");
             const data = await res.json();
             const r = data.rates;
-
-            // Unir tasas al objeto global
             Object.assign(this.rates, r);
 
             const currencies = [
-                {code: 'EUR', name: 'Euro', flag: '🇪🇺'},
-                {code: 'GBP', name: 'Libra Esterlina', flag: '🇬🇧'},
-                {code: 'JPY', name: 'Yen Japonés', flag: '🇯🇵'},
-                {code: 'BRL', name: 'Real Brasil', flag: '🇧🇷'},
-                {code: 'CLP', name: 'Peso Chileno', flag: '🇨🇱'},
-                {code: 'MXN', name: 'Peso Mexicano', flag: '🇲🇽'},
-                {code: 'CAD', name: 'Dólar Canadá', flag: '🇨🇦'},
-                {code: 'AUD', name: 'Dólar Austral', flag: '🇦🇺'},
-                {code: 'CNY', name: 'Yuan Chino', flag: '🇨🇳'},
-                {code: 'CHF', name: 'Franco Suizo', flag: '🇨🇭'}
+                {code: 'EUR', name: 'Euro', flag: '🇪🇺'}, {code: 'GBP', name: 'Libra Esterlina', flag: '🇬🇧'},
+                {code: 'JPY', name: 'Yen Japonés', flag: '🇯🇵'}, {code: 'BRL', name: 'Real Brasil', flag: '🇧🇷'},
+                {code: 'CLP', name: 'Peso Chileno', flag: '🇨🇱'}, {code: 'MXN', name: 'Peso Mexicano', flag: '🇲🇽'},
+                {code: 'CAD', name: 'Dólar Canadá', flag: '🇨🇦'}, {code: 'AUD', name: 'Dólar Austral', flag: '🇦🇺'},
+                {code: 'CNY', name: 'Yuan Chino', flag: '🇨🇳'}, {code: 'CHF', name: 'Franco Suizo', flag: '🇨🇭'}
             ];
 
             gridWorld.innerHTML = currencies.map(c => {
@@ -516,9 +502,7 @@ const app = {
                     <p class="text-[10px] text-slate-600">1 USD = ${val.toFixed(2)} ${c.code}</p>
                 </div>`;
             }).join('');
-            
         } catch (e) { 
-            console.error(e);
             gridWorld.innerHTML = `<div class="col-span-full text-center text-slate-500 p-4">Datos internacionales no disponibles momentáneamente.</div>`;
         }
 
@@ -531,24 +515,16 @@ const app = {
         const selFrom = document.getElementById("calcFrom");
         const selTo = document.getElementById("calcTo");
         
-        // Opciones customizadas
         const options = [
-            {v: 'USD', t: '🇺🇸 Dólar (USD)'},
-            {v: 'ARS_BLUE', t: '🇦🇷 Peso Blue'},
-            {v: 'ARS_OFICIAL', t: '🇦🇷 Peso Oficial'},
-            {v: 'EUR', t: '🇪🇺 Euro'},
-            {v: 'BRL', t: '🇧🇷 Real'},
-            {v: 'GBP', t: '🇬🇧 Libra'},
-            {v: 'JPY', t: '🇯🇵 Yen'},
-            {v: 'CLP', t: '🇨🇱 Peso Chileno'},
-            {v: 'MXN', t: '🇲🇽 Peso Mexicano'}
+            {v: 'USD', t: '🇺🇸 Dólar (USD)'}, {v: 'ARS_BLUE', t: '🇦🇷 Peso Blue'}, {v: 'ARS_OFICIAL', t: '🇦🇷 Peso Oficial'},
+            {v: 'EUR', t: '🇪🇺 Euro'}, {v: 'BRL', t: '🇧🇷 Real'}, {v: 'GBP', t: '🇬🇧 Libra'}, {v: 'JPY', t: '🇯🇵 Yen'},
+            {v: 'CLP', t: '🇨🇱 Peso Chileno'}, {v: 'MXN', t: '🇲🇽 Peso Mexicano'}
         ];
 
         const html = options.map(o => `<option value="${o.v}">${o.t}</option>`).join('');
-        
         selFrom.innerHTML = html;
         selTo.innerHTML = html;
-        selTo.value = 'EUR'; // Default
+        selTo.value = 'EUR';
     },
 
     calcCurrency() {
@@ -557,31 +533,19 @@ const app = {
         const to = document.getElementById("calcTo").value;
         const resEl = document.getElementById("calcResult");
         
-        // Default rates in case API is super slow/fails on init
         const safeRates = { ...this.rates }; 
         if(!safeRates[from]) safeRates[from] = 1; 
         if(!safeRates[to]) safeRates[to] = 1;
 
-        // Normalizamos todo a USD primero
         let amountInUSD = 0;
+        if (from === 'USD') amountInUSD = amount;
+        else if (from.includes('ARS')) amountInUSD = amount * safeRates[from];
+        else amountInUSD = amount / safeRates[from];
 
-        if (from === 'USD') {
-            amountInUSD = amount;
-        } else if (from.includes('ARS')) {
-             amountInUSD = amount * safeRates[from];
-        } else {
-            amountInUSD = amount / safeRates[from];
-        }
-
-        // Convertimos USD a Target
         let finalAmount = 0;
-        if (to === 'USD') {
-            finalAmount = amountInUSD;
-        } else if (to.includes('ARS')) {
-             finalAmount = amountInUSD / safeRates[to];
-        } else {
-            finalAmount = amountInUSD * safeRates[to];
-        }
+        if (to === 'USD') finalAmount = amountInUSD;
+        else if (to.includes('ARS')) finalAmount = amountInUSD / safeRates[to];
+        else finalAmount = amountInUSD * safeRates[to];
 
         resEl.textContent = finalAmount.toLocaleString(undefined, {maximumFractionDigits: 2});
     },
@@ -595,29 +559,97 @@ const app = {
         this.calcCurrency();
     },
 
+    /* =================== EXCEL NIVEL "BIG FOUR" =================== */
     exportProExcel() {
         const wb = XLSX.utils.book_new();
-        const headerStyle = { font: { bold: true, color: { rgb: "FFFFFF" } }, fill: { fgColor: { rgb: "0F172A" } }, alignment: { horizontal: "center", vertical: "center" } };
-        const titleStyle = { font: { bold: true, sz: 18, color: { rgb: "3B82F6" } } };
-        const moneyGreen = { numFmt: "$ #,##0", font: { color: { rgb: "10B981" } } };
-        const moneyRed = { numFmt: "$ #,##0", font: { color: { rgb: "EF4444" } } };
+        
+        // --- ESTILOS CORPORATIVOS ---
+        const borderThin = { style: "thin", color: { rgb: "D1D5DB" } };
+        const borderThick = { style: "medium", color: { rgb: "374151" } };
+        
+        const sHeaderDark = { font: { bold: true, color: { rgb: "FFFFFF" }, sz: 11, name: "Arial" }, fill: { fgColor: { rgb: "1E3A8A" } }, alignment: { horizontal: "center", vertical: "center" }, border: { bottom: borderThick, top: borderThin, left: borderThin, right: borderThin } };
+        const sTitle = { font: { bold: true, sz: 16, color: { rgb: "1E3A8A" }, name: "Arial" }, alignment: { horizontal: "left" } };
+        const sSubtitle = { font: { italic: true, sz: 10, color: { rgb: "6B7280" }, name: "Arial" } };
+        const sData = { font: { sz: 10, name: "Arial" }, border: { bottom: borderThin, left: borderThin, right: borderThin } };
+        const sDataCenter = { ...sData, alignment: { horizontal: "center" } };
+        const sDataBold = { ...sData, font: { ...sData.font, bold: true } };
+        
+        const sCurrency = { ...sData, numFmt: "$ #,##0", alignment: { horizontal: "right" } };
+        const sCurrencyBold = { ...sCurrency, font: { bold: true } };
+        const sCurrencyGreen = { ...sCurrency, font: { color: { rgb: "059669" }, bold: true } };
+        const sCurrencyRed = { ...sCurrency, font: { color: { rgb: "DC2626" }, bold: true } };
+        const sPercent = { ...sData, numFmt: "0.0%", alignment: { horizontal: "center" }, font: { bold: true } };
+        const sSectionHeader = { font: { bold: true, sz: 12, color: { rgb: "111827" }, name: "Arial" }, border: { bottom: borderThick } };
 
+        // --- CÁLCULOS ---
         const totalInc = this.data.records.filter(r => r.type === 'income').reduce((acc, curr) => acc + curr.amount, 0);
         const totalExp = this.data.records.filter(r => r.type === 'expense').reduce((acc, curr) => acc + curr.amount, 0);
-        const wsDash = XLSX.utils.aoa_to_sheet([["REPORTE CFO"],["Generado por:", this.user],[""],["Ingresos", totalInc],["Gastos", totalExp],["Balance", totalInc - totalExp]]);
-        wsDash['A1'].s = titleStyle;
-        XLSX.utils.book_append_sheet(wb, wsDash, "Resumen");
+        const balance = totalInc - totalExp;
+        const savingRate = totalInc > 0 ? (balance / totalInc) : 0;
+        const budgetExec = this.data.budget > 0 ? (totalExp / this.data.budget) : 0;
 
-        const transData = [["FECHA", "DESCRIPCIÓN", "CATEGORÍA", "TIPO", "MONTO"], ...this.data.records.map(r => [r.date, r.desc, r.category, r.type.toUpperCase(), r.amount])];
-        const wsTrans = XLSX.utils.aoa_to_sheet(transData);
-        wsTrans['A1'].s = wsTrans['B1'].s = wsTrans['C1'].s = wsTrans['D1'].s = wsTrans['E1'].s = headerStyle;
+        // --- HOJA 1: DASHBOARD EJECUTIVO ---
+        const dashData = [
+            ["FORJAX FINANCIAL TERMINAL - REPORTE CFO", "", "", ""],
+            [`Generado por: ${this.user.toUpperCase()} | Fecha: ${new Date().toLocaleDateString()}`, "", "", ""],
+            ["", "", "", ""], // Espacio
+            ["RESUMEN OPERATIVO DEL PERÍODO", "", "", ""], // Seccion 1
+            ["CONCEPTO", "RESULTADO", "", "ANÁLISIS RAPIDO"],
+            ["Ingresos Totales", totalInc, "", "Flujo de entrada"],
+            ["Gastos Operativos", totalExp, "", "Flujo de salida"],
+            ["BALANCE NETO", balance, "", balance >= 0 ? "Superávit" : "Déficit"],
+            ["", "", "", ""], // Espacio
+            ["ANÁLISIS DE EFICIENCIA & PRESUPUESTO", "", "", ""], // Seccion 2
+            ["MÉTRICA", "VALOR", "OBJETIVO", "ESTADO"],
+            ["Margen de Ahorro", savingRate, "> 20%", savingRate > 0.2 ? "Excelente" : savingRate > 0 ? "Regular" : "Crítico"],
+            ["Ejecución Presupuestaria", budgetExec, "< 90%", budgetExec < 0.9 ? "Bajo Control" : budgetExec < 1 ? "Alerta" : "Excedido"],
+            ["Presupuesto Total", this.data.budget, "", ""]
+        ];
+
+        const wsDash = XLSX.utils.aoa_to_sheet(dashData);
         
-        for (let i = 1; i < transData.length; i++) {
-            wsTrans[XLSX.utils.encode_cell({ r: i, c: 4 })].s = transData[i][3] === 'GASTO' ? moneyRed : moneyGreen;
+        // Estructura
+        wsDash['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 3 } }, { s: { r: 1, c: 0 }, e: { r: 1, c: 3 } }, { s: { r: 3, c: 0 }, e: { r: 3, c: 3 } }, { s: { r: 7, c: 0 }, e: { r: 7, c: 1 } }, { s: { r: 9, c: 0 }, e: { r: 9, c: 3 } }];
+        wsDash['!cols'] = [{ wch: 25 }, { wch: 20 }, { wch: 15 }, { wch: 20 }];
+        
+        // Aplicar Estilos Dash
+        wsDash['A1'].s = sTitle; wsDash['A2'].s = sSubtitle;
+        wsDash['A4'].s = wsDash['A10'].s = sSectionHeader;
+        ["A5","B5","D5","A11","B11","C11","D11"].forEach(c => { if(wsDash[c]) wsDash[c].s = sHeaderDark; });
+        wsDash['A6'].s = wsDash['A7'].s = sDataBold;
+        wsDash['B6'].s = sCurrencyGreen; wsDash['B7'].s = sCurrencyRed;
+        wsDash['A8'].s = sDataBold; wsDash['B8'].s = balance >= 0 ? sCurrencyGreen : sCurrencyRed; wsDash['B8'].s.border = { top: borderThick, bottom: borderThick };
+        wsDash['B12'].s = wsDash['B13'].s = sPercent;
+        wsDash['B14'].s = sCurrencyBold;
+        ["D6","D7","D8","A12","C12","D12","A13","C13","D13","A14"].forEach(c => { if(wsDash[c] && !wsDash[c].s) wsDash[c].s = sDataCenter; });
+
+        XLSX.utils.book_append_sheet(wb, wsDash, "Dashboard Ejecutivo");
+
+        // --- HOJA 2: REGISTRO TRANSACCIONAL ---
+        const transData = [
+            ["REGISTRO DETALLADO DE OPERACIONES", "", "", "", ""],
+            ["", "", "", "", ""],
+            ["FECHA", "DESCRIPCIÓN", "CATEGORÍA", "TIPO", "MONTO"]
+        ];
+        this.data.records.forEach(r => transData.push([r.date, r.desc, r.category, r.type.toUpperCase(), r.amount]));
+
+        const wsTrans = XLSX.utils.aoa_to_sheet(transData);
+        wsTrans['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }];
+        wsTrans['!cols'] = [{ wch: 12 }, { wch: 40 }, { wch: 18 }, { wch: 12 }, { wch: 18 }];
+        wsTrans['A1'].s = sTitle;
+        ["A3", "B3", "C3", "D3", "E3"].forEach(c => wsTrans[c].s = sHeaderDark);
+
+        for (let i = 3; i < transData.length; i++) {
+            const isExp = transData[i][3] === 'GASTO';
+            wsTrans[XLSX.utils.encode_cell({r:i, c:0})].s = sDataCenter;
+            wsTrans[XLSX.utils.encode_cell({r:i, c:1})].s = sData;
+            wsTrans[XLSX.utils.encode_cell({r:i, c:2})].s = sDataCenter;
+            wsTrans[XLSX.utils.encode_cell({r:i, c:3})].s = sDataCenter;
+            wsTrans[XLSX.utils.encode_cell({r:i, c:4})].s = isExp ? sCurrencyRed : sCurrencyGreen;
         }
 
-        XLSX.utils.book_append_sheet(wb, wsTrans, "Detalle");
-        XLSX.writeFile(wb, `FORJAX_CFO_${this.user}.xlsx`);
+        XLSX.utils.book_append_sheet(wb, wsTrans, "Registro Transaccional");
+        XLSX.writeFile(wb, `FORJAX_Reporte_CFO_${new Date().toISOString().split('T')[0]}.xlsx`);
     },
 
     updateCharts(inc, exp) {
