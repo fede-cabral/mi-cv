@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestor Pro - Global Edition</title>
+    <title>FORJAX Terminal - CFO Edition</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -17,227 +17,232 @@
             theme: {
                 extend: {
                     fontFamily: { sans: ['Outfit', 'sans-serif'] },
-                    colors: { dark: '#0f172a' }
+                    colors: { 
+                        dark: '#0f172a',
+                        primary: '#3b82f6',
+                        secondary: '#10b981'
+                    }
                 }
             }
         }
     </script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap');
         
-        body { font-family: 'Outfit', sans-serif; transition: background-color 0.3s ease, color 0.3s ease; }
-
-        .glass { backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s ease; }
-        .dark .glass { background: rgba(30, 41, 59, 0.85); border-color: rgba(255,255,255,0.1); }
-        .light .glass { background: rgba(255, 255, 255, 0.9); border-color: rgba(0,0,0,0.05); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-
-        .fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; transform: translateY(20px); }
-        .delay-100 { animation-delay: 0.1s; }
-        .delay-200 { animation-delay: 0.2s; }
-        .delay-300 { animation-delay: 0.3s; }
-
-        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
-
-        .custom-scroll::-webkit-scrollbar { width: 6px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #64748b; border-radius: 10px; }
-        .dark .custom-scroll::-webkit-scrollbar-thumb { background: #334155; }
+        body { font-family: 'Outfit', sans-serif; transition: all 0.3s ease; }
         
-        .animate-spin-slow { animation: spin 4s linear infinite; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        /* Glassmorphism Premium */
+        .glass { backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .dark .glass { background: rgba(15, 23, 42, 0.7); border-color: rgba(255,255,255,0.05); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); }
+        .light .glass { background: rgba(255, 255, 255, 0.8); border-color: rgba(0,0,0,0.05); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); }
 
-        .dark select option { background-color: #1e293b; color: white; }
-        .dark ::placeholder { color: #94a3b8; opacity: 1; }
+        /* Efectos */
+        .hover-scale:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.2); }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Scrollbar Invisible pero funcional */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Inputs Contrastados */
+        .dark input, .dark select { background: #1e293b; color: #fff; border: 1px solid #334155; }
+        .dark input::placeholder { color: #94a3b8; }
+        .light input, .light select { background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; }
     </style>
 </head>
 
-<body class="min-h-screen pb-10 transition-colors duration-500 bg-slate-100 text-slate-900 dark:bg-dark dark:text-slate-100">
+<body class="min-h-screen pb-10 transition-colors duration-500 bg-slate-100 text-slate-900 dark:bg-[#0B1121] dark:text-slate-100 selection:bg-blue-500 selection:text-white">
 
-<button onclick="app.toggleTheme()" class="fixed bottom-6 right-6 z-[100] p-4 rounded-full shadow-2xl hover:scale-110 transition-transform bg-blue-600 text-white border-2 border-white/20 glass cursor-pointer">
-    <i id="themeIcon" data-lucide="sun" class="w-6 h-6"></i>
-</button>
-
-<div id="loginScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/95 backdrop-blur-sm transition-opacity duration-500">
-    <div class="glass p-8 rounded-3xl w-full max-w-md shadow-2xl text-center fade-in-up border border-white/10">
-        <div class="mb-6 inline-flex p-5 bg-gradient-to-tr from-blue-600 to-cyan-500 rounded-2xl shadow-lg shadow-blue-500/30 transform -rotate-3 hover:rotate-0 transition-transform">
-            <i data-lucide="shield-check" class="w-10 h-10 text-white"></i>
+<div id="loginScreen" class="fixed inset-0 z-[60] flex items-center justify-center bg-[#0B1121] transition-all duration-500">
+    <div class="relative w-full max-w-md p-8 text-center fade-in">
+        <div class="absolute inset-0 bg-blue-600/20 blur-[100px] rounded-full"></div> <div class="glass relative p-10 rounded-3xl border border-white/10">
+            <div class="mb-8 inline-flex p-5 bg-gradient-to-tr from-blue-600 to-indigo-600 rounded-2xl shadow-2xl shadow-blue-600/20">
+                <i data-lucide="layout-dashboard" class="w-10 h-10 text-white"></i>
+            </div>
+            <h2 class="text-4xl font-extrabold mb-2 tracking-tight">FORJAX <span class="text-blue-500">TERMINAL</span></h2>
+            <p class="text-slate-400 mb-8 font-medium">Sistema de Inteligencia Financiera</p>
+            <input id="userInput" type="text" placeholder="Identificación de Agente" class="w-full p-4 rounded-xl mb-4 text-center text-lg font-bold outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+            <button onclick="app.initSession()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-blue-600/40">ACCEDER</button>
         </div>
-        <h2 class="text-4xl font-bold mb-2 tracking-tight">ProManager</h2>
-        <p class="text-slate-400 mb-8 font-light">Sistema Financiero Global</p>
-        <input id="userInput" type="text" placeholder="Ingresa tu nombre" class="w-full bg-slate-800 border border-slate-600 p-4 rounded-xl mb-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all text-center text-white placeholder-slate-400 font-medium">
-        <button onclick="app.initSession()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-4 rounded-xl transition-all transform hover:scale-[1.02] shadow-xl">INICIAR SESIÓN</button>
     </div>
 </div>
 
-<div id="mainApp" class="hidden">
+<div id="mainApp" class="hidden opacity-0 transition-opacity duration-700">
     
-    <nav class="glass sticky top-0 z-40 px-6 py-4 mb-8 flex justify-between items-center border-b shadow-sm dark:shadow-none">
-        <div class="flex items-center gap-3">
-            <div class="bg-gradient-to-br from-blue-600 to-violet-600 p-2.5 rounded-xl text-white shadow-lg">
-                <i data-lucide="globe-2" class="w-5 h-5"></i>
-            </div>
-            <span class="font-bold text-xl tracking-tight">FORJAX <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">GLOBAL</span></span>
-        </div>
-        <div class="flex items-center gap-4">
-            <span id="userNameDisplay" class="font-semibold hidden md:block opacity-70"></span>
-            <button onclick="app.logout()" class="flex items-center gap-2 text-rose-500 hover:bg-rose-500/10 px-4 py-2 rounded-lg transition-colors text-sm font-bold border border-transparent hover:border-rose-500/20"><i data-lucide="log-out" class="w-4 h-4"></i> Salir</button>
-        </div>
+    <nav class="fixed top-6 left-1/2 -translate-x-1/2 z-50 glass px-2 py-2 rounded-2xl flex items-center gap-1 shadow-2xl">
+        <button onclick="app.switchTab('wallet')" id="btnWallet" class="px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all bg-blue-600 text-white shadow-lg">
+            <i data-lucide="wallet"></i> Mi Billetera
+        </button>
+        <button onclick="app.switchTab('market')" id="btnMarket" class="px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all text-slate-400 hover:text-white hover:bg-white/5">
+            <i data-lucide="bar-chart-4"></i> Mercado
+        </button>
+        <div class="w-px h-6 bg-white/10 mx-2"></div>
+        <button onclick="app.toggleTheme()" class="p-2.5 rounded-xl text-slate-400 hover:text-yellow-400 hover:bg-white/5 transition-all">
+            <i id="themeIcon" data-lucide="sun" class="w-5 h-5"></i>
+        </button>
+        <button onclick="app.logout()" class="p-2.5 rounded-xl text-slate-400 hover:text-rose-500 hover:bg-white/5 transition-all">
+            <i data-lucide="power" class="w-5 h-5"></i>
+        </button>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div class="pt-28 max-w-[1400px] mx-auto px-6 pb-12">
         
-        <div class="lg:col-span-4 space-y-6">
-            <section class="glass p-6 rounded-3xl fade-in-up hover:shadow-lg transition-all">
-                <h3 class="flex items-center gap-2 text-lg font-bold mb-4 text-blue-500 dark:text-blue-400"><i data-lucide="target" class="w-5 h-5"></i> Objetivo Mensual</h3>
-                <div class="flex gap-2">
-                    <input id="budgetInput" type="number" placeholder="$ Meta" class="flex-1 bg-slate-200 dark:bg-slate-800 border-transparent focus:border-blue-500 border p-3 rounded-xl outline-none transition-all font-semibold text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-400">
-                    <button onclick="app.setBudget()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 rounded-xl font-bold transition-colors shadow-lg">Fijar</button>
+        <div id="viewWallet" class="fade-in">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div class="glass p-6 rounded-3xl border-b-4 border-emerald-500 hover-scale">
+                    <p class="text-xs font-bold uppercase tracking-wider opacity-60 mb-1">Ingresos Totales</p>
+                    <h2 class="text-3xl font-black text-emerald-500" id="bIncome">$0</h2>
                 </div>
-                <div class="mt-4 grid grid-cols-2 gap-4">
-                    <div class="p-4 rounded-2xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/5">
-                        <p class="text-xs opacity-70 uppercase tracking-wider font-bold">Meta</p>
-                        <p class="text-lg font-bold text-slate-700 dark:text-slate-200" id="budgetTotal">$0</p>
+                <div class="glass p-6 rounded-3xl border-b-4 border-rose-500 hover-scale">
+                    <p class="text-xs font-bold uppercase tracking-wider opacity-60 mb-1">Gastos Totales</p>
+                    <h2 class="text-3xl font-black text-rose-500" id="bExpense">$0</h2>
+                </div>
+                <div class="glass p-6 rounded-3xl border-b-4 border-blue-500 hover-scale">
+                    <p class="text-xs font-bold uppercase tracking-wider opacity-60 mb-1">Balance Neto</p>
+                    <h2 class="text-3xl font-black text-blue-500" id="bNet">$0</h2>
+                </div>
+                <div class="glass p-6 rounded-3xl border-b-4 border-violet-500 hover-scale flex flex-col justify-center">
+                    <p class="text-xs font-bold uppercase tracking-wider opacity-60 mb-1">Capital en USD</p>
+                    <div class="flex items-baseline gap-2">
+                        <h2 class="text-3xl font-black text-white" id="capitalUsd">US$ 0</h2>
+                        <span class="text-xs text-emerald-400 font-bold bg-emerald-500/10 px-2 py-1 rounded" id="dolarRateTag">@ $...</span>
                     </div>
-                    <div class="p-4 rounded-2xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/5">
-                        <p class="text-xs opacity-70 uppercase tracking-wider font-bold">Disponible</p>
-                        <p class="text-lg font-bold" id="budgetAvailable">$0</p>
-                    </div>
-                </div>
-            </section>
-
-            <section class="glass p-6 rounded-3xl fade-in-up delay-100 hover:shadow-lg transition-all">
-                <h3 class="flex items-center gap-2 text-lg font-bold mb-4 text-emerald-500 dark:text-emerald-400"><i data-lucide="wallet" class="w-5 h-5"></i> Registrar</h3>
-                <div class="space-y-3">
-                    <input id="transDesc" type="text" placeholder="¿Qué compraste?" class="w-full bg-slate-200 dark:bg-slate-800 border border-transparent focus:border-emerald-500 p-3 rounded-xl outline-none transition-all text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 font-medium">
-                    <div class="flex gap-2">
-                        <input id="transAmount" type="number" placeholder="$ Monto" class="w-1/2 bg-slate-200 dark:bg-slate-800 border border-transparent focus:border-emerald-500 p-3 rounded-xl outline-none transition-all text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 font-medium">
-                        <select id="transCategory" class="w-1/2 bg-slate-200 dark:bg-slate-800 border border-transparent focus:border-emerald-500 p-3 rounded-xl outline-none transition-all cursor-pointer text-sm font-medium text-slate-800 dark:text-white">
-                            <option value="Ingreso">📈 Ingreso</option>
-                            <option value="Comida">🍔 Comida</option>
-                            <option value="Servicios">💡 Servicios</option>
-                            <option value="Transporte">🚗 Transporte</option>
-                            <option value="Estudio">📚 Estudio</option>
-                            <option value="Otros">📦 Otros</option>
-                        </select>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3 pt-2">
-                        <button onclick="app.addRecord('income')" class="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white py-3.5 rounded-xl font-bold transition-all shadow-lg active:scale-95 flex justify-center items-center gap-2"><i data-lucide="arrow-up" class="w-5 h-5"></i> Ingreso</button>
-                        <button onclick="app.addRecord('expense')" class="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-400 hover:to-pink-400 text-white py-3.5 rounded-xl font-bold transition-all shadow-lg active:scale-95 flex justify-center items-center gap-2"><i data-lucide="arrow-down" class="w-5 h-5"></i> Gasto</button>
-                    </div>
-                </div>
-            </section>
-
-            <section class="glass p-6 rounded-3xl fade-in-up delay-200">
-                <h3 class="flex items-center gap-2 text-lg font-bold mb-4 text-amber-500"><i data-lucide="sticky-note" class="w-5 h-5"></i> Notas</h3>
-                <div class="flex gap-2 mb-4">
-                    <input id="taskInput" type="text" placeholder="Recordatorio..." class="flex-1 bg-slate-200 dark:bg-slate-800 border-transparent focus:border-amber-500 border p-2 rounded-xl outline-none text-sm text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-400">
-                    <button onclick="app.addTask()" class="bg-amber-500 hover:bg-amber-600 text-white px-3 rounded-xl transition-colors"><i data-lucide="plus" class="w-4 h-4"></i></button>
-                </div>
-                <ul id="taskList" class="space-y-2 max-h-48 overflow-y-auto custom-scroll pr-2"></ul>
-            </section>
-        </div>
-
-        <div class="lg:col-span-8 space-y-6">
-            
-            <section class="grid grid-cols-1 md:grid-cols-2 gap-6 fade-in-up">
-                
-                <div class="glass p-6 rounded-3xl border-l-4 border-emerald-500 relative overflow-hidden group hover:shadow-xl transition-all">
-                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-all"><i data-lucide="dollar-sign" class="w-24 h-24"></i></div>
-                    <h3 class="flex items-center gap-2 text-lg font-bold text-emerald-600 dark:text-emerald-400 mb-1">
-                        <i data-lucide="refresh-cw" class="w-4 h-4 animate-spin-slow"></i> Dólar Blue
-                    </h3>
-                    <p class="text-3xl font-extrabold text-slate-800 dark:text-white mb-2" id="dolarPrice">...</p>
-                    <div class="bg-emerald-500/10 p-3 rounded-xl inline-block">
-                        <p class="text-xs font-bold text-emerald-600 dark:text-emerald-300 uppercase">Tu Capital en USD</p>
-                        <p class="text-xl font-bold text-emerald-600 dark:text-emerald-400" id="balanceInUsd">$0.00</p>
-                    </div>
-                </div>
-
-                <div class="glass p-6 rounded-3xl border-l-4 border-blue-500 relative overflow-hidden group hover:shadow-xl transition-all">
-                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-all"><i data-lucide="euro" class="w-24 h-24"></i></div>
-                    <h3 class="flex items-center gap-2 text-lg font-bold text-blue-600 dark:text-blue-400 mb-1">
-                        <i data-lucide="refresh-cw" class="w-4 h-4 animate-spin-slow"></i> Euro Blue
-                    </h3>
-                    <p class="text-3xl font-extrabold text-slate-800 dark:text-white mb-2" id="euroPrice">...</p>
-                    <div class="bg-blue-500/10 p-3 rounded-xl inline-block">
-                        <p class="text-xs font-bold text-blue-600 dark:text-blue-300 uppercase">Tu Capital en EUR</p>
-                        <p class="text-xl font-bold text-blue-600 dark:text-blue-400" id="balanceInEur">€0.00</p>
-                    </div>
-                </div>
-            </section>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 fade-in-up delay-100">
-                <div class="glass p-5 rounded-3xl border-b-4 border-emerald-500 hover:-translate-y-2 transition-transform">
-                    <p class="opacity-60 text-xs font-bold uppercase tracking-wider">Ingresos</p>
-                    <h2 class="text-2xl font-black text-emerald-500 mt-1" id="bIncome">$0</h2>
-                </div>
-                <div class="glass p-5 rounded-3xl border-b-4 border-rose-500 hover:-translate-y-2 transition-transform">
-                    <p class="opacity-60 text-xs font-bold uppercase tracking-wider">Gastos</p>
-                    <h2 class="text-2xl font-black text-rose-500 mt-1" id="bExpense">$0</h2>
-                </div>
-                <div class="glass p-5 rounded-3xl border-b-4 border-blue-500 hover:-translate-y-2 transition-transform">
-                    <p class="opacity-60 text-xs font-bold uppercase tracking-wider">Balance Neto</p>
-                    <h2 class="text-2xl font-black text-blue-500 mt-1" id="bNet">$0</h2>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 fade-in-up delay-200">
-                <div class="glass p-6 rounded-3xl">
-                    <h4 class="text-sm font-bold opacity-70 mb-6 uppercase tracking-wider flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-4 h-4"></i> Flujo de Caja</h4>
-                    <div class="h-64"><canvas id="barChart"></canvas></div>
-                </div>
-                <div class="glass p-6 rounded-3xl">
-                    <h4 class="text-sm font-bold opacity-70 mb-6 uppercase tracking-wider flex items-center gap-2"><i data-lucide="pie-chart" class="w-4 h-4"></i> Gastos por Categoría</h4>
-                    <div class="h-64 flex justify-center"><canvas id="pieChart"></canvas></div>
-                </div>
-            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <div class="lg:col-span-4 space-y-6">
+                    <div class="glass p-6 rounded-3xl">
+                        <h3 class="flex items-center gap-2 text-lg font-bold mb-6 text-blue-500"><i data-lucide="mouse-pointer-2"></i> Operaciones</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="relative">
+                                <i data-lucide="type" class="absolute left-4 top-3.5 w-5 h-5 opacity-50"></i>
+                                <input id="transDesc" type="text" placeholder="Descripción (ej: Sueldo, Super)" class="w-full pl-12 p-3 rounded-xl font-medium outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                            </div>
+                            
+                            <div class="flex gap-3">
+                                <div class="relative w-1/2">
+                                    <i data-lucide="dollar-sign" class="absolute left-3 top-3.5 w-5 h-5 opacity-50"></i>
+                                    <input id="transAmount" type="number" placeholder="Monto" class="w-full pl-10 p-3 rounded-xl font-medium outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                                </div>
+                                <select id="transCategory" class="w-1/2 p-3 rounded-xl font-medium outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
+                                    <option value="Ingreso">💼 Ingreso</option>
+                                    <option value="Hogar">🏠 Hogar</option>
+                                    <option value="Comida">🍔 Comida</option>
+                                    <option value="Servicios">💡 Servicios</option>
+                                    <option value="Transporte">🚗 Transporte</option>
+                                    <option value="Ocio">🍿 Ocio</option>
+                                    <option value="Salud">❤️ Salud</option>
+                                    <option value="Educación">📚 Educación</option>
+                                    <option value="Otros">📦 Otros</option>
+                                </select>
+                            </div>
 
-            <section class="glass rounded-3xl overflow-hidden fade-in-up delay-300 border border-slate-200 dark:border-white/5">
-                <div class="p-6 border-b border-slate-200 dark:border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-50/50 dark:bg-white/5">
-                    <h3 class="font-bold text-lg flex items-center gap-2">
-                        <div class="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-lg text-blue-600 dark:text-blue-400"><i data-lucide="history" class="w-5 h-5"></i></div>
-                        Historial
-                    </h3>
-                    <div class="flex gap-3 w-full md:w-auto">
-                        <div class="relative flex-1 md:w-64 group">
-                            <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 opacity-40 group-focus-within:text-blue-500 transition-colors"></i>
-                            <input id="searchInput" onkeyup="app.render()" type="text" placeholder="Buscar..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 focus:border-blue-500 pl-10 pr-4 py-2 rounded-xl text-sm shadow-sm outline-none transition-all text-slate-800 dark:text-white">
+                            <div class="grid grid-cols-2 gap-3 pt-2">
+                                <button onclick="app.addRecord('income')" class="bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-emerald-500/30 active:scale-95 flex justify-center items-center gap-2">
+                                    <i data-lucide="plus"></i> INGRESO
+                                </button>
+                                <button onclick="app.addRecord('expense')" class="bg-rose-600 hover:bg-rose-500 text-white py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-rose-500/30 active:scale-95 flex justify-center items-center gap-2">
+                                    <i data-lucide="minus"></i> GASTO
+                                </button>
+                            </div>
                         </div>
-                        <button onclick="app.exportExcel()" class="bg-emerald-600 text-white hover:bg-emerald-700 px-4 py-2 rounded-xl transition-all flex items-center gap-2 text-sm font-bold shadow-lg shadow-emerald-500/30">
-                            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> <span class="hidden sm:inline">Exportar Pro</span>
-                        </button>
+
+                        <div class="mt-8 pt-6 border-t border-white/10">
+                            <div class="flex justify-between items-center mb-4">
+                                <h4 class="font-bold text-sm uppercase opacity-70">Presupuesto</h4>
+                                <span id="budgetPercent" class="text-xs font-bold bg-white/10 px-2 py-1 rounded">0%</span>
+                            </div>
+                            <div class="w-full bg-slate-700 rounded-full h-2 mb-2 overflow-hidden">
+                                <div id="budgetBar" class="bg-blue-500 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                            </div>
+                            <div class="flex justify-between text-xs font-bold">
+                                <span id="budgetUsed" class="text-rose-400">$0 Usado</span>
+                                <input id="budgetInput" onchange="app.setBudget()" type="number" class="bg-transparent text-right outline-none w-24 text-emerald-400 placeholder-slate-500" placeholder="Fijar Meta">
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead class="bg-slate-5 dark:bg-black/20 text-xs uppercase opacity-70 font-bold tracking-wider">
-                            <tr>
-                                <th class="px-6 py-4">Fecha</th>
-                                <th class="px-6 py-4">Detalle</th>
-                                <th class="px-6 py-4">Categoría</th>
-                                <th class="px-6 py-4 text-right">Monto</th>
-                                <th class="px-6 py-4 text-center">Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody id="historyTable" class="divide-y divide-slate-200 dark:divide-white/5 text-sm"></tbody>
-                    </table>
-                </div>
-            </section>
-        </div>
-    </main>
 
-    <footer class="text-center mt-12 mb-8 opacity-50 text-sm font-medium"><p>© 2026 FORJAX Global Finance System. Power Level: Infinite.</p></footer>
+                <div class="lg:col-span-8 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="glass p-5 rounded-3xl">
+                            <h4 class="text-xs font-bold uppercase tracking-wider opacity-60 mb-4">Evolución</h4>
+                            <div class="h-48"><canvas id="barChart"></canvas></div>
+                        </div>
+                        <div class="glass p-5 rounded-3xl">
+                            <h4 class="text-xs font-bold uppercase tracking-wider opacity-60 mb-4">Distribución</h4>
+                            <div class="h-48 flex justify-center"><canvas id="pieChart"></canvas></div>
+                        </div>
+                    </div>
+
+                    <div class="glass rounded-3xl overflow-hidden border border-white/5">
+                        <div class="p-5 border-b border-white/5 flex flex-wrap justify-between items-center gap-4 bg-white/5">
+                            <h3 class="font-bold flex items-center gap-2"><i data-lucide="list"></i> Movimientos</h3>
+                            <div class="flex gap-2">
+                                <input id="searchInput" onkeyup="app.render()" type="text" placeholder="Buscar..." class="bg-black/20 border-none rounded-lg px-3 py-1.5 text-sm w-32 focus:w-48 transition-all outline-none">
+                                <button onclick="app.exportProExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 shadow-lg shadow-emerald-600/20">
+                                    <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> EXCEL CFO
+                                </button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto max-h-[400px] custom-scroll">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="sticky top-0 bg-[#0f172a] z-10 text-xs uppercase opacity-70 font-bold">
+                                    <tr>
+                                        <th class="px-6 py-4">Fecha</th>
+                                        <th class="px-6 py-4">Detalle</th>
+                                        <th class="px-6 py-4">Categoría</th>
+                                        <th class="px-6 py-4 text-right">Monto</th>
+                                        <th class="px-6 py-4 text-center">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyTable" class="divide-y divide-white/5 text-sm font-medium"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="viewMarket" class="hidden fade-in">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-3xl font-black tracking-tight text-white">Mercado Cambiario</h2>
+                    <p class="text-slate-400">Cotizaciones en tiempo real • Argentina</p>
+                </div>
+                <div class="text-right">
+                    <button onclick="app.fetchFullMarket()" class="bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 p-3 rounded-xl transition-all">
+                        <i data-lucide="refresh-cw" id="refreshIcon" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="marketGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div class="col-span-full text-center py-20">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+                    <p class="mt-4 text-slate-500">Conectando con la Bolsa...</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
 
 <script>
-/* ================= LÓGICA DE NEGOCIO ================= */
-
+/* ====================== CORE DEL SISTEMA ====================== */
 const app = {
     user: localStorage.getItem("currentUser"),
     theme: localStorage.getItem("theme") || 'dark',
-    data: { tasks: [], records: [], budget: 0 },
+    currentTab: 'wallet',
+    data: { records: [], budget: 0 },
+    marketCache: [],
     charts: {},
 
+    /* --- INICIALIZACIÓN --- */
     init() {
         this.applyTheme();
         if (!this.user) {
@@ -245,246 +250,327 @@ const app = {
         } else {
             document.getElementById("loginScreen").classList.add("hidden");
             document.getElementById("mainApp").classList.remove("hidden");
-            document.getElementById("userNameDisplay").textContent = `Agente: ${this.user.toUpperCase()}`;
+            setTimeout(() => document.getElementById("mainApp").classList.remove("opacity-0"), 100); // Fade in suave
+            
             this.loadData();
             this.render();
-            this.fetchCurrencies(); // Nueva función doble
+            this.fetchDolarSimple(); // Para el dashboard
+            this.fetchFullMarket();  // Para la pestaña Mercado
             lucide.createIcons();
         }
     },
 
-    toggleTheme() {
-        this.theme = this.theme === 'dark' ? 'light' : 'dark';
-        localStorage.setItem("theme", this.theme);
-        this.applyTheme();
-    },
+    /* --- NAVEGACIÓN (TABS) --- */
+    switchTab(tab) {
+        this.currentTab = tab;
+        const walletView = document.getElementById("viewWallet");
+        const marketView = document.getElementById("viewMarket");
+        const btnWallet = document.getElementById("btnWallet");
+        const btnMarket = document.getElementById("btnMarket");
 
-    applyTheme() {
-        const html = document.documentElement;
-        const icon = document.getElementById("themeIcon");
-        if (this.theme === 'dark') {
-            html.classList.add('dark');
-            html.classList.remove('light');
-            if(icon) icon.setAttribute('data-lucide', 'sun');
+        if (tab === 'wallet') {
+            walletView.classList.remove("hidden");
+            marketView.classList.add("hidden");
+            
+            btnWallet.className = "px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all bg-blue-600 text-white shadow-lg";
+            btnMarket.className = "px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all text-slate-400 hover:text-white hover:bg-white/5";
         } else {
-            html.classList.add('light');
-            html.classList.remove('dark');
-            if(icon) icon.setAttribute('data-lucide', 'moon');
+            walletView.classList.add("hidden");
+            marketView.classList.remove("hidden");
+
+            btnWallet.className = "px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all text-slate-400 hover:text-white hover:bg-white/5";
+            btnMarket.className = "px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all bg-blue-600 text-white shadow-lg";
+            this.fetchFullMarket(); // Actualizar al entrar
         }
-        lucide.createIcons();
-        this.updateCharts(0,0);
     },
 
-    // --- NUEVA FUNCIÓN: TRAE DOLAR Y EURO ---
-    async fetchCurrencies() {
-        const totalInc = this.data.records.filter(r => r.type === 'income').reduce((acc, curr) => acc + curr.amount, 0);
-        const totalExp = this.data.records.filter(r => r.type === 'expense').reduce((acc, curr) => acc + curr.amount, 0);
-        const balance = totalInc - totalExp;
-
-        // 1. DOLAR
-        try {
-            const res = await fetch("https://dolarapi.com/v1/dolares/blue");
-            const data = await res.json();
-            const val = data.venta;
-            document.getElementById("dolarPrice").textContent = `$${val}`;
-            if(val > 0) {
-                document.getElementById("balanceInUsd").textContent = `US$ ${(balance / val).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            }
-        } catch (e) { document.getElementById("dolarPrice").textContent = "Error"; }
-
-        // 2. EURO
-        try {
-            const res = await fetch("https://dolarapi.com/v1/euros/blue"); // Endpoint del Euro
-            const data = await res.json();
-            const val = data.venta;
-            document.getElementById("euroPrice").textContent = `€${val}`;
-            if(val > 0) {
-                document.getElementById("balanceInEur").textContent = `€${(balance / val).toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`; // Formato Europeo
-            }
-        } catch (e) { document.getElementById("euroPrice").textContent = "Error"; }
-    },
-
-    initSession() {
-        const val = document.getElementById("userInput").value.trim();
-        if (val.length < 3) return Swal.fire("Error", "Nombre muy corto", "error");
-        localStorage.setItem("currentUser", val);
-        location.reload();
-    },
-
-    logout() { localStorage.removeItem("currentUser"); location.reload(); },
-
+    /* --- LÓGICA DE DATOS --- */
     loadData() {
         const prefix = this.user + "_";
-        this.data.tasks = JSON.parse(localStorage.getItem(prefix + "tasks")) || [];
         this.data.records = JSON.parse(localStorage.getItem(prefix + "records")) || [];
         this.data.budget = Number(localStorage.getItem(prefix + "budget")) || 0;
     },
 
     save() {
         const prefix = this.user + "_";
-        localStorage.setItem(prefix + "tasks", JSON.stringify(this.data.tasks));
         localStorage.setItem(prefix + "records", JSON.stringify(this.data.records));
         localStorage.setItem(prefix + "budget", this.data.budget);
-        this.render(); 
+        this.render();
     },
 
     addRecord(type) {
         const desc = document.getElementById("transDesc").value;
         const amount = Number(document.getElementById("transAmount").value);
         const category = document.getElementById("transCategory").value;
-        if (!desc || amount <= 0) return Swal.fire("Oops", "Faltan datos", "warning");
 
-        this.data.records.unshift({ id: Date.now(), date: new Date().toLocaleDateString(), desc, amount, category: type === 'income' ? 'Ingreso' : category, type });
+        if (!desc || amount <= 0) return Swal.fire({toast:true, position:'top', icon:'warning', title:'Faltan datos', showConfirmButton:false, timer:2000});
+
+        this.data.records.unshift({ id: Date.now(), date: new Date().toLocaleDateString(), desc, amount, category, type });
+        
         document.getElementById("transDesc").value = "";
         document.getElementById("transAmount").value = "";
         this.save();
         
-        const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true });
-        Toast.fire({ icon: 'success', title: 'Registrado' });
+        const Toast = Swal.mixin({ toast: true, position: 'bottom-end', showConfirmButton: false, timer: 3000, timerProgressBar: true });
+        Toast.fire({ icon: 'success', title: 'Operación Registrada' });
     },
 
-    deleteRecord(id) { this.data.records = this.data.records.filter(r => r.id !== id); this.save(); },
-    addTask() { const input = document.getElementById("taskInput"); if (!input.value) return; this.data.tasks.push(input.value); input.value = ""; this.save(); },
-    deleteTask(index) { this.data.tasks.splice(index, 1); this.save(); },
-    setBudget() { this.data.budget = Number(document.getElementById("budgetInput").value); this.save(); },
+    deleteRecord(id) {
+        this.data.records = this.data.records.filter(r => r.id !== id);
+        this.save();
+    },
 
+    setBudget() {
+        this.data.budget = Number(document.getElementById("budgetInput").value);
+        this.save();
+    },
+
+    /* --- RENDERING (UI) --- */
     render() {
-        const formatter = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' });
+        const formatter = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
+        
+        // Cálculos
         const totalInc = this.data.records.filter(r => r.type === 'income').reduce((acc, curr) => acc + curr.amount, 0);
         const totalExp = this.data.records.filter(r => r.type === 'expense').reduce((acc, curr) => acc + curr.amount, 0);
         const balance = totalInc - totalExp;
-        const available = this.data.budget - totalExp;
-
+        
+        // Actualizar KPIs Header
         document.getElementById("bIncome").textContent = formatter.format(totalInc);
         document.getElementById("bExpense").textContent = formatter.format(totalExp);
-        const bNetEl = document.getElementById("bNet");
-        bNetEl.textContent = formatter.format(balance);
-        bNetEl.className = balance >= 0 ? "text-2xl font-black text-emerald-500" : "text-2xl font-black text-rose-500";
-        document.getElementById("budgetTotal").textContent = formatter.format(this.data.budget);
-        document.getElementById("budgetAvailable").textContent = formatter.format(available);
-        document.getElementById("budgetAvailable").className = `text-lg font-bold ${available < 0 ? 'text-rose-500' : 'text-emerald-500'}`;
+        document.getElementById("bNet").textContent = formatter.format(balance);
+        document.getElementById("bNet").className = `text-3xl font-black ${balance >= 0 ? 'text-blue-500' : 'text-rose-500'}`;
 
-        if(this.data.budget > 0 && available < 0) Swal.fire({ toast: true, position: 'top-end', icon: 'warning', title: '¡Presupuesto excedido!', showConfirmButton: false, timer: 3000 });
+        // Barra de Presupuesto
+        document.getElementById("budgetInput").value = this.data.budget || "";
+        if(this.data.budget > 0) {
+            const percent = Math.min((totalExp / this.data.budget) * 100, 100);
+            document.getElementById("budgetBar").style.width = `${percent}%`;
+            document.getElementById("budgetBar").className = `h-2 rounded-full transition-all duration-1000 ${percent > 90 ? 'bg-rose-500' : percent > 50 ? 'bg-yellow-500' : 'bg-blue-500'}`;
+            document.getElementById("budgetPercent").textContent = `${Math.round(percent)}%`;
+            document.getElementById("budgetUsed").textContent = `${formatter.format(totalExp)} Usado`;
+        }
 
+        // Tabla
         const searchTerm = document.getElementById("searchInput")?.value.toLowerCase() || "";
-        const filteredRecords = this.data.records.filter(r => r.desc.toLowerCase().includes(searchTerm) || r.category.toLowerCase().includes(searchTerm));
-        const tbody = document.getElementById("historyTable");
+        const filtered = this.data.records.filter(r => r.desc.toLowerCase().includes(searchTerm) || r.category.toLowerCase().includes(searchTerm));
         
-        if(filteredRecords.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-10 opacity-50 font-medium">No hay movimientos registrados</td></tr>`;
+        const tbody = document.getElementById("historyTable");
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-12 opacity-30 font-bold text-lg">SIN MOVIMIENTOS</td></tr>`;
         } else {
-            tbody.innerHTML = filteredRecords.map(r => `
-                <tr class="hover:bg-slate-100 dark:hover:bg-white/5 transition-colors group">
-                    <td class="px-6 py-4 opacity-70 text-xs font-semibold">${r.date}</td>
-                    <td class="px-6 py-4 font-bold text-slate-700 dark:text-slate-200 flex items-center gap-3">
-                        <div class="p-2 rounded-xl ${r.type === 'income' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400' : 'bg-rose-100 text-rose-600 dark:bg-rose-500/20 dark:text-rose-400'}">
-                            ${r.type === 'income' ? '<i data-lucide="arrow-up" class="w-4 h-4"></i>' : '<i data-lucide="shopping-bag" class="w-4 h-4"></i>'}
+            tbody.innerHTML = filtered.map(r => `
+                <tr class="hover:bg-slate-50 dark:hover:bg-white/5 transition-all group border-b border-white/5 last:border-0">
+                    <td class="px-6 py-4 opacity-70 text-xs font-bold">${r.date}</td>
+                    <td class="px-6 py-4 font-bold flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center ${r.type === 'income' ? 'bg-emerald-500/20 text-emerald-500' : 'bg-rose-500/20 text-rose-500'}">
+                            <i data-lucide="${r.type === 'income' ? 'arrow-up' : 'shopping-bag'}" class="w-4 h-4"></i>
                         </div>
                         ${r.desc}
                     </td>
-                    <td class="px-6 py-4"><span class="px-3 py-1 rounded-full text-xs font-bold border border-current opacity-70">${r.category}</span></td>
-                    <td class="px-6 py-4 text-right font-bold ${r.type === 'income' ? 'text-emerald-500' : 'text-rose-500'}">${r.type === 'income' ? '+' : '-'}${formatter.format(r.amount)}</td>
-                    <td class="px-6 py-4 text-center"><button onclick="app.deleteRecord(${r.id})" class="p-2 hover:bg-rose-100 dark:hover:bg-rose-500/20 text-rose-500 rounded-lg transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
-                </tr>`).join('');
+                    <td class="px-6 py-4"><span class="px-3 py-1 rounded-lg text-xs font-bold bg-slate-200 dark:bg-white/10 opacity-80">${r.category}</span></td>
+                    <td class="px-6 py-4 text-right font-black ${r.type === 'income' ? 'text-emerald-500' : 'text-rose-500'}">
+                        ${r.type === 'income' ? '+' : '-'}${formatter.format(r.amount)}
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <button onclick="app.deleteRecord(${r.id})" class="text-slate-400 hover:text-rose-500 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </td>
+                </tr>
+            `).join('');
         }
 
-        document.getElementById("taskList").innerHTML = this.data.tasks.map((t, i) => `<li class="flex justify-between items-center bg-slate-50 dark:bg-white/5 p-3 rounded-xl group hover:bg-slate-100 dark:hover:bg-white/10 transition-colors border border-slate-100 dark:border-white/5"><span class="text-sm font-medium pl-2">${t}</span><button onclick="app.deleteTask(${i})" class="text-rose-400 opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-rose-500/10 rounded"><i data-lucide="x" class="w-4 h-4"></i></button></li>`).join('');
-
         if(searchTerm === "") this.updateCharts(totalInc, totalExp);
-        this.fetchCurrencies(); // Actualiza dolar y euro
         lucide.createIcons();
+    },
+
+    /* --- API & MERCADO --- */
+    async fetchDolarSimple() {
+        try {
+            const res = await fetch("https://dolarapi.com/v1/dolares/blue");
+            const data = await res.json();
+            document.getElementById("dolarRateTag").textContent = `@ $${data.venta}`;
+            
+            const totalInc = this.data.records.filter(r => r.type === 'income').reduce((acc, curr) => acc + curr.amount, 0);
+            const totalExp = this.data.records.filter(r => r.type === 'expense').reduce((acc, curr) => acc + curr.amount, 0);
+            const balance = totalInc - totalExp;
+            
+            if(data.venta > 0) {
+                document.getElementById("capitalUsd").textContent = `US$ ${(balance / data.venta).toLocaleString('en-US', {maximumFractionDigits: 0})}`;
+            }
+        } catch(e) {}
+    },
+
+    async fetchFullMarket() {
+        const grid = document.getElementById("marketGrid");
+        const icon = document.getElementById("refreshIcon");
+        icon.classList.add("animate-spin");
+
+        try {
+            // 1. Traer Dólares
+            const resDol = await fetch("https://dolarapi.com/v1/dolares");
+            const dataDol = await resDol.json();
+            
+            // 2. Traer Euro y Real (Endpoints separados)
+            const resEur = await fetch("https://dolarapi.com/v1/euros/blue"); // Solo blue para simplificar visualización
+            const euroData = await resEur.json();
+            
+            const resBrl = await fetch("https://dolarapi.com/v1/reales/blue"); // Solo blue
+            const realData = await resBrl.json();
+            
+            // Normalizar datos para renderizar
+            let cards = dataDol.map(d => ({
+                nombre: `Dólar ${d.nombre}`,
+                compra: d.compra,
+                venta: d.venta,
+                fecha: d.fechaActualizacion,
+                icon: 'dollar-sign',
+                color: 'emerald'
+            }));
+
+            cards.push({ nombre: 'Euro Blue', compra: euroData.compra, venta: euroData.venta, fecha: euroData.fechaActualizacion, icon: 'euro', color: 'blue' });
+            cards.push({ nombre: 'Real Blue', compra: realData.compra, venta: realData.venta, fecha: realData.fechaActualizacion, icon: 'coins', color: 'yellow' });
+
+            // Renderizar Grid
+            grid.innerHTML = cards.map(c => `
+                <div class="glass p-6 rounded-3xl relative overflow-hidden group hover:bg-white/5 transition-all border border-${c.color}-500/30">
+                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-${c.color}-500/10 rounded-full blur-2xl group-hover:bg-${c.color}-500/20 transition-all"></div>
+                    
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-3 rounded-xl bg-${c.color}-500/20 text-${c.color}-400">
+                            <i data-lucide="${c.icon}" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-bold text-lg text-slate-200">${c.nombre}</h3>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="bg-black/20 p-3 rounded-xl">
+                            <p class="text-[10px] uppercase font-bold text-slate-500 mb-1">Compra</p>
+                            <p class="text-xl font-black text-white">$${c.compra}</p>
+                        </div>
+                        <div class="bg-black/20 p-3 rounded-xl border border-${c.color}-500/20">
+                            <p class="text-[10px] uppercase font-bold text-slate-500 mb-1">Venta</p>
+                            <p class="text-xl font-black text-${c.color}-400">$${c.venta}</p>
+                        </div>
+                    </div>
+                    
+                    <p class="text-xs text-slate-500 text-center font-mono">Actualizado: ${new Date(c.fecha).toLocaleTimeString()}</p>
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+
+        } catch (e) {
+            console.error(e);
+            grid.innerHTML = `<div class="col-span-full text-center text-rose-500 font-bold p-10 glass rounded-3xl">Error conectando con el Mercado. Intente nuevamente.</div>`;
+        } finally {
+            setTimeout(() => icon.classList.remove("animate-spin"), 1000);
+        }
+    },
+
+    /* --- EXCEL CFO EDITION (NIVEL DIOS) --- */
+    exportProExcel() {
+        const wb = XLSX.utils.book_new();
+        
+        // Estilos
+        const headerStyle = { font: { bold: true, color: { rgb: "FFFFFF" } }, fill: { fgColor: { rgb: "0F172A" } }, alignment: { horizontal: "center", vertical: "center" }, border: { bottom: { style: "medium", color: { rgb: "3B82F6" } } } };
+        const titleStyle = { font: { bold: true, sz: 18, color: { rgb: "3B82F6" } }, alignment: { horizontal: "left" } };
+        const moneyStyle = { numFmt: "$ #,##0" };
+        const moneyStyleRed = { numFmt: "$ #,##0", font: { color: { rgb: "EF4444" } } };
+        const moneyStyleGreen = { numFmt: "$ #,##0", font: { color: { rgb: "10B981" } } };
+
+        // --- HOJA 1: DASHBOARD ---
+        const totalInc = this.data.records.filter(r => r.type === 'income').reduce((acc, curr) => acc + curr.amount, 0);
+        const totalExp = this.data.records.filter(r => r.type === 'expense').reduce((acc, curr) => acc + curr.amount, 0);
+        const ratioAhorro = totalInc > 0 ? ((totalInc - totalExp) / totalInc) : 0;
+
+        const dashData = [
+            ["INFORME EJECUTIVO - FORJAX TERMINAL"],
+            ["Generado por:", this.user.toUpperCase()],
+            ["Fecha:", new Date().toLocaleDateString()],
+            [""],
+            ["ESTADO DE RESULTADOS"],
+            ["Concepto", "Monto", "Notas"],
+            ["Ingresos Totales", totalInc, "Entradas operativas"],
+            ["Gastos Totales", totalExp, "Salidas operativas"],
+            ["BALANCE NETO", totalInc - totalExp, totalInc - totalExp > 0 ? "Superávit" : "Déficit"],
+            [""],
+            ["RATIOS FINANCIEROS"],
+            ["Margen de Ahorro", ratioAhorro, "Objetivo > 20%"]
+        ];
+
+        const wsDash = XLSX.utils.aoa_to_sheet(dashData);
+        wsDash['!cols'] = [{ wch: 25 }, { wch: 20 }, { wch: 30 }];
+        wsDash['A1'].s = titleStyle;
+        wsDash['A6'].s = wsDash['B6'].s = wsDash['C6'].s = headerStyle;
+        wsDash['B7'].s = moneyStyleGreen; 
+        wsDash['B8'].s = moneyStyleRed;
+        wsDash['B9'].s = { font: { bold: true }, numFmt: "$ #,##0" };
+        wsDash['B12'].s = { numFmt: "0.00%" };
+
+        XLSX.utils.book_append_sheet(wb, wsDash, "Resumen Gerencial");
+
+        // --- HOJA 2: TRANSACCIONES ---
+        const transData = [
+            ["REGISTRO DE OPERACIONES"],
+            [""],
+            ["FECHA", "DESCRIPCIÓN", "CATEGORÍA", "TIPO", "MONTO"]
+        ];
+        
+        this.data.records.forEach(r => {
+            transData.push([r.date, r.desc, r.category, r.type === 'income' ? 'INGRESO' : 'GASTO', r.amount]);
+        });
+
+        const wsTrans = XLSX.utils.aoa_to_sheet(transData);
+        wsTrans['!cols'] = [{ wch: 12 }, { wch: 35 }, { wch: 15 }, { wch: 10 }, { wch: 15 }];
+        wsTrans['A1'].s = titleStyle;
+        
+        // Estilar Cabecera (Fila 3 -> index 2)
+        ["A3", "B3", "C3", "D3", "E3"].forEach(cell => wsTrans[cell].s = headerStyle);
+
+        // Estilar Filas de Datos
+        for (let i = 3; i < transData.length; i++) {
+            const isExpense = transData[i][3] === 'GASTO';
+            const cellMonto = XLSX.utils.encode_cell({ r: i, c: 4 });
+            wsTrans[cellMonto].s = isExpense ? moneyStyleRed : moneyStyleGreen;
+        }
+
+        XLSX.utils.book_append_sheet(wb, wsTrans, "Detalle Operativo");
+
+        // GUARDAR
+        XLSX.writeFile(wb, `FORJAX_Reporte_CFO_${this.user}.xlsx`);
     },
 
     updateCharts(inc, exp) {
         const ctxBar = document.getElementById("barChart").getContext("2d");
         const ctxPie = document.getElementById("pieChart").getContext("2d");
+        
         if (this.charts.bar) this.charts.bar.destroy();
         if (this.charts.pie) this.charts.pie.destroy();
 
-        const isDark = this.theme === 'dark';
-        const textColor = isDark ? '#94a3b8' : '#475569';
-        const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+        const colors = { bg: this.theme === 'dark' ? '#94a3b8' : '#475569', grid: this.theme === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' };
 
         this.charts.bar = new Chart(ctxBar, {
             type: 'bar',
-            data: { labels: ['Ingresos', 'Gastos'], datasets: [{ data: [inc, exp], backgroundColor: ['#10b981', '#f43f5e'], borderRadius: 8, barThickness: 50 }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: gridColor }, ticks: { color: textColor, font: {family: 'Outfit'} } }, x: { grid: { display: false }, ticks: { color: textColor, font: {family: 'Outfit'} } } } }
+            data: { labels: ['Ingresos', 'Gastos'], datasets: [{ data: [inc, exp], backgroundColor: ['#10b981', '#f43f5e'], borderRadius: 6, barThickness: 40 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: colors.grid }, ticks: { color: colors.bg } }, x: { grid: { display: false }, ticks: { color: colors.bg } } } }
         });
 
         const catData = {};
         this.data.records.filter(r => r.type === 'expense').forEach(r => { catData[r.category] = (catData[r.category] || 0) + r.amount; });
+        
         this.charts.pie = new Chart(ctxPie, {
             type: 'doughnut',
-            data: { labels: Object.keys(catData), datasets: [{ data: Object.values(catData), backgroundColor: ['#3b82f6', '#8b5cf6', '#f59e0b', '#ec4899', '#64748b'], borderWidth: 0, hoverOffset: 10 }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: textColor, boxWidth: 12, font: { size: 11, family: 'Outfit' } } } }, cutout: '70%' }
+            data: { labels: Object.keys(catData), datasets: [{ data: Object.values(catData), backgroundColor: ['#3b82f6', '#8b5cf6', '#f59e0b', '#ec4899', '#64748b'], borderWidth: 0 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: colors.bg, boxWidth: 10, font: {size:10} } } }, cutout: '75%' }
         });
     },
 
-    /* --- EXCEL NIVEL DIOS (CON ESTILOS) --- */
-    exportExcel() {
-        const wb = XLSX.utils.book_new();
-        
-        // Estilos
-        const titleStyle = { font: { bold: true, sz: 16, color: { rgb: "FFFFFF" } }, fill: { fgColor: { rgb: "2563EB" } }, alignment: { horizontal: "center" } };
-        const headerStyle = { font: { bold: true, color: { rgb: "FFFFFF" } }, fill: { fgColor: { rgb: "475569" } }, alignment: { horizontal: "center" } };
-        const incStyle = { font: { color: { rgb: "059669" }, bold: true } };
-        const expStyle = { font: { color: { rgb: "DC2626" }, bold: true } };
-
-        // Datos del Reporte
-        const totalInc = this.data.records.filter(r => r.type === 'income').reduce((acc, curr) => acc + curr.amount, 0);
-        const totalExp = this.data.records.filter(r => r.type === 'expense').reduce((acc, curr) => acc + curr.amount, 0);
-        
-        // Armamos la matriz de datos (Array of Arrays)
-        const wsData = [
-            ["REPORTE FINANCIERO FORJAX GLOBAL"], // Título
-            [`Generado por: ${this.user.toUpperCase()} - Fecha: ${new Date().toLocaleDateString()}`],
-            [""], // Espacio
-            ["RESUMEN EJECUTIVO"],
-            ["Total Ingresos", "Total Gastos", "Balance Neto"],
-            [totalInc, totalExp, totalInc - totalExp],
-            [""],
-            ["DETALLE DE OPERACIONES"],
-            ["Fecha", "Descripción", "Categoría", "Tipo", "Monto"]
-        ];
-
-        // Agregamos las filas de transacciones
-        this.data.records.forEach(r => {
-            wsData.push([r.date, r.desc, r.category, r.type === 'income' ? 'INGRESO' : 'GASTO', r.amount]);
-        });
-
-        // Convertimos a Hoja
-        const ws = XLSX.utils.aoa_to_sheet(wsData);
-
-        // --- APLICAMOS ESTILOS ---
-        // Combinar celdas del título
-        ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }, { s: { r: 1, c: 0 }, e: { r: 1, c: 4 } }];
-        
-        // Ancho de columnas
-        ws['!cols'] = [{ wch: 15 }, { wch: 30 }, { wch: 15 }, { wch: 12 }, { wch: 15 }];
-
-        // Aplicar estilos celda por celda (Iteramos)
-        // 1. Título
-        ws['A1'].s = titleStyle;
-        ws['A2'].s = { font: { italic: true }, alignment: { horizontal: "center" } };
-
-        // 2. Headers Resumen (Fila 4 index 0 -> row 5)
-        ["A5", "B5", "C5"].forEach(ref => { if(ws[ref]) ws[ref].s = headerStyle; });
-
-        // 3. Headers Tabla (Fila 8 index 0 -> row 9)
-        ["A9", "B9", "C9", "D9", "E9"].forEach(ref => { if(ws[ref]) ws[ref].s = headerStyle; });
-
-        // 4. Datos (Colorear montos)
-        let currentRow = 9; // Empezamos en la fila de datos (Index 9, visual 10)
-        this.data.records.forEach((r, i) => {
-            const cellRef = XLSX.utils.encode_cell({ r: currentRow + i, c: 4 }); // Columna E (Monto)
-            if (!ws[cellRef]) return;
-            ws[cellRef].t = 'n'; // Asegurar que es número
-            ws[cellRef].s = r.type === 'income' ? incStyle : expStyle;
-        });
-
-        XLSX.utils.book_append_sheet(wb, ws, "Finanzas");
-        XLSX.writeFile(wb, `Reporte_Forjax_${this.user}.xlsx`);
-    }
+    toggleTheme() { this.theme = this.theme === 'dark' ? 'light' : 'dark'; localStorage.setItem("theme", this.theme); this.init(); },
+    applyTheme() { 
+        document.documentElement.className = this.theme; 
+        document.getElementById("themeIcon").setAttribute('data-lucide', this.theme === 'dark' ? 'sun' : 'moon');
+    },
+    initSession() { const v = document.getElementById("userInput").value; if(v.length>2) { localStorage.setItem("currentUser", v); location.reload(); } },
+    logout() { localStorage.removeItem("currentUser"); location.reload(); }
 };
 
 app.init();
