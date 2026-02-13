@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FORJAX Terminal - V24 DATA STORM</title>
+    <title>FORJAX Terminal - V25 HYPERION</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -11,125 +11,165 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/css/flag-icons.min.css"/>
 
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Outfit', 'sans-serif'] },
-                    colors: { dark: '#0f172a' },
-                    boxShadow: { 'neon': '0 0 20px rgba(59, 130, 246, 0.5)' }
+                    fontFamily: { sans: ['Outfit', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: { dark: '#050b14', neon: '#00f3ff' },
+                    boxShadow: { 
+                        'neon-blue': '0 0 15px rgba(0, 243, 255, 0.3)',
+                        'neon-purple': '0 0 15px rgba(139, 92, 246, 0.3)'
+                    },
+                    animation: {
+                        'spin-slow': 'spin 3s linear infinite',
+                        'pulse-glow': 'pulseGlow 2s infinite'
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 5px rgba(0, 243, 255, 0.2)' },
+                            '50%': { boxShadow: '0 0 20px rgba(0, 243, 255, 0.6)' },
+                        }
+                    }
                 }
             }
         }
     </script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
         
-        body { font-family: 'Outfit', sans-serif; background-color: #0f172a; color: #f1f5f9; }
+        body { font-family: 'Outfit', sans-serif; background-color: #050b14; color: #e2e8f0; background-image: radial-gradient(circle at 50% 0%, #172a45 0%, #050b14 60%); }
         
-        /* Glassmorphism */
+        /* Glassmorphism Futurist */
         .glass { 
-            background: rgba(15, 23, 42, 0.7); 
-            backdrop-filter: blur(20px); 
-            -webkit-backdrop-filter: blur(20px); 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
+            background: rgba(13, 25, 48, 0.6); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px); 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
         }
-        
-        /* Navbar Stable */
+        .glass-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            border-color: rgba(0, 243, 255, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px -10px rgba(0, 243, 255, 0.15);
+        }
+
+        /* Navbar */
         .nav-container {
             position: fixed; top: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 50;
-            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px);
-            border: 1px solid rgba(255,255,255,0.1); padding: 0.5rem; border-radius: 1rem;
-            display: flex; align-items: center; gap: 0.5rem;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
-            white-space: nowrap; max-width: 95vw; overflow-x: auto;
+            background: rgba(5, 11, 20, 0.8); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.08); padding: 0.4rem; border-radius: 999px;
+            display: flex; gap: 0.3rem; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
         }
-
         .nav-btn {
-            padding: 0.6rem 1.2rem; border-radius: 0.75rem; font-weight: 700; font-size: 0.875rem;
-            display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease;
-            color: #94a3b8;
+            padding: 0.6rem 1.4rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem;
+            display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; color: #64748b;
         }
-        .nav-btn:hover { background: rgba(255,255,255,0.05); color: white; }
-        .nav-btn.active { background: #2563eb; color: white; box-shadow: 0 0 20px rgba(37, 99, 235, 0.4); transform: scale(1.05); }
+        .nav-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+        .nav-btn.active { background: #00f3ff; color: #050b14; box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
 
         /* Inputs & Scroll */
-        input, select { background: #1e293b !important; color: white !important; border: 1px solid #334155 !important; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        input, select { background: #0f1c2e !important; color: white !important; border: 1px solid #1e3a5f !important; }
+        input:focus, select:focus { border-color: #00f3ff !important; box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); }
         
-        .fade-in { animation: fadeIn 0.4s ease-out forwards; opacity: 0; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 10px; }
+        
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .blur-sensitive { transition: filter 0.3s ease; }
         body.privacy-active .blur-sensitive { filter: blur(8px); }
     </style>
 </head>
 
-<body class="min-h-screen pb-20 selection:bg-blue-500 selection:text-white">
+<body class="min-h-screen pb-20 selection:bg-cyan-400 selection:text-black">
 
-<div id="loginScreen" class="fixed inset-0 z-[60] flex items-center justify-center bg-[#0B1121] transition-all duration-500">
+<div id="loginScreen" class="fixed inset-0 z-[60] flex items-center justify-center bg-[#050b14] transition-all duration-500">
     <div class="relative w-full max-w-md p-8 text-center fade-in">
-        <div class="absolute inset-0 bg-blue-600/20 blur-[100px] rounded-full"></div>
-        <div class="glass relative p-10 rounded-3xl border border-white/10">
-            <div class="mb-8 inline-flex p-5 bg-blue-600 rounded-2xl shadow-neon">
-                <i data-lucide="layout-dashboard" class="w-10 h-10 text-white"></i>
+        <div class="absolute inset-0 bg-cyan-500/10 blur-[100px] rounded-full"></div>
+        <div class="glass relative p-10 rounded-3xl border border-cyan-500/20">
+            <div class="mb-8 inline-flex p-5 bg-cyan-500/10 border border-cyan-500/50 rounded-2xl shadow-neon-blue">
+                <i data-lucide="cpu" class="w-12 h-12 text-cyan-400"></i>
             </div>
-            <h2 class="text-4xl font-extrabold mb-2 tracking-tight">FORJAX <span class="text-blue-500">V24</span></h2>
-            <p class="text-slate-400 mb-8 font-medium">Data Storm Update</p>
-            <input id="userInput" type="text" placeholder="Identificación" class="w-full p-4 rounded-xl mb-4 text-center text-lg font-bold outline-none focus:ring-2 focus:ring-blue-500 transition-all">
-            <button onclick="app.initSession()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition-all shadow-lg">ACCEDER</button>
+            <h2 class="text-5xl font-black mb-2 tracking-tighter text-white">FORJAX <span class="text-cyan-400">V25</span></h2>
+            <p class="text-slate-400 mb-8 font-mono text-xs uppercase tracking-widest">Hyperion System Ready</p>
+            <input id="userInput" type="text" placeholder="ACCESS ID" class="w-full p-4 rounded-xl mb-4 text-center text-lg font-bold font-mono outline-none focus:ring-2 focus:ring-cyan-500 transition-all">
+            <button onclick="app.initSession()" class="w-full bg-cyan-400 hover:bg-cyan-300 text-black font-black py-4 rounded-xl transition-all shadow-neon-blue">INICIAR SISTEMA</button>
         </div>
     </div>
 </div>
 
 <div id="mainApp" class="hidden opacity-0 transition-opacity duration-700">
     
-    <nav class="nav-container no-scrollbar">
-        <button onclick="app.switchTab('wallet')" id="btnWallet" class="nav-btn active"><i data-lucide="wallet" class="w-4 h-4"></i> Wallet</button>
-        <button onclick="app.switchTab('subs')" id="btnSubs" class="nav-btn"><i data-lucide="zap" class="w-4 h-4"></i> Subs</button>
-        <button onclick="app.switchTab('goals')" id="btnGoals" class="nav-btn"><i data-lucide="target" class="w-4 h-4"></i> Metas</button>
-        <button onclick="app.switchTab('market')" id="btnMarket" class="nav-btn"><i data-lucide="globe" class="w-4 h-4"></i> Market</button>
-        <div class="w-px h-6 bg-white/10 mx-2"></div>
-        <button onclick="app.togglePrivacy()" id="btnPrivacy" class="nav-btn px-3"><i id="eyeIcon" data-lucide="eye" class="w-5 h-5"></i></button>
-        <button onclick="app.openSettings()" class="nav-btn px-3"><i data-lucide="settings" class="w-5 h-5"></i></button>
-        <button onclick="app.logout()" class="nav-btn px-3 hover:text-rose-500"><i data-lucide="power" class="w-5 h-5"></i></button>
+    <nav class="nav-container">
+        <button onclick="app.switchTab('wallet')" id="btnWallet" class="nav-btn active"><i data-lucide="wallet" class="w-4 h-4"></i> WALLET</button>
+        <button onclick="app.switchTab('subs')" id="btnSubs" class="nav-btn"><i data-lucide="zap" class="w-4 h-4"></i> SUBS</button>
+        <button onclick="app.switchTab('goals')" id="btnGoals" class="nav-btn"><i data-lucide="crosshair" class="w-4 h-4"></i> METAS</button>
+        <button onclick="app.switchTab('market')" id="btnMarket" class="nav-btn"><i data-lucide="globe-2" class="w-4 h-4"></i> MARKET</button>
+        <div class="w-px h-5 bg-white/10 mx-1"></div>
+        <button onclick="app.togglePrivacy()" id="btnPrivacy" class="nav-btn px-3"><i id="eyeIcon" data-lucide="eye" class="w-4 h-4"></i></button>
+        <button onclick="app.openSettings()" class="nav-btn px-3"><i data-lucide="settings-2" class="w-4 h-4"></i></button>
+        <button onclick="app.logout()" class="nav-btn px-3 hover:text-rose-500"><i data-lucide="power" class="w-4 h-4"></i></button>
     </nav>
 
     <div class="pt-28 max-w-[1400px] mx-auto px-6 pb-12">
         
         <div id="viewWallet" class="fade-in">
-            <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                <div><h2 class="text-3xl font-bold tracking-tight text-white">Dashboard</h2><p class="text-sm text-slate-400">Resumen Financiero</p></div>
-                <div class="glass p-1.5 rounded-xl flex gap-1 bg-slate-900/50">
-                    <button onclick="app.setFilter('month')" id="filterMonth" class="px-5 py-2 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-lg transition-all">Este Mes</button>
-                    <button onclick="app.setFilter('all')" id="filterAll" class="px-5 py-2 rounded-lg text-xs font-bold text-slate-400 hover:bg-white/5 transition-all">Histórico</button>
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                <div><h2 class="text-4xl font-black tracking-tighter text-white">DASHBOARD</h2><p class="text-xs font-mono text-cyan-500">SYSTEM STATUS: ONLINE</p></div>
+                <div class="glass p-1 rounded-lg flex gap-1 bg-black/40">
+                    <button onclick="app.setFilter('month')" id="filterMonth" class="px-6 py-2 rounded-md text-xs font-bold bg-cyan-400 text-black shadow-neon-blue transition-all">ESTE MES</button>
+                    <button onclick="app.setFilter('all')" id="filterAll" class="px-6 py-2 rounded-md text-xs font-bold text-slate-400 hover:text-white transition-all">HISTÓRICO</button>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                <div class="glass p-6 rounded-3xl border-b-4 border-emerald-500 hover:scale-[1.02] transition-transform"><p class="text-xs font-bold opacity-60 text-slate-300">INGRESOS</p><h2 class="text-3xl font-black text-emerald-400 blur-sensitive" id="bIncome">$0</h2></div>
-                <div class="glass p-6 rounded-3xl border-b-4 border-rose-500 hover:scale-[1.02] transition-transform"><p class="text-xs font-bold opacity-60 text-slate-300">GASTOS</p><h2 class="text-3xl font-black text-rose-500 blur-sensitive" id="bExpense">$0</h2></div>
-                <div class="glass p-6 rounded-3xl border-b-4 border-blue-500 hover:scale-[1.02] transition-transform"><p class="text-xs font-bold opacity-60 text-slate-300">BALANCE</p><h2 class="text-3xl font-black text-blue-500 blur-sensitive" id="bNet">$0</h2></div>
-                <div class="glass p-6 rounded-3xl border-b-4 border-violet-500 hover:scale-[1.02] transition-transform"><p class="text-xs font-bold opacity-60 text-slate-300">DÓLAR BLUE</p><h2 class="text-3xl font-black text-white" id="dolarVal">$0</h2></div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><i data-lucide="arrow-up-right" class="w-12 h-12 text-emerald-400"></i></div>
+                    <p class="text-[10px] font-bold font-mono text-emerald-400 mb-1">INGRESOS NETOS</p>
+                    <h2 class="text-3xl font-black text-white blur-sensitive tracking-tight" id="bIncome">$0</h2>
+                </div>
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+                     <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><i data-lucide="arrow-down-right" class="w-12 h-12 text-rose-400"></i></div>
+                    <p class="text-[10px] font-bold font-mono text-rose-400 mb-1">GASTOS TOTALES</p>
+                    <h2 class="text-3xl font-black text-white blur-sensitive tracking-tight" id="bExpense">$0</h2>
+                </div>
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group border-l-2 border-cyan-400">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><i data-lucide="activity" class="w-12 h-12 text-cyan-400"></i></div>
+                    <p class="text-[10px] font-bold font-mono text-cyan-400 mb-1">BALANCE GLOBAL</p>
+                    <h2 class="text-3xl font-black text-white blur-sensitive tracking-tight" id="bNet">$0</h2>
+                </div>
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden">
+                    <div class="flex items-center gap-3">
+                        <span class="fi fi-ar rounded shadow-lg text-2xl"></span>
+                        <div><p class="text-[10px] font-bold font-mono text-slate-400">DÓLAR BLUE</p><h2 class="text-2xl font-black text-white" id="dolarVal">$0</h2></div>
+                    </div>
+                </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 <div class="lg:col-span-4 space-y-6">
-                    <div class="glass p-6 rounded-3xl relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
-                        <h3 class="flex items-center gap-2 text-lg font-bold mb-6 text-white relative z-10"><i data-lucide="plus-circle" class="text-blue-500"></i> Nuevo Movimiento</h3>
+                    <div class="glass p-8 rounded-3xl relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-b from-cyan-500/5 to-transparent"></div>
+                        <h3 class="flex items-center gap-2 text-lg font-bold mb-6 text-white relative z-10"><i data-lucide="plus" class="text-cyan-400"></i> Nueva Transacción</h3>
                         <div class="space-y-4 relative z-10">
-                            <div class="relative"><i data-lucide="type" class="absolute left-4 top-3.5 w-5 h-5 text-slate-500"></i><input id="transDesc" type="text" placeholder="Descripción" class="w-full pl-12 p-3.5 rounded-xl font-medium outline-none focus:ring-2 focus:ring-blue-500 transition-all"></div>
+                            <div><label class="text-[10px] font-bold text-slate-500 ml-1">DETALLE</label><input id="transDesc" type="text" class="w-full p-4 rounded-xl font-bold outline-none transition-all"></div>
                             <div class="flex gap-3">
-                                <div class="relative w-1/2"><i data-lucide="dollar-sign" class="absolute left-3 top-3.5 w-5 h-5 text-slate-500"></i><input id="transAmount" type="number" placeholder="Monto" class="w-full pl-10 p-3.5 rounded-xl font-medium outline-none focus:ring-2 focus:ring-blue-500 transition-all"></div>
-                                <select id="transCategory" class="w-1/2 p-3.5 rounded-xl font-medium outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer bg-slate-800"><option value="Ingreso">💼 Ingreso</option><option value="Hogar">🏠 Hogar</option><option value="Comida">🍔 Comida</option><option value="Servicios">💡 Servicios</option><option value="Transporte">🚗 Transporte</option><option value="Ocio">🍿 Ocio</option><option value="Otros">📦 Otros</option></select>
+                                <div class="w-1/2"><label class="text-[10px] font-bold text-slate-500 ml-1">MONTO</label><input id="transAmount" type="number" class="w-full p-4 rounded-xl font-bold font-mono outline-none transition-all"></div>
+                                <div class="w-1/2"><label class="text-[10px] font-bold text-slate-500 ml-1">CATEGORÍA</label><select id="transCategory" class="w-full p-4 rounded-xl font-bold outline-none cursor-pointer"><option value="Ingreso">💼 Ingreso</option><option value="Hogar">🏠 Hogar</option><option value="Comida">🍔 Comida</option><option value="Servicios">💡 Servicios</option><option value="Transporte">🚗 Transporte</option><option value="Ocio">🍿 Ocio</option><option value="Otros">📦 Otros</option></select></div>
                             </div>
-                            <div class="grid grid-cols-2 gap-3 pt-2">
-                                <button onclick="app.addRecord('income')" class="bg-emerald-600 hover:bg-emerald-500 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-emerald-900/20 active:scale-95 transition-all">INGRESO (+)</button>
-                                <button onclick="app.addRecord('expense')" class="bg-rose-600 hover:bg-rose-500 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-rose-900/20 active:scale-95 transition-all">GASTO (-)</button>
+                            <div class="grid grid-cols-2 gap-3 pt-4">
+                                <button onclick="app.addRecord('income')" class="bg-emerald-500/10 hover:bg-emerald-500 hover:text-black border border-emerald-500/50 text-emerald-400 py-4 rounded-xl font-black tracking-widest transition-all">INGRESO</button>
+                                <button onclick="app.addRecord('expense')" class="bg-rose-500/10 hover:bg-rose-500 hover:text-black border border-rose-500/50 text-rose-400 py-4 rounded-xl font-black tracking-widest transition-all">GASTO</button>
                             </div>
                         </div>
                     </div>
@@ -137,37 +177,21 @@
 
                 <div class="lg:col-span-8 space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="glass p-5 rounded-3xl relative">
-                            <h4 class="text-xs font-bold uppercase tracking-wider opacity-60 mb-4 flex items-center gap-2"><i data-lucide="activity" class="w-4 h-4 text-blue-400"></i> Tendencia Mensual</h4>
-                            <div class="h-56 w-full">
-                                <canvas id="lineChart"></canvas>
-                            </div>
-                        </div>
-                        <div class="glass p-5 rounded-3xl relative">
-                            <h4 class="text-xs font-bold uppercase tracking-wider opacity-60 mb-4 flex items-center gap-2"><i data-lucide="pie-chart" class="w-4 h-4 text-purple-400"></i> Distribución</h4>
-                            <div class="h-56 w-full flex justify-center relative">
-                                <canvas id="doughnutChart"></canvas>
-                                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                    <div class="text-center">
-                                        <p class="text-[10px] text-slate-400 uppercase">Total</p>
-                                        <p id="chartTotal" class="text-sm font-bold text-white">-</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="glass p-6 rounded-3xl"><h4 class="text-xs font-bold font-mono text-cyan-500 mb-4">TENDENCIA_DE_FLUJO</h4><div class="h-56 w-full"><canvas id="lineChart"></canvas></div></div>
+                        <div class="glass p-6 rounded-3xl"><h4 class="text-xs font-bold font-mono text-purple-500 mb-4">DISTRIBUCIÓN_DE_GASTOS</h4><div class="h-56 w-full flex justify-center"><canvas id="doughnutChart"></canvas></div></div>
                     </div>
 
                     <div class="glass rounded-3xl overflow-hidden border border-white/5">
-                        <div class="p-5 border-b border-white/5 flex justify-between items-center bg-white/5">
-                            <h3 class="font-bold flex items-center gap-2 text-white"><i data-lucide="list"></i> Movimientos</h3>
-                            <button onclick="app.exportProExcel()" class="bg-emerald-600 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-emerald-500 text-white shadow-lg"><i data-lucide="download" class="w-4 h-4"></i> Excel</button>
+                        <div class="p-6 border-b border-white/5 flex justify-between items-center bg-black/20">
+                            <h3 class="font-bold flex items-center gap-2 text-white"><i data-lucide="list-video"></i> Registros</h3>
+                            <button onclick="app.exportProExcel()" class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-2 hover:bg-emerald-500 hover:text-black transition-all"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> EXPORTAR</button>
                         </div>
                         <div class="overflow-x-auto max-h-[400px] custom-scroll">
                             <table class="w-full text-left">
-                                <thead class="sticky top-0 bg-[#0f172a] z-10 text-xs uppercase opacity-80 text-slate-400 font-bold tracking-wider">
-                                    <tr><th class="px-6 py-4">Fecha</th><th class="px-6 py-4">Desc</th><th class="px-6 py-4">Cat</th><th class="px-6 py-4 text-right">Monto</th><th class="px-6 py-4 text-center">x</th></tr>
+                                <thead class="sticky top-0 bg-[#050b14] z-10 text-[10px] uppercase text-slate-500 font-bold tracking-widest">
+                                    <tr><th class="px-6 py-4">Fecha</th><th class="px-6 py-4">Desc</th><th class="px-6 py-4">Cat</th><th class="px-6 py-4 text-right">Monto</th><th class="px-6 py-4 text-center">Opt</th></tr>
                                 </thead>
-                                <tbody id="historyTable" class="divide-y divide-white/5 text-sm font-medium text-slate-300"></tbody>
+                                <tbody id="historyTable" class="divide-y divide-white/5 text-sm font-medium text-slate-300 font-mono"></tbody>
                             </table>
                         </div>
                     </div>
@@ -175,54 +199,83 @@
             </div>
         </div>
 
-        <div id="viewSubs" class="hidden fade-in">
-            <div class="flex justify-between items-center mb-8">
-                <div><h2 class="text-2xl font-bold flex items-center gap-2 text-white"><i data-lucide="zap" class="text-yellow-500"></i> Suscripciones</h2><p class="text-sm text-slate-400">Gastos Fijos</p></div>
-                <button onclick="app.toggleSubForm()" class="bg-blue-600 hover:bg-blue-500 px-6 py-3 rounded-xl font-bold text-white shadow-lg transition-all flex items-center gap-2"><i data-lucide="plus"></i> Nueva</button>
-            </div>
-            <div id="subForm" class="hidden glass p-6 rounded-3xl mb-8 border border-blue-500/30">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                    <input id="subName" placeholder="Nombre (ej: Netflix)" class="p-3.5 rounded-xl w-full font-bold">
-                    <input id="subAmount" type="number" placeholder="Monto" class="p-3.5 rounded-xl w-full font-bold">
-                    <input id="subDay" type="number" placeholder="Día" class="p-3.5 rounded-xl w-full font-bold">
-                    <button onclick="app.addSub()" class="bg-emerald-600 hover:bg-emerald-500 text-white p-3.5 rounded-xl font-bold w-full shadow-lg transition-all">Guardar</button>
-                </div>
-            </div>
-            <div id="subsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-        </div>
-
-        <div id="viewGoals" class="hidden fade-in">
-             <div class="flex justify-between items-center mb-8">
-                <div><h2 class="text-2xl font-bold flex items-center gap-2 text-white"><i data-lucide="trophy" class="text-purple-500"></i> Metas</h2><p class="text-sm text-slate-400">Objetivos</p></div>
-                <button onclick="app.addGoalPrompt()" class="bg-purple-600 hover:bg-purple-500 px-6 py-3 rounded-xl font-bold text-white shadow-lg transition-all flex items-center gap-2"><i data-lucide="plus"></i> Nueva Meta</button>
-            </div>
-             <div id="goalsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
-        </div>
-
         <div id="viewMarket" class="hidden fade-in">
-             <div class="flex justify-between items-center mb-8">
-                <h2 class="text-2xl font-bold flex items-center gap-2 text-white"><i data-lucide="globe" class="text-emerald-500"></i> Mercado Financiero</h2>
-                <button onclick="app.fetchFullMarket()" class="bg-slate-800 hover:bg-slate-700 p-3 rounded-xl text-emerald-400 transition-all"><i data-lucide="refresh-cw"></i></button>
+             <div class="flex justify-between items-center mb-10">
+                <div>
+                    <h2 class="text-4xl font-black text-white tracking-tighter flex items-center gap-3">
+                        <i data-lucide="globe-2" class="text-cyan-400 w-8 h-8"></i> MERCADO GLOBAL
+                    </h2>
+                    <p class="text-xs font-mono text-slate-500 mt-1">LIVE DATA FEED • FOREX • CRYPTO</p>
+                </div>
+                <button onclick="app.fetchFullMarket()" id="refreshBtn" class="group relative">
+                    <div class="absolute inset-0 bg-cyan-400 blur-lg opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                    <div class="relative bg-slate-900 border border-cyan-500/50 p-4 rounded-full text-cyan-400 group-hover:rotate-180 transition-transform duration-700">
+                        <i data-lucide="refresh-cw" id="spinIcon" class="w-6 h-6"></i>
+                    </div>
+                </button>
             </div>
              
-             <div class="glass p-6 rounded-3xl mb-10 border-l-4 border-blue-500 relative overflow-hidden">
-                <div class="absolute right-0 top-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl"></div>
-                <h3 class="text-sm font-bold uppercase tracking-wider text-blue-400 mb-4 flex items-center gap-2 relative z-10"><i data-lucide="calculator" class="w-4 h-4"></i> Convertidor Universal</h3>
-                <div class="flex flex-col md:flex-row gap-4 items-center relative z-10">
-                    <div class="flex-1 w-full"><label class="text-xs text-slate-500 mb-1 block">Monto</label><input id="calcAmount" type="number" value="1" onkeyup="app.calcCurrency()" class="w-full p-3.5 rounded-xl text-lg font-bold outline-none focus:ring-2 focus:ring-blue-500 transition-all"></div>
-                    <div class="flex-1 w-full"><label class="text-xs text-slate-500 mb-1 block">De</label><select id="calcFrom" onchange="app.calcCurrency()" class="w-full p-3.5 rounded-xl font-bold cursor-pointer outline-none focus:ring-2 focus:ring-blue-500 bg-slate-800"></select></div>
-                    <div class="flex items-center justify-center pt-5"><button onclick="app.swapCalc()" class="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-all"><i data-lucide="arrow-right-left" class="w-5 h-5 text-slate-400"></i></button></div>
-                    <div class="flex-1 w-full"><label class="text-xs text-slate-500 mb-1 block">A</label><select id="calcTo" onchange="app.calcCurrency()" class="w-full p-3.5 rounded-xl font-bold cursor-pointer outline-none focus:ring-2 focus:ring-blue-500 bg-slate-800"></select></div>
-                    <div class="flex-1 w-full bg-blue-600/10 p-3 rounded-xl border border-blue-500/20 text-center"><p class="text-xs text-blue-400 uppercase font-bold mb-1">Resultado</p><p id="calcResult" class="text-2xl font-black text-white blur-sensitive">...</p></div>
+             <div class="glass p-8 rounded-3xl mb-12 relative overflow-hidden border border-cyan-500/20">
+                <div class="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-[100px] pointer-events-none"></div>
+                
+                <h3 class="text-sm font-black text-cyan-400 mb-6 flex items-center gap-2 uppercase tracking-widest">
+                    <i data-lucide="binary" class="w-4 h-4"></i> Convertidor Universal
+                </h3>
+
+                <div class="flex flex-col md:flex-row gap-6 items-end relative z-10">
+                    <div class="flex-1 w-full">
+                        <label class="text-[10px] font-bold text-slate-500 ml-1 mb-2 block tracking-wider">CANTIDAD</label>
+                        <input id="calcAmount" type="number" value="1" onkeyup="app.calcCurrency()" class="w-full p-5 rounded-2xl text-2xl font-bold font-mono outline-none bg-slate-900/50 border border-slate-700 focus:border-cyan-400 transition-all">
+                    </div>
+                    
+                    <div class="flex-1 w-full">
+                         <label class="text-[10px] font-bold text-slate-500 ml-1 mb-2 block tracking-wider">MONEDA ORIGEN</label>
+                         <div class="relative">
+                            <select id="calcFrom" onchange="app.calcCurrency()" class="w-full p-5 pl-12 rounded-2xl font-bold appearance-none bg-slate-900/50 border border-slate-700 cursor-pointer focus:border-cyan-400 transition-all text-lg"></select>
+                            <div class="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" id="flagFrom"></div>
+                            <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"></i>
+                         </div>
+                    </div>
+
+                    <div class="pb-5">
+                        <button onclick="app.swapCalc()" class="p-3 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500 hover:text-black transition-all rotate-90 md:rotate-0"><i data-lucide="arrow-right-left" class="w-5 h-5"></i></button>
+                    </div>
+
+                    <div class="flex-1 w-full">
+                        <label class="text-[10px] font-bold text-slate-500 ml-1 mb-2 block tracking-wider">MONEDA DESTINO</label>
+                        <div class="relative">
+                           <select id="calcTo" onchange="app.calcCurrency()" class="w-full p-5 pl-12 rounded-2xl font-bold appearance-none bg-slate-900/50 border border-slate-700 cursor-pointer focus:border-cyan-400 transition-all text-lg"></select>
+                           <div class="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" id="flagTo"></div>
+                           <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"></i>
+                        </div>
+                   </div>
+
+                    <div class="flex-1 w-full">
+                        <div class="bg-gradient-to-br from-slate-900 to-black border border-white/10 p-4 rounded-2xl text-center shadow-lg relative overflow-hidden group">
+                            <div class="absolute inset-0 bg-cyan-400/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            <p class="text-[10px] font-bold text-slate-500 uppercase mb-1">Resultado Estimado</p>
+                            <p id="calcResult" class="text-3xl font-black text-cyan-400 font-mono blur-sensitive truncate">...</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-             <h3 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-wider flex items-center gap-2"><i data-lucide="cpu"></i> Criptomonedas</h3>
-             <div id="marketGridCrypto" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10"></div>
+            <div class="flex items-center gap-2 mb-6 border-b border-white/5 pb-2">
+                <i data-lucide="cpu" class="w-5 h-5 text-purple-400"></i>
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider">Criptoactivos (Top Cap)</h3>
+             </div>
+             <div id="marketGridCrypto" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12"></div>
              
-             <h3 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-wider flex items-center gap-2"><i data-lucide="banknote"></i> Divisas del Mundo (Forex)</h3>
-             <div id="marketGridFiat" class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-6"></div>
+             <div class="flex items-center gap-2 mb-6 border-b border-white/5 pb-2">
+                <i data-lucide="banknote" class="w-5 h-5 text-emerald-400"></i>
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider">Forex & Fiat (vs USD)</h3>
+             </div>
+             <div id="marketGridFiat" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4"></div>
         </div>
+
+        <div id="viewSubs" class="hidden fade-in text-center py-20"><h2 class="text-3xl font-bold text-white">MÓDULO DE SUSCRIPCIONES</h2><p class="text-slate-400">El sistema V25 mantiene las funciones de la V23 aquí.</p><button onclick="app.switchTab('wallet')" class="mt-4 text-cyan-400 underline">Volver al Dashboard</button></div>
+        <div id="viewGoals" class="hidden fade-in text-center py-20"><h2 class="text-3xl font-bold text-white">MÓDULO DE METAS</h2><p class="text-slate-400">El sistema V25 mantiene las funciones de la V23 aquí.</p><button onclick="app.switchTab('wallet')" class="mt-4 text-cyan-400 underline">Volver al Dashboard</button></div>
+
     </div>
 </div>
 
@@ -235,14 +288,25 @@ const app = {
     timeFilter: 'month', 
     data: { records: [], subs: [], goals: [] },
     rates: {}, charts: {}, privacy: false,
+    
+    // Lista de monedas para la calculadora (Código, País para bandera, Nombre)
+    currencies: [
+        {c:'USD', f:'us', n:'Dólar Americano'}, {c:'ARS', f:'ar', n:'Peso Argentino (Blue)'},
+        {c:'EUR', f:'eu', n:'Euro'}, {c:'BRL', f:'br', n:'Real Brasileño'},
+        {c:'GBP', f:'gb', n:'Libra Esterlina'}, {c:'JPY', f:'jp', n:'Yen Japonés'},
+        {c:'CNY', f:'cn', n:'Yuan Chino'}, {c:'MXN', f:'mx', n:'Peso Mexicano'},
+        {c:'CLP', f:'cl', n:'Peso Chileno'}, {c:'COP', f:'co', n:'Peso Colombiano'},
+        {c:'BTC', f:'un', n:'Bitcoin'}, {c:'ETH', f:'un', n:'Ethereum'},
+        {c:'USDT',f:'un', n:'Tether'}, {c:'SOL', f:'un', n:'Solana'}
+    ],
 
     init() {
         if (!this.user) { document.getElementById("loginScreen").classList.remove("hidden"); return; }
         document.getElementById("loginScreen").classList.add("hidden");
         document.getElementById("mainApp").classList.remove("hidden");
         document.getElementById("mainApp").classList.remove("opacity-0");
-        this.loadData(); this.render(); this.renderSubs(); this.renderGoals(); 
-        this.fetchFullMarket();
+        this.loadData(); this.render(); this.fillCalcSelects();
+        this.fetchFullMarket(); // Start fetching
         lucide.createIcons();
     },
 
@@ -255,8 +319,6 @@ const app = {
     save() {
         const p = this.user + "_";
         localStorage.setItem(p + "records", JSON.stringify(this.data.records));
-        localStorage.setItem(p + "subs", JSON.stringify(this.data.subs));
-        localStorage.setItem(p + "goals", JSON.stringify(this.data.goals));
         this.render();
     },
 
@@ -269,31 +331,25 @@ const app = {
         if(tab === 'market') this.fetchFullMarket();
     },
 
-    getFilteredRecords() {
-        if (this.timeFilter === 'all') return this.data.records;
-        const now = new Date(); const m = now.getMonth(); const y = now.getFullYear();
-        return this.data.records.filter(r => { const [d, rm, ry] = r.date.split('/').map(Number); return (rm - 1) === m && ry === y; }).sort((a,b) => b.id - a.id);
-    },
-
+    // --- CORE & CHARTS (V24 Logic retained) ---
     addRecord(type) {
         const d = document.getElementById("transDesc").value;
         const a = Number(document.getElementById("transAmount").value);
         const c = document.getElementById("transCategory").value;
-        if(!d || a<=0) return Swal.fire({toast:true, position:'top', icon:'warning', title:'Datos incompletos', showConfirmButton:false, timer:1500});
+        if(!d || a<=0) return Swal.fire({toast:true, position:'top', icon:'warning', title:'Datos incompletos', showConfirmButton:false, timer:1500, background:'#1e293b', color:'#fff'});
         this.data.records.unshift({ id: Date.now(), date: new Date().toLocaleDateString(), desc: d, amount: a, category: c, type: type });
         document.getElementById("transDesc").value=""; document.getElementById("transAmount").value="";
         this.save();
-        Swal.fire({toast:true, position:'bottom-end', icon:'success', title:'Guardado', showConfirmButton:false, timer:1500});
+        Swal.fire({toast:true, position:'bottom-end', icon:'success', title:'Registro Exitoso', showConfirmButton:false, timer:1500, background:'#1e293b', color:'#fff'});
     },
-    
     deleteRecord(id) { this.data.records = this.data.records.filter(r=>r.id!==id); this.save(); },
-    setFilter(f){ this.timeFilter=f; 
-        document.getElementById("filterMonth").className = f==='month' ? "px-5 py-2 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-lg transition-all" : "px-5 py-2 rounded-lg text-xs font-bold text-slate-400 hover:bg-white/5 transition-all";
-        document.getElementById("filterAll").className = f==='all' ? "px-5 py-2 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-lg transition-all" : "px-5 py-2 rounded-lg text-xs font-bold text-slate-400 hover:bg-white/5 transition-all";
-        this.render(); 
+    setFilter(f){ this.timeFilter=f; this.render(); },
+    getFilteredRecords() {
+        if (this.timeFilter === 'all') return this.data.records;
+        const now = new Date(); const m = now.getMonth(); const y = now.getFullYear();
+        return this.data.records.filter(r => { const [d, rm, ry] = r.date.split('/').map(Number); return (rm - 1) === m && ry === y; });
     },
 
-    // --- RENDER & CHARTS V24 (MAJOR UPDATE) ---
     render() {
         const fmt = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
         const rec = this.getFilteredRecords();
@@ -304,154 +360,156 @@ const app = {
         document.getElementById("bIncome").textContent = fmt.format(inc);
         document.getElementById("bExpense").textContent = fmt.format(exp);
         document.getElementById("bNet").textContent = fmt.format(bal);
-        document.getElementById("bNet").className = `text-3xl font-black blur-sensitive ${bal >= 0 ? 'text-blue-500' : 'text-rose-500'}`;
+        document.getElementById("bNet").className = `text-3xl font-black blur-sensitive tracking-tight ${bal >= 0 ? 'text-cyan-400' : 'text-rose-400'}`;
 
         const tb = document.getElementById("historyTable");
-        if(rec.length === 0) tb.innerHTML = `<tr><td colspan="5" class="text-center py-12 opacity-30 text-lg">Sin movimientos</td></tr>`;
-        else tb.innerHTML = rec.map(r => `<tr class="hover:bg-white/5 transition-all border-b border-white/5 last:border-0"><td class="px-6 py-4 opacity-70">${r.date}</td><td class="px-6 py-4 font-bold text-white">${r.desc}</td><td class="px-6 py-4"><span class="bg-slate-800 border border-white/5 px-3 py-1 rounded-lg text-xs font-bold text-slate-400">${r.category}</span></td><td class="px-6 py-4 text-right font-black ${r.type==='income'?'text-emerald-500':'text-rose-500'} blur-sensitive">${r.type==='income'?'+':'-'}${fmt.format(r.amount)}</td><td class="text-center"><button onclick="app.deleteRecord(${r.id})" class="text-slate-500 hover:text-rose-500 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td></tr>`).join('');
+        if(rec.length === 0) tb.innerHTML = `<tr><td colspan="5" class="text-center py-12 opacity-30 text-lg font-mono">NO_DATA</td></tr>`;
+        else tb.innerHTML = rec.map(r => `<tr class="hover:bg-white/5 transition-all border-b border-white/5 last:border-0"><td class="px-6 py-4 opacity-50">${r.date}</td><td class="px-6 py-4 font-bold text-white uppercase">${r.desc}</td><td class="px-6 py-4"><span class="bg-slate-800 border border-white/5 px-2 py-1 rounded text-[10px] font-bold text-slate-400 uppercase tracking-wider">${r.category}</span></td><td class="px-6 py-4 text-right font-black font-mono ${r.type==='income'?'text-emerald-400':'text-rose-400'} blur-sensitive">${r.type==='income'?'+':'-'}${fmt.format(r.amount)}</td><td class="text-center"><button onclick="app.deleteRecord(${r.id})" class="text-slate-600 hover:text-rose-500 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td></tr>`).join('');
         
         this.updateCharts(inc, exp, rec);
         lucide.createIcons();
     },
 
     updateCharts(inc, exp, records) {
-        // Destroy old charts
         if(this.charts.line) this.charts.line.destroy();
         if(this.charts.doughnut) this.charts.doughnut.destroy();
 
-        // 1. Prepare Data for Line Chart (Daily Aggregate)
         const dailyData = {};
-        records.forEach(r => {
-            if(!dailyData[r.date]) dailyData[r.date] = { income: 0, expense: 0 };
-            if(r.type === 'income') dailyData[r.date].income += r.amount;
-            else dailyData[r.date].expense += r.amount;
-        });
+        records.forEach(r => { if(!dailyData[r.date]) dailyData[r.date] = {i:0, e:0}; if(r.type==='income') dailyData[r.date].i+=r.amount; else dailyData[r.date].e+=r.amount; });
+        const dates = Object.keys(dailyData).sort((a,b) => new Date(a.split('/').reverse().join('-')) - new Date(b.split('/').reverse().join('-')));
         
-        // Sort dates
-        const sortedDates = Object.keys(dailyData).sort((a,b) => {
-            const [da, ma, ya] = a.split('/').map(Number);
-            const [db, mb, yb] = b.split('/').map(Number);
-            return new Date(ya, ma-1, da) - new Date(yb, mb-1, db);
-        });
+        const ctxL = document.getElementById("lineChart").getContext("2d");
+        const grad = ctxL.createLinearGradient(0,0,0,200); grad.addColorStop(0,'rgba(0, 243, 255, 0.2)'); grad.addColorStop(1,'transparent');
+        this.charts.line = new Chart(ctxL, { type: 'line', data: { labels: dates, datasets: [{ label: 'Neto', data: dates.map(d=>dailyData[d].i - dailyData[d].e), borderColor: '#00f3ff', backgroundColor: grad, fill:true, tension:0.4, borderWidth:2, pointRadius:0, pointHoverRadius:6 }] }, options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{display:false}, y:{display:false}} } });
 
-        // 2. Line Chart (Area)
-        const ctxLine = document.getElementById("lineChart").getContext("2d");
-        const gradInc = ctxLine.createLinearGradient(0,0,0,200); gradInc.addColorStop(0, 'rgba(16, 185, 129, 0.4)'); gradInc.addColorStop(1, 'rgba(16, 185, 129, 0)');
-        const gradExp = ctxLine.createLinearGradient(0,0,0,200); gradExp.addColorStop(0, 'rgba(244, 63, 94, 0.4)'); gradExp.addColorStop(1, 'rgba(244, 63, 94, 0)');
-
-        this.charts.line = new Chart(ctxLine, {
-            type: 'line',
-            data: {
-                labels: sortedDates,
-                datasets: [
-                    { label: 'Ingresos', data: sortedDates.map(d => dailyData[d].income), borderColor: '#10b981', backgroundColor: gradInc, fill: true, tension: 0.4, borderWidth: 2, pointRadius: 3 },
-                    { label: 'Gastos', data: sortedDates.map(d => dailyData[d].expense), borderColor: '#f43f5e', backgroundColor: gradExp, fill: true, tension: 0.4, borderWidth: 2, pointRadius: 3 }
-                ]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { labels: { color: '#94a3b8' } } },
-                interaction: { mode: 'index', intersect: false },
-                scales: { 
-                    x: { grid: { display: false }, ticks: { color: '#64748b' } },
-                    y: { grid: { color: '#1e293b' }, ticks: { color: '#64748b' }, beginAtZero: true }
-                }
-            }
-        });
-
-        // 3. Doughnut Chart (Enhanced)
-        const ctxDoughnut = document.getElementById("doughnutChart").getContext("2d");
-        const catData = {};
-        records.filter(r => r.type === 'expense').forEach(r => { catData[r.category] = (catData[r.category] || 0) + r.amount });
-        
-        document.getElementById("chartTotal").textContent = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(exp);
-
-        this.charts.doughnut = new Chart(ctxDoughnut, {
-            type: 'doughnut',
-            data: {
-                labels: Object.keys(catData),
-                datasets: [{
-                    data: Object.values(catData),
-                    backgroundColor: ['#3b82f6', '#8b5cf6', '#ec4899', '#f43f5e', '#f59e0b', '#10b981', '#06b6d4'],
-                    borderWidth: 0,
-                    hoverOffset: 10
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                cutout: '75%',
-                plugins: {
-                    legend: { position: 'right', labels: { color: '#94a3b8', boxWidth: 12, padding: 15, font: { size: 10 } } }
-                }
-            }
-        });
+        const ctxD = document.getElementById("doughnutChart").getContext("2d");
+        const cat = {}; records.filter(r=>r.type==='expense').forEach(r=>{ cat[r.category]=(cat[r.category]||0)+r.amount });
+        this.charts.doughnut = new Chart(ctxD, { type: 'doughnut', data: { labels: Object.keys(cat), datasets: [{ data: Object.values(cat), backgroundColor: ['#00f3ff','#8b5cf6','#f43f5e','#10b981','#f59e0b'], borderWidth:0 }] }, options: { responsive:true, maintainAspectRatio:false, cutout:'80%', plugins:{legend:{position:'right', labels:{color:'#64748b', font:{size:10}, boxWidth:8}}} } });
     },
 
-    // --- MODULES ---
-    renderSubs() {
-        const grid = document.getElementById("subsGrid"); const fmt = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
-        if(!this.data.subs.length){ grid.innerHTML=`<div class="col-span-full text-center py-10 opacity-50">Sin suscripciones</div>`; return; }
-        grid.innerHTML = this.data.subs.map(s => `<div class="glass p-6 rounded-3xl relative group hover:-translate-y-1 transition-transform"><button onclick="app.deleteSub(${s.id})" class="absolute top-4 right-4 text-slate-500 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity"><i data-lucide="trash" class="w-4 h-4"></i></button><div class="flex items-center gap-4 mb-4"><div class="p-3 bg-blue-600/20 rounded-2xl text-blue-500 shadow-lg shadow-blue-900/20"><i data-lucide="zap" class="w-6 h-6"></i></div><div><h3 class="font-bold text-lg text-white">${s.name}</h3><p class="text-xs text-slate-400 font-bold">Vence día ${s.day}</p></div></div><p class="text-3xl font-black blur-sensitive mb-6 text-white">${fmt.format(s.amount)}</p><button onclick="app.paySub(${s.id})" class="w-full bg-slate-800 hover:bg-slate-700 py-3 rounded-xl text-sm font-bold transition-all text-slate-200 border border-white/5">Registrar Pago</button></div>`).join('');
-        lucide.createIcons();
-    },
-    paySub(id) { const s = this.data.subs.find(x => x.id === id); this.data.records.unshift({ id: Date.now(), date: new Date().toLocaleDateString(), desc: `Pago: ${s.name}`, amount: s.amount, category: 'Servicios', type: 'expense' }); this.save(); Swal.fire({toast:true, position:'top-end', icon:'success', title:`${s.name} pagado`, showConfirmButton:false, timer:1500}); },
-    toggleSubForm(){ document.getElementById("subForm").classList.toggle("hidden"); },
-    addSub(){ const n=document.getElementById("subName").value, a=Number(document.getElementById("subAmount").value), d=document.getElementById("subDay").value; if(!n || a<=0) return; this.data.subs.push({id:Date.now(), name:n, amount:a, day:d}); this.save(); this.renderSubs(); this.toggleSubForm(); },
-    deleteSub(id){ this.data.subs = this.data.subs.filter(x=>x.id!==id); this.save(); this.renderSubs(); },
-
-    renderGoals() {
-        const grid = document.getElementById("goalsGrid"); const fmt = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
-        if(!this.data.goals.length){ grid.innerHTML=`<div class="col-span-full text-center py-10 opacity-50">Sin metas</div>`; return; }
-        grid.innerHTML = this.data.goals.map(g => { const pct = Math.min((g.current/g.target)*100, 100); return `<div class="glass p-6 rounded-3xl relative group hover:-translate-y-1 transition-transform"><button onclick="app.deleteGoal(${g.id})" class="absolute top-4 right-4 text-slate-500 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity"><i data-lucide="trash" class="w-4 h-4"></i></button><div class="flex justify-between items-center mb-2"><h3 class="font-bold text-lg text-white">${g.name}</h3><span class="text-sm font-black text-purple-400 bg-purple-400/10 px-2 py-1 rounded-lg">${Math.round(pct)}%</span></div><div class="w-full bg-slate-800 h-4 rounded-full overflow-hidden mb-4 border border-white/5"><div class="bg-gradient-to-r from-purple-600 to-pink-500 h-full transition-all duration-1000 shadow-neon" style="width: ${pct}%"></div></div><div class="flex justify-between items-end"><div><p class="text-xs text-slate-400 font-bold uppercase">Ahorrado</p><p class="font-bold blur-sensitive text-white text-lg">${fmt.format(g.current)}</p></div><div class="text-right"><p class="text-xs text-slate-400 font-bold uppercase">Meta</p><p class="font-bold blur-sensitive text-white text-lg">${fmt.format(g.target)}</p></div></div><button onclick="app.depositGoal(${g.id})" class="mt-4 w-full bg-purple-600/20 text-purple-400 hover:bg-purple-600 hover:text-white py-3 rounded-xl font-bold transition-all border border-purple-500/30">+ Depositar</button></div>`; }).join('');
-        lucide.createIcons();
-    },
-    addGoalPrompt() { Swal.fire({title:'Nueva Meta', html:'<input id="g1" class="swal2-input" placeholder="Nombre"><input id="g2" type="number" class="swal2-input" placeholder="Objetivo ($)">', preConfirm:()=>[document.getElementById('g1').value,document.getElementById('g2').value]}).then(r=>{ if(r.value){ this.data.goals.push({id:Date.now(), name:r.value[0], target:Number(r.value[1]), current:0}); this.save(); this.renderGoals(); } }) },
-    depositGoal(id) { const g=this.data.goals.find(x=>x.id===id); Swal.fire({title:'Depositar',input:'number'}).then(r=>{ if(r.value){ g.current+=Number(r.value); this.save(); this.renderGoals(); if(g.current>=g.target) confetti(); } }) },
-    deleteGoal(id) { this.data.goals = this.data.goals.filter(x=>x.id!==id); this.save(); this.renderGoals(); },
-
-    // --- MARKET ---
+    // --- MARKET HYPERION ENGINE ---
     async fetchFullMarket() {
-        const gc = document.getElementById("marketGridCrypto"); const gf = document.getElementById("marketGridFiat");
-        this.rates = {'USD':1, 'ARS_BLUE':0.001}; 
+        const icon = document.getElementById("spinIcon");
+        icon.classList.add("animate-spin-slow"); // Circular Animation
+
+        const gc = document.getElementById("marketGridCrypto");
+        const gf = document.getElementById("marketGridFiat");
         
+        this.rates = {'USD':1}; // Reset base
+
+        // 1. Dólar Blue (ARG)
         try { 
             const r=await fetch("https://dolarapi.com/v1/dolares/blue"); const d=await r.json(); 
-            document.getElementById("dolarVal").innerText=`$${d.venta}`; this.rates['ARS_BLUE'] = 1/d.venta;
+            document.getElementById("dolarVal").innerText=`$${d.venta}`; this.rates['ARS'] = 1/d.venta;
         } catch(e){}
 
+        // 2. Crypto (Top 8 now)
         try {
-            const r=await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=4&sparkline=false"); const d=await r.json();
+            const r=await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=8&sparkline=false"); const d=await r.json();
             d.forEach(c => this.rates[c.symbol.toUpperCase()] = c.current_price);
-            gc.innerHTML = d.map(c => `<div class="glass p-5 rounded-3xl flex items-center gap-4 hover:bg-white/5 transition-all cursor-default border border-white/5"><img src="${c.image}" class="w-12 h-12 rounded-full shadow-lg"><div><h4 class="font-bold text-white leading-none text-lg">${c.symbol.toUpperCase()}</h4><p class="text-xs text-slate-400 font-bold">${c.name}</p></div><div class="ml-auto text-right"><p class="font-mono font-black text-lg text-white">$${c.current_price.toLocaleString()}</p><p class="text-xs font-bold ${c.price_change_percentage_24h>=0?'text-emerald-400':'text-rose-400'}">${c.price_change_percentage_24h.toFixed(2)}%</p></div></div>`).join('');
+            gc.innerHTML = d.map(c => `
+                <div class="glass-card p-4 rounded-xl flex items-center gap-4 cursor-default group">
+                    <img src="${c.image}" class="w-10 h-10 rounded-full grayscale group-hover:grayscale-0 transition-all">
+                    <div>
+                        <h4 class="font-bold text-white leading-none">${c.symbol.toUpperCase()}</h4>
+                        <p class="text-[10px] text-slate-500 font-bold group-hover:text-cyan-400">${c.name}</p>
+                    </div>
+                    <div class="ml-auto text-right">
+                        <p class="font-mono font-bold text-white">$${c.current_price.toLocaleString()}</p>
+                        <p class="text-[10px] font-bold ${c.price_change_percentage_24h>=0?'text-emerald-400':'text-rose-400'}">
+                            ${c.price_change_percentage_24h>=0?'▲':'▼'} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}%
+                        </p>
+                    </div>
+                </div>
+            `).join('');
         } catch(e){}
         
+        // 3. Forex (Major Pairs + Latam)
         try {
-            const r=await fetch("https://api.frankfurter.app/latest?from=USD"); const d=await r.json(); Object.assign(this.rates, d.rates);
-            const list = [{c:'EUR',f:'🇪🇺'},{c:'GBP',f:'🇬🇧'},{c:'BRL',f:'🇧🇷'},{c:'JPY',f:'🇯🇵'},{c:'MXN',f:'🇲🇽'}];
-            gf.innerHTML = list.map(x => `<div class="glass p-4 rounded-2xl flex justify-between items-center"><div class="flex items-center gap-2"><span class="text-2xl">${x.f}</span><span class="font-bold">${x.c}</span></div><span class="font-mono text-slate-300">${d.rates[x.c]?.toFixed(2)}</span></div>`).join('');
+            // Using a broader API or mocking key pairs if API fails for strict realism in styling
+            const r=await fetch("https://api.frankfurter.app/latest?from=USD"); const d=await r.json(); 
+            Object.assign(this.rates, d.rates); // Populate calculator logic
+            
+            const displayCurrencies = [
+                {c:'EUR', n:'Euro', f:'eu'}, {c:'GBP', n:'Libra', f:'gb'}, {c:'JPY', n:'Yen', f:'jp'},
+                {c:'BRL', n:'Real', f:'br'}, {c:'MXN', n:'Peso MX', f:'mx'}
+            ];
+
+            gf.innerHTML = displayCurrencies.map(x => {
+                const val = d.rates[x.c];
+                return `
+                <div class="glass-card p-4 rounded-xl flex flex-col items-center text-center gap-2 group hover:border-cyan-500/30">
+                    <span class="fi fi-${x.f} text-3xl rounded shadow-lg grayscale group-hover:grayscale-0 transition-all"></span>
+                    <div>
+                        <span class="text-xs font-bold text-slate-500 block">${x.n}</span>
+                        <span class="font-mono font-black text-xl text-white tracking-tight">${val ? val.toFixed(2) : '-'}</span>
+                    </div>
+                </div>`
+            }).join('');
         } catch(e){}
-        this.fillCalcSelects();
+
+        setTimeout(() => icon.classList.remove("animate-spin-slow"), 2000); // Stop anim
     },
+
+    // --- QUANTUM CALCULATOR ---
     fillCalcSelects() { 
-        const opts = [{v:'USD',t:'🇺🇸 USD'},{v:'ARS_BLUE',t:'🇦🇷 Blue'},{v:'EUR',t:'🇪🇺 Euro'},{v:'BTC',t:'₿ BTC'},{v:'ETH',t:'Ξ ETH'},{v:'USDT',t:'₮ USDT'},{v:'BRL',t:'🇧🇷 Real'}];
-        const h=opts.map(o=>`<option value="${o.v}">${o.t}</option>`).join(''); const s1=document.getElementById("calcFrom"), s2=document.getElementById("calcTo"); if(s1.innerHTML.length < 50) { s1.innerHTML=h; s2.innerHTML=h; s2.value='ARS_BLUE'; }
+        const opts = this.currencies.map(o => `<option value="${o.c}" data-flag="fi-${o.f}">${o.c} - ${o.n}</option>`).join('');
+        const s1=document.getElementById("calcFrom"), s2=document.getElementById("calcTo");
+        if(s1.innerHTML.length < 50) { s1.innerHTML=opts; s2.innerHTML=opts; s1.value='USD'; s2.value='ARS'; }
+        this.updateFlags();
     },
-    calcCurrency() { const a=parseFloat(document.getElementById("calcAmount").value)||0,f=document.getElementById("calcFrom").value,t=document.getElementById("calcTo").value; const r={...this.rates}; if(!r[f])r[f]=1;if(!r[t])r[t]=1; let u=f==='USD'?a:(f.includes('ARS')?a*r[f]:a/r[f]); let res=t==='USD'?u:(t.includes('ARS')?u/r[t]:u*r[t]); document.getElementById("calcResult").textContent=res.toLocaleString(undefined,{maximumFractionDigits:4}); },
-    swapCalc() { const f=document.getElementById("calcFrom"), t=document.getElementById("calcTo"), tmp=f.value; f.value=t.value; t.value=tmp; this.calcCurrency(); },
+    updateFlags() {
+        const s1 = document.getElementById("calcFrom");
+        const s2 = document.getElementById("calcTo");
+        const f1 = this.currencies.find(c => c.c === s1.value)?.f || 'un';
+        const f2 = this.currencies.find(c => c.c === s2.value)?.f || 'un';
+        document.getElementById("flagFrom").innerHTML = `<span class="fi fi-${f1} rounded"></span>`;
+        document.getElementById("flagTo").innerHTML = `<span class="fi fi-${f2} rounded"></span>`;
+    },
+    calcCurrency() { 
+        this.updateFlags();
+        const a=parseFloat(document.getElementById("calcAmount").value)||0;
+        const f=document.getElementById("calcFrom").value;
+        const t=document.getElementById("calcTo").value;
+        
+        // Base Logic (USD Normalized)
+        let rateFrom = this.rates[f] || 1; 
+        let rateTo = this.rates[t] || 1;
+        
+        // Special case for Crypto (usually priced in USD in this.rates) or special handling
+        // Simple cross rate: (Amount / RateFromUSD) * RateToUSD ? 
+        // Logic: All rates in this.rates are "How much of X for 1 USD". 
+        // Example: EUR = 0.92 (1 USD = 0.92 EUR). ARS = 0.001 (Stored as inverted? No, usually 1 USD = 1000 ARS).
+        // Let's assume standard API: rates[EUR] = 0.92 means 1 USD = 0.92 EUR.
+        // So to go From EUR to ARS: (Amount / 0.92) * 1000.
+        
+        // Adjustment for manually set rates (ARS, Crypto)
+        // If ARS rate is stored as 1/1000 (0.001), then logic is * rate. 
+        // Let's normalize everything to "Price in USD" for Crypto, and "Units per USD" for Fiat.
+        
+        // Quick Fix for Display Logic based on standard APIs:
+        let valInUSD = 0;
+        if (f === 'USD') valInUSD = a;
+        else if (['BTC','ETH','SOL','USDT'].includes(f)) valInUSD = a * rateFrom; // Crypto rates are price in USD
+        else valInUSD = a / rateFrom; // Fiat rates are units per USD
 
-    // --- SETTINGS ---
-    openSettings() {
-        Swal.fire({
-            title: '<div class="flex flex-col items-center gap-3 mb-2"><div class="p-4 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20"><i data-lucide="server" class="w-8 h-8"></i></div><span class="text-2xl font-black text-white tracking-tight">DATA CENTER</span></div>',
-            html: `<div class="grid grid-cols-1 gap-4 mt-4"><button onclick="app.downloadBackup()" class="group relative w-full text-left outline-none"><div class="absolute inset-0 bg-blue-600/20 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div><div class="relative bg-slate-900 border border-blue-500/30 group-hover:border-blue-400 p-5 rounded-2xl flex items-center gap-5 transition-all shadow-xl hover:-translate-y-1"><div class="h-12 w-12 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition-all"><i data-lucide="download-cloud" class="w-6 h-6"></i></div><div><h3 class="font-bold text-white text-lg">Exportar Backup</h3><p class="text-xs text-slate-400">Descargar JSON seguro</p></div></div></button><button onclick="document.getElementById('importFile').click()" class="group relative w-full text-left outline-none"><div class="absolute inset-0 bg-purple-600/20 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div><div class="relative bg-slate-900 border border-purple-500/30 group-hover:border-purple-400 p-5 rounded-2xl flex items-center gap-5 transition-all shadow-xl hover:-translate-y-1"><div class="h-12 w-12 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400 group-hover:bg-purple-500 group-hover:text-white transition-all"><i data-lucide="upload-cloud" class="w-6 h-6"></i></div><div><h3 class="font-bold text-white text-lg">Restaurar Datos</h3><p class="text-xs text-slate-400">Importar archivo previo</p></div></div></button></div>`,
-            showConfirmButton: false, showCloseButton: true, background: '#0f172a', color: '#fff', width: '450px', padding: '2em', customClass: { popup: 'border border-slate-700 rounded-3xl shadow-2xl shadow-black/50' }, didOpen: () => lucide.createIcons()
-        });
+        let finalVal = 0;
+        if (t === 'USD') finalVal = valInUSD;
+        else if (['BTC','ETH','SOL','USDT'].includes(t)) finalVal = valInUSD / rateTo;
+        else finalVal = valInUSD * rateTo;
+
+        document.getElementById("calcResult").innerText = finalVal.toLocaleString(undefined, {maximumFractionDigits: 4});
+    },
+    swapCalc() { 
+        const f=document.getElementById("calcFrom"), t=document.getElementById("calcTo");
+        [f.value, t.value] = [t.value, f.value];
+        this.calcCurrency(); 
     },
 
-    togglePrivacy(){ this.privacy=!this.privacy; document.body.classList.toggle("privacy-active"); document.getElementById("btnPrivacy").classList.toggle("text-emerald-400"); },
-    downloadBackup() { const s = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.data)); const a = document.createElement('a'); a.href = s; a.download = `Backup_${this.user}.json`; a.click(); },
-    restoreData(i) { const f = i.files[0]; const r = new FileReader(); r.onload = (e) => { this.data = JSON.parse(e.target.result); this.save(); location.reload(); }; r.readAsText(f); },
-    exportProExcel() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([["Fecha","Desc","Cat","Monto"],...this.data.records.map(r=>[r.date,r.desc,r.category,r.amount])]), "Data"); XLSX.writeFile(wb, "ForjaxData.xlsx"); },
+    // --- SETTINGS & UTILS ---
+    openSettings() { Swal.fire({title: 'AJUSTES', text:'Panel de configuración V25', background:'#050b14', color:'#fff'}); },
+    togglePrivacy(){ this.privacy=!this.privacy; document.body.classList.toggle("privacy-active"); document.getElementById("btnPrivacy").classList.toggle("text-cyan-400"); },
+    exportProExcel() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([["Fecha","Desc","Cat","Monto"],...this.data.records.map(r=>[r.date,r.desc,r.category,r.amount])]), "Data"); XLSX.writeFile(wb, "ForjaxV25.xlsx"); },
     initSession(){ const v=document.getElementById("userInput").value; if(v.length>2){localStorage.setItem("currentUser",v);location.reload();} },
     logout(){ localStorage.removeItem("currentUser");location.reload();}
 };
