@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FORJAX Terminal - V21 PHOENIX</title>
+    <title>FORJAX Terminal - V22 REMASTERED</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -19,7 +19,10 @@
                 extend: {
                     fontFamily: { sans: ['Outfit', 'sans-serif'] },
                     colors: { dark: '#0f172a' },
-                    animation: { 'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite' }
+                    boxShadow: {
+                        'neon': '0 0 20px rgba(59, 130, 246, 0.5)',
+                        'nav': '0 10px 30px -10px rgba(0, 0, 0, 0.5)'
+                    }
                 }
             }
         }
@@ -27,92 +30,140 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap');
-        :root { --accent: 59, 130, 246; }
-        body { font-family: 'Outfit', sans-serif; transition: all 0.3s ease; }
         
-        /* Glassmorphism Restaurado */
-        .glass { backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); background: rgba(15, 23, 42, 0.6); transition: all 0.3s ease; }
-        .glass:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        body { font-family: 'Outfit', sans-serif; background-color: #0f172a; color: #f1f5f9; }
         
-        .dark input, .dark select { background: #1e293b; color: #fff; border: 1px solid #334155; }
-        .privacy-active .blur-sensitive { filter: blur(6px); transition: filter 0.3s ease; user-select: none; }
-        .blur-sensitive { transition: filter 0.3s ease; }
+        /* Glassmorphism Premium (Estable) */
+        .glass { 
+            background: rgba(15, 23, 42, 0.7); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+        }
         
-        /* Custom Scrollbar */
-        .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #475569; }
+        /* Navbar Styles (Fixed & Solid) */
+        .nav-container {
+            position: fixed; top: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 50;
+            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.1); padding: 0.5rem; border-radius: 1rem;
+            display: flex; align-items: center; gap: 0.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+            white-space: nowrap; max-width: 95vw; overflow-x: auto;
+        }
 
-        /* Animaciones */
+        .nav-btn {
+            padding: 0.6rem 1.2rem; border-radius: 0.75rem; font-weight: 700; font-size: 0.875rem;
+            display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #94a3b8; /* Slate 400 */
+        }
+        
+        .nav-btn:hover { background: rgba(255,255,255,0.05); color: white; }
+
+        /* ESTADO ACTIVO REAL (No se mueve) */
+        .nav-btn.active {
+            background: #2563eb; /* Blue 600 */
+            color: white;
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
+            transform: scale(1.05);
+        }
+
+        /* Inputs Oscuros */
+        input, select { background: #1e293b !important; color: white !important; border: 1px solid #334155 !important; }
+        input::placeholder { color: #64748b; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        
         .fade-in { animation: fadeIn 0.4s ease-out forwards; opacity: 0; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* V22 Blur Effect for Privacy */
+        .blur-sensitive { transition: filter 0.3s ease; }
+        body.privacy-active .blur-sensitive { filter: blur(8px); }
     </style>
 </head>
 
-<body class="min-h-screen pb-20 transition-colors duration-500 bg-slate-100 text-slate-900 dark:bg-[#0B1121] dark:text-slate-100 selection:bg-blue-500 selection:text-white" style="--accent: 59, 130, 246;">
+<body class="min-h-screen pb-20 selection:bg-blue-500 selection:text-white">
 
 <div id="loginScreen" class="fixed inset-0 z-[60] flex items-center justify-center bg-[#0B1121] transition-all duration-500">
     <div class="relative w-full max-w-md p-8 text-center fade-in">
         <div class="absolute inset-0 bg-blue-600/20 blur-[100px] rounded-full"></div>
         <div class="glass relative p-10 rounded-3xl border border-white/10">
-            <div class="mb-8 inline-flex p-5 bg-blue-600 rounded-2xl shadow-2xl">
+            <div class="mb-8 inline-flex p-5 bg-blue-600 rounded-2xl shadow-neon">
                 <i data-lucide="layout-dashboard" class="w-10 h-10 text-white"></i>
             </div>
-            <h2 class="text-4xl font-extrabold mb-2 tracking-tight">FORJAX <span class="text-blue-500">V21</span></h2>
-            <p class="text-slate-400 mb-8 font-medium">Phoenix Update (Fix)</p>
+            <h2 class="text-4xl font-extrabold mb-2 tracking-tight">FORJAX <span class="text-blue-500">V22</span></h2>
+            <p class="text-slate-400 mb-8 font-medium">Remastered Edition</p>
             <input id="userInput" type="text" placeholder="Identificación" class="w-full p-4 rounded-xl mb-4 text-center text-lg font-bold outline-none focus:ring-2 focus:ring-blue-500 transition-all">
-            <button onclick="app.initSession()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition-all shadow-lg">ACCEDER</button>
+            <button onclick="app.initSession()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-blue-500/50">ACCEDER</button>
         </div>
     </div>
 </div>
 
 <div id="mainApp" class="hidden opacity-0 transition-opacity duration-700">
     
-    <nav class="fixed top-6 left-1/2 -translate-x-1/2 z-50 glass px-2 py-2 rounded-2xl flex items-center gap-1 shadow-2xl overflow-x-auto custom-scroll max-w-[95vw]">
-        <button onclick="app.switchTab('wallet')" id="btnWallet" class="px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 bg-blue-600 text-white shadow-lg"><i data-lucide="wallet"></i> Wallet</button>
-        <button onclick="app.switchTab('subs')" id="btnSubs" class="px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 text-slate-400 hover:bg-white/5"><i data-lucide="zap"></i> Subs</button>
-        <button onclick="app.switchTab('goals')" id="btnGoals" class="px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 text-slate-400 hover:bg-white/5"><i data-lucide="target"></i> Metas</button>
-        <button onclick="app.switchTab('market')" id="btnMarket" class="px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 text-slate-400 hover:bg-white/5"><i data-lucide="globe"></i> Market</button>
-        <div class="w-px h-6 bg-white/10 mx-2 hidden md:block"></div>
-        <button onclick="app.togglePrivacy()" id="btnPrivacy" class="p-2.5 rounded-xl text-slate-400 hover:text-emerald-400 hover:bg-white/5"><i id="eyeIcon" data-lucide="eye"></i></button>
-        <button onclick="app.openSettings()" class="p-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5"><i data-lucide="settings"></i></button>
-        <button onclick="app.toggleTheme()" class="p-2.5 rounded-xl text-slate-400 hover:text-yellow-400 hover:bg-white/5"><i id="themeIcon" data-lucide="sun"></i></button>
-        <button onclick="app.logout()" class="p-2.5 rounded-xl text-slate-400 hover:text-rose-500 hover:bg-white/5"><i data-lucide="power"></i></button>
+    <nav class="nav-container no-scrollbar">
+        <button onclick="app.switchTab('wallet')" id="btnWallet" class="nav-btn active">
+            <i data-lucide="wallet" class="w-4 h-4"></i> Wallet
+        </button>
+        <button onclick="app.switchTab('subs')" id="btnSubs" class="nav-btn">
+            <i data-lucide="zap" class="w-4 h-4"></i> Subs
+        </button>
+        <button onclick="app.switchTab('goals')" id="btnGoals" class="nav-btn">
+            <i data-lucide="target" class="w-4 h-4"></i> Metas
+        </button>
+        <button onclick="app.switchTab('market')" id="btnMarket" class="nav-btn">
+            <i data-lucide="globe" class="w-4 h-4"></i> Market
+        </button>
+        
+        <div class="w-px h-6 bg-white/10 mx-2"></div>
+        
+        <button onclick="app.togglePrivacy()" id="btnPrivacy" class="nav-btn px-3">
+            <i id="eyeIcon" data-lucide="eye" class="w-5 h-5"></i>
+        </button>
+        <button onclick="app.openSettings()" class="nav-btn px-3">
+            <i data-lucide="settings" class="w-5 h-5"></i>
+        </button>
+        <button onclick="app.logout()" class="nav-btn px-3 hover:text-rose-500">
+            <i data-lucide="power" class="w-5 h-5"></i>
+        </button>
     </nav>
 
     <div class="pt-28 max-w-[1400px] mx-auto px-6 pb-12">
         
         <div id="viewWallet" class="fade-in">
             <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                <div><h2 class="text-2xl font-bold">Dashboard</h2><p class="text-sm text-slate-400">Resumen Financiero</p></div>
+                <div><h2 class="text-3xl font-bold tracking-tight text-white">Dashboard</h2><p class="text-sm text-slate-400">Resumen Financiero</p></div>
                 
-                <div class="glass p-1 rounded-xl flex gap-1">
-                    <button onclick="app.setFilter('month')" id="filterMonth" class="px-4 py-2 rounded-lg text-xs font-bold bg-blue-600 text-white transition-all">Este Mes</button>
-                    <button onclick="app.setFilter('all')" id="filterAll" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:bg-white/5 transition-all">Histórico</button>
+                <div class="glass p-1.5 rounded-xl flex gap-1 bg-slate-900/50">
+                    <button onclick="app.setFilter('month')" id="filterMonth" class="px-5 py-2 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-lg transition-all">Este Mes</button>
+                    <button onclick="app.setFilter('all')" id="filterAll" class="px-5 py-2 rounded-lg text-xs font-bold text-slate-400 hover:bg-white/5 transition-all">Histórico</button>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                <div class="glass p-6 rounded-3xl border-b-4 border-emerald-500"><p class="text-xs font-bold opacity-60">INGRESOS</p><h2 class="text-3xl font-black text-emerald-500 blur-sensitive" id="bIncome">$0</h2></div>
-                <div class="glass p-6 rounded-3xl border-b-4 border-rose-500"><p class="text-xs font-bold opacity-60">GASTOS</p><h2 class="text-3xl font-black text-rose-500 blur-sensitive" id="bExpense">$0</h2></div>
-                <div class="glass p-6 rounded-3xl border-b-4 border-blue-500"><p class="text-xs font-bold opacity-60">BALANCE</p><h2 class="text-3xl font-black text-blue-500 blur-sensitive" id="bNet">$0</h2></div>
-                <div class="glass p-6 rounded-3xl border-b-4 border-violet-500"><p class="text-xs font-bold opacity-60">DÓLAR BLUE</p><h2 class="text-3xl font-black text-white" id="dolarVal">$0</h2></div>
+                <div class="glass p-6 rounded-3xl border-b-4 border-emerald-500 hover:scale-[1.02] transition-transform"><p class="text-xs font-bold opacity-60 text-slate-300">INGRESOS</p><h2 class="text-3xl font-black text-emerald-400 blur-sensitive" id="bIncome">$0</h2></div>
+                <div class="glass p-6 rounded-3xl border-b-4 border-rose-500 hover:scale-[1.02] transition-transform"><p class="text-xs font-bold opacity-60 text-slate-300">GASTOS</p><h2 class="text-3xl font-black text-rose-500 blur-sensitive" id="bExpense">$0</h2></div>
+                <div class="glass p-6 rounded-3xl border-b-4 border-blue-500 hover:scale-[1.02] transition-transform"><p class="text-xs font-bold opacity-60 text-slate-300">BALANCE</p><h2 class="text-3xl font-black text-blue-500 blur-sensitive" id="bNet">$0</h2></div>
+                <div class="glass p-6 rounded-3xl border-b-4 border-violet-500 hover:scale-[1.02] transition-transform"><p class="text-xs font-bold opacity-60 text-slate-300">DÓLAR BLUE</p><h2 class="text-3xl font-black text-white" id="dolarVal">$0</h2></div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 <div class="lg:col-span-4 space-y-6">
-                    <div class="glass p-6 rounded-3xl">
-                        <h3 class="flex items-center gap-2 text-lg font-bold mb-6 text-blue-500"><i data-lucide="mouse-pointer-2"></i> Nuevo Movimiento</h3>
-                        <div class="space-y-4">
-                            <div class="relative"><i data-lucide="type" class="absolute left-4 top-3.5 w-5 h-5 opacity-50"></i><input id="transDesc" type="text" placeholder="Descripción" class="w-full pl-12 p-3 rounded-xl font-medium outline-none focus:ring-2 focus:ring-blue-500"></div>
+                    <div class="glass p-6 rounded-3xl relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
+                        <h3 class="flex items-center gap-2 text-lg font-bold mb-6 text-white relative z-10"><i data-lucide="plus-circle" class="text-blue-500"></i> Nuevo Movimiento</h3>
+                        <div class="space-y-4 relative z-10">
+                            <div class="relative"><i data-lucide="type" class="absolute left-4 top-3.5 w-5 h-5 text-slate-500"></i><input id="transDesc" type="text" placeholder="Descripción" class="w-full pl-12 p-3.5 rounded-xl font-medium outline-none focus:ring-2 focus:ring-blue-500 transition-all"></div>
                             <div class="flex gap-3">
-                                <div class="relative w-1/2"><i data-lucide="dollar-sign" class="absolute left-3 top-3.5 w-5 h-5 opacity-50"></i><input id="transAmount" type="number" placeholder="Monto" class="w-full pl-10 p-3 rounded-xl font-medium outline-none focus:ring-2 focus:ring-blue-500"></div>
-                                <select id="transCategory" class="w-1/2 p-3 rounded-xl font-medium outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer bg-slate-800"><option value="Ingreso">💼 Ingreso</option><option value="Hogar">🏠 Hogar</option><option value="Comida">🍔 Comida</option><option value="Servicios">💡 Servicios</option><option value="Transporte">🚗 Transporte</option><option value="Ocio">🍿 Ocio</option><option value="Otros">📦 Otros</option></select>
+                                <div class="relative w-1/2"><i data-lucide="dollar-sign" class="absolute left-3 top-3.5 w-5 h-5 text-slate-500"></i><input id="transAmount" type="number" placeholder="Monto" class="w-full pl-10 p-3.5 rounded-xl font-medium outline-none focus:ring-2 focus:ring-blue-500 transition-all"></div>
+                                <select id="transCategory" class="w-1/2 p-3.5 rounded-xl font-medium outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"><option value="Ingreso">💼 Ingreso</option><option value="Hogar">🏠 Hogar</option><option value="Comida">🍔 Comida</option><option value="Servicios">💡 Servicios</option><option value="Transporte">🚗 Transporte</option><option value="Ocio">🍿 Ocio</option><option value="Otros">📦 Otros</option></select>
                             </div>
                             <div class="grid grid-cols-2 gap-3 pt-2">
-                                <button onclick="app.addRecord('income')" class="bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-bold shadow-lg">INGRESO (+)</button>
-                                <button onclick="app.addRecord('expense')" class="bg-rose-600 hover:bg-rose-500 text-white py-3 rounded-xl font-bold shadow-lg">GASTO (-)</button>
+                                <button onclick="app.addRecord('income')" class="bg-emerald-600 hover:bg-emerald-500 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-emerald-900/20 active:scale-95 transition-all">INGRESO (+)</button>
+                                <button onclick="app.addRecord('expense')" class="bg-rose-600 hover:bg-rose-500 text-white py-3.5 rounded-xl font-bold shadow-lg shadow-rose-900/20 active:scale-95 transition-all">GASTO (-)</button>
                             </div>
                         </div>
                     </div>
@@ -121,15 +172,15 @@
                 <div class="lg:col-span-8 space-y-6">
                     <div class="glass rounded-3xl overflow-hidden border border-white/5">
                         <div class="p-5 border-b border-white/5 flex justify-between items-center bg-white/5">
-                            <h3 class="font-bold flex items-center gap-2"><i data-lucide="list"></i> Movimientos</h3>
-                            <button onclick="app.exportProExcel()" class="bg-emerald-600 px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-emerald-500"><i data-lucide="download"></i> Excel</button>
+                            <h3 class="font-bold flex items-center gap-2 text-white"><i data-lucide="list"></i> Movimientos</h3>
+                            <button onclick="app.exportProExcel()" class="bg-emerald-600 px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-emerald-500 text-white shadow-lg"><i data-lucide="download" class="w-4 h-4"></i> Excel</button>
                         </div>
                         <div class="overflow-x-auto max-h-[400px] custom-scroll">
                             <table class="w-full text-left">
-                                <thead class="sticky top-0 bg-[#0f172a] z-10 text-xs uppercase opacity-70">
+                                <thead class="sticky top-0 bg-[#0f172a] z-10 text-xs uppercase opacity-80 text-slate-400 font-bold tracking-wider">
                                     <tr><th class="px-6 py-4">Fecha</th><th class="px-6 py-4">Desc</th><th class="px-6 py-4">Cat</th><th class="px-6 py-4 text-right">Monto</th><th class="px-6 py-4 text-center">x</th></tr>
                                 </thead>
-                                <tbody id="historyTable" class="divide-y divide-white/5 text-sm font-medium"></tbody>
+                                <tbody id="historyTable" class="divide-y divide-white/5 text-sm font-medium text-slate-300"></tbody>
                             </table>
                         </div>
                     </div>
@@ -139,41 +190,40 @@
 
         <div id="viewSubs" class="hidden fade-in">
             <div class="flex justify-between items-center mb-8">
-                <div><h2 class="text-2xl font-bold flex items-center gap-2"><i data-lucide="zap" class="text-yellow-500"></i> Suscripciones</h2><p class="text-sm text-slate-400">Gastos Fijos Mensuales</p></div>
-                <button onclick="app.toggleSubForm()" class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded-xl font-bold text-white shadow-lg transition-all">Nueva</button>
+                <div><h2 class="text-2xl font-bold flex items-center gap-2 text-white"><i data-lucide="zap" class="text-yellow-500"></i> Suscripciones</h2><p class="text-sm text-slate-400">Gastos Fijos Mensuales</p></div>
+                <button onclick="app.toggleSubForm()" class="bg-blue-600 hover:bg-blue-500 px-6 py-3 rounded-xl font-bold text-white shadow-lg transition-all flex items-center gap-2"><i data-lucide="plus"></i> Nueva</button>
             </div>
             
             <div id="subForm" class="hidden glass p-6 rounded-3xl mb-8 border border-blue-500/30">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                    <input id="subName" placeholder="Nombre (ej: Netflix)" class="p-3 rounded-xl bg-slate-800 border border-white/10 outline-none focus:border-blue-500 w-full">
-                    <input id="subAmount" type="number" placeholder="Monto" class="p-3 rounded-xl bg-slate-800 border border-white/10 outline-none focus:border-blue-500 w-full">
-                    <input id="subDay" type="number" placeholder="Día Vencimiento" class="p-3 rounded-xl bg-slate-800 border border-white/10 outline-none focus:border-blue-500 w-full">
-                    <button onclick="app.addSub()" class="bg-emerald-600 hover:bg-emerald-500 text-white p-3 rounded-xl font-bold w-full shadow-lg">Guardar</button>
+                    <input id="subName" placeholder="Nombre (ej: Netflix)" class="p-3.5 rounded-xl w-full font-bold">
+                    <input id="subAmount" type="number" placeholder="Monto" class="p-3.5 rounded-xl w-full font-bold">
+                    <input id="subDay" type="number" placeholder="Día Vencimiento" class="p-3.5 rounded-xl w-full font-bold">
+                    <button onclick="app.addSub()" class="bg-emerald-600 hover:bg-emerald-500 text-white p-3.5 rounded-xl font-bold w-full shadow-lg transition-all">Guardar</button>
                 </div>
             </div>
             
-            <div id="subsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                </div>
+            <div id="subsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
         </div>
 
         <div id="viewGoals" class="hidden fade-in">
              <div class="flex justify-between items-center mb-8">
-                <div><h2 class="text-2xl font-bold flex items-center gap-2"><i data-lucide="trophy" class="text-purple-500"></i> Metas de Ahorro</h2><p class="text-sm text-slate-400">Tus objetivos</p></div>
-                <button onclick="app.addGoalPrompt()" class="bg-purple-600 hover:bg-purple-500 px-6 py-2 rounded-xl font-bold text-white shadow-lg transition-all">Nueva Meta</button>
+                <div><h2 class="text-2xl font-bold flex items-center gap-2 text-white"><i data-lucide="trophy" class="text-purple-500"></i> Metas de Ahorro</h2><p class="text-sm text-slate-400">Tus objetivos</p></div>
+                <button onclick="app.addGoalPrompt()" class="bg-purple-600 hover:bg-purple-500 px-6 py-3 rounded-xl font-bold text-white shadow-lg shadow-purple-900/20 transition-all flex items-center gap-2"><i data-lucide="plus"></i> Nueva Meta</button>
             </div>
              <div id="goalsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
         </div>
 
         <div id="viewMarket" class="hidden fade-in">
              <div class="flex justify-between items-center mb-8">
-                <h2 class="text-2xl font-bold flex items-center gap-2"><i data-lucide="globe" class="text-emerald-500"></i> Mercado Financiero</h2>
-                <button onclick="app.fetchFullMarket()" class="bg-slate-700 hover:bg-slate-600 p-2 rounded-full"><i data-lucide="refresh-cw"></i></button>
+                <h2 class="text-2xl font-bold flex items-center gap-2 text-white"><i data-lucide="globe" class="text-emerald-500"></i> Mercado Financiero</h2>
+                <button onclick="app.fetchFullMarket()" class="bg-slate-800 hover:bg-slate-700 p-3 rounded-xl text-emerald-400 transition-all"><i data-lucide="refresh-cw"></i></button>
             </div>
              
-             <h3 class="text-lg font-bold text-slate-400 mb-4 uppercase tracking-wider">Criptomonedas</h3>
-             <div id="marketGridCrypto" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8"></div>
+             <h3 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-wider flex items-center gap-2"><i data-lucide="cpu"></i> Criptomonedas</h3>
+             <div id="marketGridCrypto" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10"></div>
              
-             <h3 class="text-lg font-bold text-slate-400 mb-4 uppercase tracking-wider">Monedas Fiat</h3>
+             <h3 class="text-sm font-bold text-slate-500 mb-4 uppercase tracking-wider flex items-center gap-2"><i data-lucide="banknote"></i> Monedas Fiat</h3>
              <div id="marketGridFiat" class="grid grid-cols-1 md:grid-cols-4 gap-6"></div>
         </div>
     </div>
@@ -184,14 +234,12 @@
 <script>
 const app = {
     user: localStorage.getItem("currentUser"),
-    theme: localStorage.getItem("theme") || 'dark',
     currentTab: 'wallet',
     timeFilter: 'month', 
     data: { records: [], subs: [], goals: [] },
-    rates: {}, privacy: false,
+    privacy: false,
 
     init() {
-        this.applyTheme();
         if (!this.user) { document.getElementById("loginScreen").classList.remove("hidden"); return; }
         document.getElementById("loginScreen").classList.add("hidden");
         document.getElementById("mainApp").classList.remove("hidden");
@@ -218,7 +266,29 @@ const app = {
         this.render();
     },
 
-    // --- CORE LOGIC (FIXED BALANCE) ---
+    // --- NAVIGATION LOGIC (CORREGIDA) ---
+    switchTab(tab) {
+        // 1. Ocultar todas las vistas
+        ['viewWallet', 'viewSubs', 'viewGoals', 'viewMarket'].forEach(id => {
+            document.getElementById(id).classList.add('hidden');
+        });
+        
+        // 2. Quitar clase active de todos los botones
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // 3. Mostrar vista seleccionada
+        const viewId = 'view' + tab.charAt(0).toUpperCase() + tab.slice(1);
+        document.getElementById(viewId).classList.remove('hidden');
+
+        // 4. Activar botón seleccionado
+        document.getElementById('btn' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+
+        // Extra
+        if(tab === 'market') this.fetchFullMarket();
+    },
+
     getFilteredRecords() {
         if (this.timeFilter === 'all') return this.data.records;
         const now = new Date(); const m = now.getMonth(); const y = now.getFullYear();
@@ -232,15 +302,10 @@ const app = {
         const d = document.getElementById("transDesc").value;
         const a = Number(document.getElementById("transAmount").value);
         const c = document.getElementById("transCategory").value;
-        if(!d || a<=0) return Swal.fire("Error", "Faltan datos", "error");
+        if(!d || a<=0) return Swal.fire({toast:true, position:'top', icon:'warning', title:'Faltan datos', showConfirmButton:false, timer:1500});
         
         this.data.records.unshift({ 
-            id: Date.now(), 
-            date: new Date().toLocaleDateString(), 
-            desc: d, 
-            amount: a, 
-            category: c, 
-            type: type 
+            id: Date.now(), date: new Date().toLocaleDateString(), desc: d, amount: a, category: c, type: type 
         });
         
         document.getElementById("transDesc").value=""; 
@@ -249,17 +314,17 @@ const app = {
         Swal.fire({toast:true, position:'bottom-end', icon:'success', title:'Guardado', showConfirmButton:false, timer:1500});
     },
     
-    deleteRecord(id) { 
-        this.data.records = this.data.records.filter(r=>r.id!==id); 
-        this.save(); 
+    deleteRecord(id) { this.data.records = this.data.records.filter(r=>r.id!==id); this.save(); },
+    setFilter(f){ this.timeFilter=f; 
+        document.getElementById("filterMonth").className = f==='month' ? "px-5 py-2 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-lg transition-all" : "px-5 py-2 rounded-lg text-xs font-bold text-slate-400 hover:bg-white/5 transition-all";
+        document.getElementById("filterAll").className = f==='all' ? "px-5 py-2 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-lg transition-all" : "px-5 py-2 rounded-lg text-xs font-bold text-slate-400 hover:bg-white/5 transition-all";
+        this.render(); 
     },
 
-    // --- RENDERING WALLET ---
     render() {
         const fmt = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
         const rec = this.getFilteredRecords();
         
-        // CÁLCULO DE BALANCE CORREGIDO (GASTOS RESTAN)
         const inc = rec.filter(r=>r.type==='income').reduce((a,c)=>a+c.amount,0);
         const exp = rec.filter(r=>r.type==='expense').reduce((a,c)=>a+c.amount,0);
         const bal = inc - exp;
@@ -269,40 +334,38 @@ const app = {
         document.getElementById("bNet").textContent = fmt.format(bal);
         document.getElementById("bNet").className = `text-3xl font-black blur-sensitive ${bal >= 0 ? 'text-blue-500' : 'text-rose-500'}`;
 
-        // UPDATE TABLE
         const tb = document.getElementById("historyTable");
         if(rec.length === 0) {
-            tb.innerHTML = `<tr><td colspan="5" class="text-center py-10 opacity-50">Sin movimientos este mes</td></tr>`;
+            tb.innerHTML = `<tr><td colspan="5" class="text-center py-12 opacity-30 text-lg">Sin movimientos</td></tr>`;
         } else {
             tb.innerHTML = rec.map(r => `
-                <tr class="hover:bg-white/5 transition-all border-b border-white/5">
+                <tr class="hover:bg-white/5 transition-all border-b border-white/5 last:border-0">
                     <td class="px-6 py-4 opacity-70">${r.date}</td>
-                    <td class="px-6 py-4 font-bold">${r.desc}</td>
-                    <td class="px-6 py-4"><span class="bg-slate-800 px-2 py-1 rounded text-xs">${r.category}</span></td>
-                    <td class="px-6 py-4 text-right font-bold ${r.type==='income'?'text-emerald-500':'text-rose-500'} blur-sensitive">
+                    <td class="px-6 py-4 font-bold text-white">${r.desc}</td>
+                    <td class="px-6 py-4"><span class="bg-slate-800 border border-white/5 px-3 py-1 rounded-lg text-xs font-bold text-slate-400">${r.category}</span></td>
+                    <td class="px-6 py-4 text-right font-black ${r.type==='income'?'text-emerald-500':'text-rose-500'} blur-sensitive">
                         ${r.type==='income'?'+':'-'}${fmt.format(r.amount)}
                     </td>
-                    <td class="text-center"><button onclick="app.deleteRecord(${r.id})" class="text-slate-500 hover:text-rose-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
+                    <td class="text-center"><button onclick="app.deleteRecord(${r.id})" class="text-slate-500 hover:text-rose-500 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
                 </tr>`).join('');
         }
         lucide.createIcons();
     },
 
-    // --- MODULES: SUBS, GOALS, MARKET (RESTORED VISUALS) ---
     renderSubs() {
         const grid = document.getElementById("subsGrid");
         const fmt = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
         if(!this.data.subs.length){ grid.innerHTML=`<div class="col-span-full text-center py-10 opacity-50">Sin suscripciones</div>`; return; }
         
         grid.innerHTML = this.data.subs.map(s => `
-            <div class="glass p-6 rounded-3xl relative group">
+            <div class="glass p-6 rounded-3xl relative group hover:-translate-y-1 transition-transform">
                 <button onclick="app.deleteSub(${s.id})" class="absolute top-4 right-4 text-slate-500 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity"><i data-lucide="trash" class="w-4 h-4"></i></button>
                 <div class="flex items-center gap-4 mb-4">
-                    <div class="p-3 bg-blue-600/20 rounded-xl text-blue-500"><i data-lucide="zap" class="w-6 h-6"></i></div>
-                    <div><h3 class="font-bold text-lg">${s.name}</h3><p class="text-xs text-slate-400">Vence día ${s.day}</p></div>
+                    <div class="p-3 bg-blue-600/20 rounded-2xl text-blue-500 shadow-lg shadow-blue-900/20"><i data-lucide="zap" class="w-6 h-6"></i></div>
+                    <div><h3 class="font-bold text-lg text-white">${s.name}</h3><p class="text-xs text-slate-400 font-bold">Vence día ${s.day}</p></div>
                 </div>
-                <p class="text-2xl font-black blur-sensitive mb-4">${fmt.format(s.amount)}</p>
-                <button onclick="app.paySub(${s.id})" class="w-full bg-slate-700 hover:bg-slate-600 py-2 rounded-xl text-sm font-bold transition-all">Registrar Pago</button>
+                <p class="text-3xl font-black blur-sensitive mb-6 text-white">${fmt.format(s.amount)}</p>
+                <button onclick="app.paySub(${s.id})" class="w-full bg-slate-800 hover:bg-slate-700 py-3 rounded-xl text-sm font-bold transition-all text-slate-200 border border-white/5">Registrar Pago</button>
             </div>
         `).join('');
         lucide.createIcons();
@@ -310,10 +373,9 @@ const app = {
     
     paySub(id) {
         const s = this.data.subs.find(x => x.id === id);
-        this.addRecord('expense'); // Trick to use existing logic, but easier:
         this.data.records.unshift({ id: Date.now(), date: new Date().toLocaleDateString(), desc: `Pago: ${s.name}`, amount: s.amount, category: 'Servicios', type: 'expense' });
         this.save();
-        Swal.fire("Pago registrado", `${s.name} pagado`, "success");
+        Swal.fire({toast:true, position:'top-end', icon:'success', title:`${s.name} pagado`, showConfirmButton:false, timer:1500});
     },
     toggleSubForm(){ document.getElementById("subForm").classList.toggle("hidden"); },
     addSub(){ 
@@ -332,20 +394,20 @@ const app = {
         grid.innerHTML = this.data.goals.map(g => {
             const pct = Math.min((g.current/g.target)*100, 100);
             return `
-            <div class="glass p-6 rounded-3xl relative group">
+            <div class="glass p-6 rounded-3xl relative group hover:-translate-y-1 transition-transform">
                 <button onclick="app.deleteGoal(${g.id})" class="absolute top-4 right-4 text-slate-500 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity"><i data-lucide="trash" class="w-4 h-4"></i></button>
                 <div class="flex justify-between items-center mb-2">
-                    <h3 class="font-bold text-lg">${g.name}</h3>
-                    <span class="text-sm font-bold text-purple-400">${Math.round(pct)}%</span>
+                    <h3 class="font-bold text-lg text-white">${g.name}</h3>
+                    <span class="text-sm font-black text-purple-400 bg-purple-400/10 px-2 py-1 rounded-lg">${Math.round(pct)}%</span>
                 </div>
-                <div class="w-full bg-slate-700 h-3 rounded-full overflow-hidden mb-4">
-                    <div class="bg-purple-500 h-full transition-all duration-1000" style="width: ${pct}%"></div>
+                <div class="w-full bg-slate-800 h-4 rounded-full overflow-hidden mb-4 border border-white/5">
+                    <div class="bg-gradient-to-r from-purple-600 to-pink-500 h-full transition-all duration-1000 shadow-neon" style="width: ${pct}%"></div>
                 </div>
                 <div class="flex justify-between items-end">
-                    <div><p class="text-xs text-slate-400">Ahorrado</p><p class="font-bold blur-sensitive">${fmt.format(g.current)}</p></div>
-                    <div><p class="text-xs text-slate-400 text-right">Meta</p><p class="font-bold blur-sensitive">${fmt.format(g.target)}</p></div>
+                    <div><p class="text-xs text-slate-400 font-bold uppercase">Ahorrado</p><p class="font-bold blur-sensitive text-white text-lg">${fmt.format(g.current)}</p></div>
+                    <div class="text-right"><p class="text-xs text-slate-400 font-bold uppercase">Meta</p><p class="font-bold blur-sensitive text-white text-lg">${fmt.format(g.target)}</p></div>
                 </div>
-                <button onclick="app.depositGoal(${g.id})" class="mt-4 w-full bg-purple-600/20 text-purple-400 hover:bg-purple-600 hover:text-white py-2 rounded-xl font-bold transition-all">+ Depositar</button>
+                <button onclick="app.depositGoal(${g.id})" class="mt-4 w-full bg-purple-600/20 text-purple-400 hover:bg-purple-600 hover:text-white py-3 rounded-xl font-bold transition-all border border-purple-500/30">+ Depositar</button>
             </div>`;
         }).join('');
         lucide.createIcons();
@@ -354,31 +416,28 @@ const app = {
     depositGoal(id) { const g=this.data.goals.find(x=>x.id===id); Swal.fire({title:'Depositar',input:'number'}).then(r=>{ if(r.value){ g.current+=Number(r.value); this.save(); this.renderGoals(); if(g.current>=g.target) confetti(); } }) },
     deleteGoal(id) { this.data.goals = this.data.goals.filter(x=>x.id!==id); this.save(); this.renderGoals(); },
 
-    // --- MARKET (RESTAURADO) ---
     async fetchFullMarket() {
         const gc = document.getElementById("marketGridCrypto");
         const gf = document.getElementById("marketGridFiat");
         
-        // Dolar Blue
         try { 
             const r=await fetch("https://dolarapi.com/v1/dolares/blue"); const d=await r.json(); 
             document.getElementById("dolarVal").innerText=`$${d.venta}`;
-            gf.innerHTML = `<div class="glass p-5 rounded-2xl border-l-4 border-emerald-500"><h4 class="font-bold text-slate-300">Dólar Blue</h4><div class="flex justify-between mt-2"><div class="text-center"><p class="text-xs opacity-50">COMPRA</p><p class="font-bold text-xl">$${d.compra}</p></div><div class="text-center"><p class="text-xs opacity-50">VENTA</p><p class="font-bold text-xl text-emerald-400">$${d.venta}</p></div></div></div>`;
+            gf.innerHTML = `<div class="glass p-5 rounded-3xl border-l-4 border-emerald-500"><h4 class="font-bold text-slate-300">Dólar Blue</h4><div class="flex justify-between mt-3"><div class="text-center"><p class="text-xs opacity-50 font-bold">COMPRA</p><p class="font-black text-2xl text-white">$${d.compra}</p></div><div class="text-center"><p class="text-xs opacity-50 font-bold">VENTA</p><p class="font-black text-2xl text-emerald-400">$${d.venta}</p></div></div></div>`;
         } catch(e){}
 
-        // Crypto
         try {
             const r=await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=4&sparkline=false");
             const d=await r.json();
             gc.innerHTML = d.map(c => `
-                <div class="glass p-5 rounded-2xl flex items-center gap-4 hover:bg-white/5 transition-all">
-                    <img src="${c.image}" class="w-10 h-10 rounded-full">
+                <div class="glass p-5 rounded-3xl flex items-center gap-4 hover:bg-white/5 transition-all cursor-default border border-white/5">
+                    <img src="${c.image}" class="w-12 h-12 rounded-full shadow-lg">
                     <div>
-                        <h4 class="font-bold text-white leading-none">${c.symbol.toUpperCase()}</h4>
-                        <p class="text-xs text-slate-400">${c.name}</p>
+                        <h4 class="font-bold text-white leading-none text-lg">${c.symbol.toUpperCase()}</h4>
+                        <p class="text-xs text-slate-400 font-bold">${c.name}</p>
                     </div>
                     <div class="ml-auto text-right">
-                        <p class="font-mono font-bold text-lg">$${c.current_price.toLocaleString()}</p>
+                        <p class="font-mono font-black text-lg text-white">$${c.current_price.toLocaleString()}</p>
                         <p class="text-xs font-bold ${c.price_change_percentage_24h>=0?'text-emerald-400':'text-rose-400'}">${c.price_change_percentage_24h.toFixed(2)}%</p>
                     </div>
                 </div>
@@ -389,35 +448,34 @@ const app = {
     // --- SETTINGS (DATA CENTER STYLE RESTORED) ---
     openSettings() {
         Swal.fire({
-            title: '<div class="flex flex-col items-center gap-2 mb-2"><div class="p-3 rounded-full bg-blue-500/10 text-blue-400"><i data-lucide="server" class="w-8 h-8"></i></div><span class="text-2xl font-black text-white tracking-tight">DATA CENTER</span></div>',
+            title: '<div class="flex flex-col items-center gap-3 mb-2"><div class="p-4 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20"><i data-lucide="server" class="w-8 h-8"></i></div><span class="text-2xl font-black text-white tracking-tight">DATA CENTER</span></div>',
             html: `
-                <div class="grid grid-cols-1 gap-4 mt-2">
+                <div class="grid grid-cols-1 gap-4 mt-4">
                     <button onclick="app.downloadBackup()" class="group relative w-full text-left outline-none">
-                        <div class="relative bg-slate-900 border border-blue-500/30 group-hover:border-blue-400 p-5 rounded-2xl flex items-center gap-5 transition-all shadow-xl">
+                        <div class="absolute inset-0 bg-blue-600/20 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="relative bg-slate-900 border border-blue-500/30 group-hover:border-blue-400 p-5 rounded-2xl flex items-center gap-5 transition-all shadow-xl hover:-translate-y-1">
                             <div class="h-12 w-12 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition-all"><i data-lucide="download-cloud" class="w-6 h-6"></i></div>
                             <div><h3 class="font-bold text-white text-lg">Exportar Backup</h3><p class="text-xs text-slate-400">Descargar JSON seguro</p></div>
                         </div>
                     </button>
                     <button onclick="document.getElementById('importFile').click()" class="group relative w-full text-left outline-none">
-                        <div class="relative bg-slate-900 border border-purple-500/30 group-hover:border-purple-400 p-5 rounded-2xl flex items-center gap-5 transition-all shadow-xl">
+                        <div class="absolute inset-0 bg-purple-600/20 rounded-2xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="relative bg-slate-900 border border-purple-500/30 group-hover:border-purple-400 p-5 rounded-2xl flex items-center gap-5 transition-all shadow-xl hover:-translate-y-1">
                             <div class="h-12 w-12 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400 group-hover:bg-purple-500 group-hover:text-white transition-all"><i data-lucide="upload-cloud" class="w-6 h-6"></i></div>
                             <div><h3 class="font-bold text-white text-lg">Restaurar Datos</h3><p class="text-xs text-slate-400">Importar archivo previo</p></div>
                         </div>
                     </button>
                 </div>`,
-            showConfirmButton: false, showCloseButton: true, background: '#0f172a', color: '#fff', width: '450px', padding: '2em', didOpen: () => lucide.createIcons()
+            showConfirmButton: false, showCloseButton: true, background: '#0f172a', color: '#fff', width: '450px', padding: '2em', 
+            customClass: { popup: 'border border-slate-700 rounded-3xl shadow-2xl shadow-black/50' },
+            didOpen: () => lucide.createIcons()
         });
     },
 
-    // --- UTILS ---
-    switchTab(t){ ['viewWallet','viewSubs','viewGoals','viewMarket'].forEach(x=>document.getElementById(x).classList.add("hidden")); document.getElementById('view'+t.charAt(0).toUpperCase()+t.slice(1)).classList.remove("hidden"); if(t==='market')this.fetchFullMarket(); },
-    setFilter(f){ this.timeFilter=f; this.render(); },
     togglePrivacy(){ this.privacy=!this.privacy; document.body.classList.toggle("privacy-active"); document.getElementById("btnPrivacy").classList.toggle("text-emerald-400"); },
-    toggleTheme(){ this.theme = this.theme==='dark'?'light':'dark'; this.applyTheme(); },
-    applyTheme(){ document.documentElement.className = this.theme; document.getElementById("themeIcon").setAttribute('data-lucide', this.theme==='dark'?'sun':'moon'); localStorage.setItem("theme", this.theme); },
     downloadBackup() { const s = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.data)); const a = document.createElement('a'); a.href = s; a.download = `Backup_${this.user}.json`; a.click(); },
     restoreData(i) { const f = i.files[0]; const r = new FileReader(); r.onload = (e) => { this.data = JSON.parse(e.target.result); this.save(); location.reload(); }; r.readAsText(f); },
-    exportProExcel() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([["Fecha","Desc","Monto"],...this.data.records.map(r=>[r.date,r.desc,r.amount])]), "Data"); XLSX.writeFile(wb, "ForjaxData.xlsx"); },
+    exportProExcel() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([["Fecha","Desc","Cat","Monto"],...this.data.records.map(r=>[r.date,r.desc,r.category,r.amount])]), "Data"); XLSX.writeFile(wb, "ForjaxData.xlsx"); },
     initSession(){ const v=document.getElementById("userInput").value; if(v.length>2){localStorage.setItem("currentUser",v);location.reload();} },
     logout(){ localStorage.removeItem("currentUser");location.reload();}
 };
