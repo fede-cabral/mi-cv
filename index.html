@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FORJAX Terminal - V28 GOD MODE</title>
+    <title>FORJAX Terminal - V30 FINAL GOLD</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -102,8 +102,8 @@
             <div class="mb-8 inline-flex p-5 bg-cyan-500/10 border border-cyan-500/50 rounded-2xl shadow-neon-blue">
                 <i data-lucide="cpu" class="w-12 h-12 text-cyan-400"></i>
             </div>
-            <h2 class="text-5xl font-black mb-2 tracking-tighter text-white">FORJAX <span class="text-cyan-400">V28</span></h2>
-            <p class="text-slate-400 mb-8 font-mono text-xs uppercase tracking-widest">God Mode</p>
+            <h2 class="text-5xl font-black mb-2 tracking-tighter text-white">FORJAX <span class="text-cyan-400">V30</span></h2>
+            <p class="text-slate-400 mb-8 font-mono text-xs uppercase tracking-widest">Final Gold Edition</p>
             <input id="userInput" type="text" placeholder="ACCESS ID" class="w-full p-4 rounded-xl mb-4 text-center text-lg font-bold font-mono outline-none focus:ring-2 focus:ring-cyan-500 transition-all dark:bg-[#111827] dark:text-white bg-white text-black border-slate-700">
             <button onclick="app.initSession()" class="w-full bg-cyan-400 hover:bg-cyan-300 text-black font-black py-4 rounded-xl transition-all shadow-neon-blue">INICIAR SISTEMA</button>
         </div>
@@ -281,7 +281,7 @@ const app = {
     currentTab: 'wallet',
     timeFilter: 'month', 
     data: { records: [], subs: [], goals: [] },
-    // V28 UPGRADE: Tasas de respaldo OFFLINE para que nunca falle la calculadora
+    // V30: Tasas de respaldo OFFLINE + Lógica Anti-Crash
     rates: {'USD':1, 'ARS':1200, 'EUR':0.92, 'BRL':5.7, 'BTC':95000, 'ETH':2800}, 
     charts: {}, privacy: false,
     defaultCategories: ["Ingreso", "Hogar", "Comida", "Servicios", "Transporte", "Salud", "Educación", "Ropa", "Deudas", "Ahorro", "Ocio", "Viajes", "Otros"],
@@ -375,24 +375,22 @@ const app = {
     },
 
     downloadBackup() { 
+        // V30: Sanitize filename for max compatibility
         const dateStr = new Date().toISOString().split('T')[0];
+        const safeUser = this.user.replace(/[^a-z0-9]/gi, '_');
         const s = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.data)); 
         const a = document.createElement('a'); 
         a.href = s; 
-        a.download = `Forjax_Backup_${this.user}_${dateStr}.json`; 
+        a.download = `Forjax_${safeUser}_${dateStr}.json`; 
         a.click(); 
     },
     restoreData(i) { const f = i.files[0]; const r = new FileReader(); r.onload = (e) => { this.data = JSON.parse(e.target.result); this.save(); location.reload(); }; r.readAsText(f); },
 
-    // V28 UPGRADE: Lógica para llenar el select con categorías usadas anteriormente
+    // V30: Dropdown inteligente que aprende categorías
     updateCategoryDropdown() {
         const select = document.getElementById("transCategory");
         if(!select) return;
-        
-        // 1. Obtener todas las categorías únicas del historial que NO estén en la lista por defecto
         const usedCats = [...new Set(this.data.records.map(r => r.category))].filter(c => !this.defaultCategories.includes(c));
-        
-        // 2. Construir HTML
         let html = this.defaultCategories.map(c => {
             let icon = '📦';
             if(c==='Ingreso') icon='💼'; if(c==='Hogar') icon='🏠'; if(c==='Comida') icon='🍔'; 
@@ -402,14 +400,10 @@ const app = {
             return `<option value="${c}">${icon} ${c}</option>`;
         }).join('');
 
-        // 3. Agregar categorías personalizadas aprendidas
         if(usedCats.length > 0) {
             html += `<optgroup label="Mis Categorías">` + usedCats.map(c => `<option value="${c}">✨ ${c}</option>`).join('') + `</optgroup>`;
         }
-
-        // 4. Agregar opción de crear nueva
         html += `<option value="custom" class="bg-cyan-900 text-cyan-200">✏️ Personalizado...</option>`;
-        
         select.innerHTML = html;
     },
 
@@ -423,20 +417,21 @@ const app = {
         const d = document.getElementById("transDesc").value;
         const a = Math.abs(Number(document.getElementById("transAmount").value));
         let c = document.getElementById("transCategory").value;
+        
+        // V30: Auto-Capitalización de categorías nuevas
         if (c === 'custom') {
-            c = document.getElementById("customCategoryInput").value;
-            if(!c) return Swal.fire({toast:true, position:'top', icon:'warning', title:'Escribe la categoría personalizada', showConfirmButton:false, timer:1500, background: this.theme==='dark'?'#1e293b':'#fff', color: this.theme==='dark'?'#fff':'#000'});
+            const raw = document.getElementById("customCategoryInput").value;
+            if(!raw) return Swal.fire({toast:true, position:'top', icon:'warning', title:'Escribe la categoría personalizada', showConfirmButton:false, timer:1500, background: this.theme==='dark'?'#1e293b':'#fff', color: this.theme==='dark'?'#fff':'#000'});
+            c = raw.charAt(0).toUpperCase() + raw.slice(1);
         }
+
         if(!d || a<=0) return Swal.fire({toast:true, position:'top', icon:'warning', title:'Datos incompletos', showConfirmButton:false, timer:1500, background: this.theme==='dark'?'#1e293b':'#fff', color: this.theme==='dark'?'#fff':'#000'});
         
         this.data.records.unshift({ id: Date.now(), date: new Date().toLocaleDateString('es-AR'), desc: d, amount: a, category: c, type: type });
         
         document.getElementById("transDesc").value=""; document.getElementById("transAmount").value="";
-        
         this.save();
-        this.updateCategoryDropdown(); // Actualizar lista inmediatamente
-        
-        // Reset select
+        this.updateCategoryDropdown();
         document.getElementById("transCategory").value="Ingreso"; document.getElementById("customCategoryInput").classList.add("hidden"); document.getElementById("customCategoryInput").value="";
         
         Swal.fire({toast:true, position:'bottom-end', icon:'success', title:'Registro Exitoso', showConfirmButton:false, timer:1500, background: this.theme==='dark'?'#1e293b':'#fff', color: this.theme==='dark'?'#fff':'#000'});
@@ -569,7 +564,7 @@ const app = {
     
     swapCalc() { const f=document.getElementById("calcFrom"), t=document.getElementById("calcTo"); [f.value, t.value] = [t.value, f.value]; this.calcCurrency(); },
     togglePrivacy(){ this.privacy=!this.privacy; document.body.classList.toggle("privacy-active"); document.getElementById("btnPrivacy").classList.toggle("text-cyan-400"); },
-    exportProExcel() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([["Fecha","Desc","Cat","Monto"],...this.data.records.map(r=>[r.date,r.desc,r.category,r.amount])]), "Data"); XLSX.writeFile(wb, "ForjaxV28.xlsx"); },
+    exportProExcel() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([["Fecha","Desc","Cat","Monto"],...this.data.records.map(r=>[r.date,r.desc,r.category,r.amount])]), "Data"); XLSX.writeFile(wb, "ForjaxV30.xlsx"); },
     initSession(){ const v=document.getElementById("userInput").value; if(v.length>2){localStorage.setItem("currentUser",v);location.reload();} },
     logout(){ localStorage.removeItem("currentUser");location.reload();}
 };
