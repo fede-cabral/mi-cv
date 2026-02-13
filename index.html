@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FORJAX Terminal - V26.2 HIGH CONTRAST</title>
+    <title>FORJAX Terminal - V26.3 CUSTOM CATS</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -49,7 +49,6 @@
         .light input, .light select { background: #fff !important; color: #020617 !important; border: 1px solid #94a3b8 !important; }
         .light .text-white { color: #020617 !important; } 
         .light .text-slate-400 { color: #475569 !important; }
-        .light .text-slate-500 { color: #334155 !important; }
 
         /* Common */
         .glass-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -74,17 +73,12 @@
         .dark .nav-btn.active { background: #00f3ff; color: #050b14; }
         .light .nav-btn.active { background: #0284c7; color: white; box-shadow: 0 0 20px rgba(2, 132, 199, 0.3); }
 
-        /* SweetAlert Custom Overrides for High Contrast */
+        /* SweetAlert */
         div:where(.swal2-container) div:where(.swal2-popup) {
-            background: #0f172a !important;
-            border: 2px solid #1e293b !important;
-            color: #fff !important;
-            border-radius: 1.5rem !important;
+            background: #0f172a !important; border: 2px solid #1e293b !important; color: #fff !important; border-radius: 1.5rem !important;
         }
         .light div:where(.swal2-container) div:where(.swal2-popup) {
-            background: #fff !important;
-            border: 1px solid #cbd5e1 !important;
-            color: #020617 !important;
+            background: #fff !important; border: 1px solid #cbd5e1 !important; color: #020617 !important;
         }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -108,8 +102,8 @@
             <div class="mb-8 inline-flex p-5 bg-cyan-500/10 border border-cyan-500/50 rounded-2xl shadow-neon-blue">
                 <i data-lucide="cpu" class="w-12 h-12 text-cyan-400"></i>
             </div>
-            <h2 class="text-5xl font-black mb-2 tracking-tighter text-white">FORJAX <span class="text-cyan-400">V26.2</span></h2>
-            <p class="text-slate-400 mb-8 font-mono text-xs uppercase tracking-widest">High Contrast Edition</p>
+            <h2 class="text-5xl font-black mb-2 tracking-tighter text-white">FORJAX <span class="text-cyan-400">V26.3</span></h2>
+            <p class="text-slate-400 mb-8 font-mono text-xs uppercase tracking-widest">Custom Categories</p>
             <input id="userInput" type="text" placeholder="ACCESS ID" class="w-full p-4 rounded-xl mb-4 text-center text-lg font-bold font-mono outline-none focus:ring-2 focus:ring-cyan-500 transition-all dark:bg-[#111827] dark:text-white bg-white text-black border-slate-700">
             <button onclick="app.initSession()" class="w-full bg-cyan-400 hover:bg-cyan-300 text-black font-black py-4 rounded-xl transition-all shadow-neon-blue">INICIAR SISTEMA</button>
         </div>
@@ -174,7 +168,26 @@
                             <div><label class="text-[10px] font-bold text-slate-500 ml-1">DETALLE</label><input id="transDesc" type="text" class="w-full p-4 rounded-xl font-bold outline-none transition-all"></div>
                             <div class="flex gap-3">
                                 <div class="w-1/2"><label class="text-[10px] font-bold text-slate-500 ml-1">MONTO</label><input id="transAmount" type="number" class="w-full p-4 rounded-xl font-bold font-mono outline-none transition-all"></div>
-                                <div class="w-1/2"><label class="text-[10px] font-bold text-slate-500 ml-1">CATEGORÍA</label><select id="transCategory" class="w-full p-4 rounded-xl font-bold outline-none cursor-pointer"><option value="Ingreso">💼 Ingreso</option><option value="Hogar">🏠 Hogar</option><option value="Comida">🍔 Comida</option><option value="Servicios">💡 Servicios</option><option value="Transporte">🚗 Transporte</option><option value="Ocio">🍿 Ocio</option><option value="Otros">📦 Otros</option></select></div>
+                                <div class="w-1/2 flex flex-col">
+                                    <label class="text-[10px] font-bold text-slate-500 ml-1">CATEGORÍA</label>
+                                    <select id="transCategory" onchange="app.checkCustomCategory()" class="w-full p-4 rounded-xl font-bold outline-none cursor-pointer">
+                                        <option value="Ingreso">💼 Ingreso</option>
+                                        <option value="Hogar">🏠 Hogar</option>
+                                        <option value="Comida">🍔 Comida</option>
+                                        <option value="Servicios">💡 Servicios</option>
+                                        <option value="Transporte">🚗 Transporte</option>
+                                        <option value="Salud">🏥 Salud</option>
+                                        <option value="Educación">📚 Educación</option>
+                                        <option value="Ropa">👕 Ropa</option>
+                                        <option value="Deudas">💸 Deudas</option>
+                                        <option value="Ahorro">🐷 Ahorro</option>
+                                        <option value="Ocio">🍿 Ocio</option>
+                                        <option value="Viajes">✈️ Viajes</option>
+                                        <option value="Otros">📦 Otros</option>
+                                        <option value="custom" class="bg-cyan-900 text-cyan-200">✏️ Personalizado...</option>
+                                    </select>
+                                    <input id="customCategoryInput" type="text" placeholder="Escribe la categoría..." class="w-full p-4 mt-2 rounded-xl font-bold outline-none transition-all border border-cyan-500/50 hidden animate-pulse">
+                                </div>
                             </div>
                             <div class="grid grid-cols-2 gap-3 pt-4">
                                 <button onclick="app.addRecord('income')" class="bg-emerald-500/10 hover:bg-emerald-500 hover:text-black border border-emerald-500/50 text-emerald-400 py-4 rounded-xl font-black tracking-widest transition-all">INGRESO</button>
@@ -321,7 +334,6 @@ const app = {
         lucide.createIcons();
     },
 
-    // --- SETTINGS FIXED ---
     openSettings() {
         Swal.fire({
             title: '<div class="flex flex-col items-center gap-3 mb-2"><div class="p-4 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20"><i data-lucide="server" class="w-8 h-8"></i></div><span class="text-2xl font-black tracking-tight">DATA CENTER</span></div>',
@@ -351,17 +363,44 @@ const app = {
     downloadBackup() { const s = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.data)); const a = document.createElement('a'); a.href = s; a.download = `Backup_${this.user}.json`; a.click(); },
     restoreData(i) { const f = i.files[0]; const r = new FileReader(); r.onload = (e) => { this.data = JSON.parse(e.target.result); this.save(); location.reload(); }; r.readAsText(f); },
 
+    // --- CUSTOM CATEGORY LOGIC ---
+    checkCustomCategory() {
+        const val = document.getElementById('transCategory').value;
+        const input = document.getElementById('customCategoryInput');
+        if(val === 'custom') {
+            input.classList.remove('hidden');
+            input.focus();
+        } else {
+            input.classList.add('hidden');
+        }
+    },
+
     // --- WALLET CORE ---
     addRecord(type) {
         const d = document.getElementById("transDesc").value;
         const a = Number(document.getElementById("transAmount").value);
-        const c = document.getElementById("transCategory").value;
+        let c = document.getElementById("transCategory").value;
+        
+        // Handle custom category
+        if (c === 'custom') {
+            c = document.getElementById("customCategoryInput").value;
+            if(!c) return Swal.fire({toast:true, position:'top', icon:'warning', title:'Escribe la categoría personalizada', showConfirmButton:false, timer:1500, background: this.theme==='dark'?'#1e293b':'#fff', color: this.theme==='dark'?'#fff':'#000'});
+        }
+
         if(!d || a<=0) return Swal.fire({toast:true, position:'top', icon:'warning', title:'Datos incompletos', showConfirmButton:false, timer:1500, background: this.theme==='dark'?'#1e293b':'#fff', color: this.theme==='dark'?'#fff':'#000'});
+        
         this.data.records.unshift({ id: Date.now(), date: new Date().toLocaleDateString(), desc: d, amount: a, category: c, type: type });
-        document.getElementById("transDesc").value=""; document.getElementById("transAmount").value="";
+        document.getElementById("transDesc").value=""; 
+        document.getElementById("transAmount").value="";
+        // Reset category to default after save
+        document.getElementById("transCategory").value="Ingreso";
+        document.getElementById("customCategoryInput").classList.add("hidden");
+        document.getElementById("customCategoryInput").value="";
+        
         this.save();
         Swal.fire({toast:true, position:'bottom-end', icon:'success', title:'Registro Exitoso', showConfirmButton:false, timer:1500, background: this.theme==='dark'?'#1e293b':'#fff', color: this.theme==='dark'?'#fff':'#000'});
     },
+    
     deleteRecord(id) { this.data.records = this.data.records.filter(r=>r.id!==id); this.save(); },
     setFilter(f){ this.timeFilter=f; this.render(); },
     getFilteredRecords() {
@@ -370,7 +409,6 @@ const app = {
         return this.data.records.filter(r => { const [d, rm, ry] = r.date.split('/').map(Number); return (rm - 1) === m && ry === y; });
     },
 
-    // --- RENDER HIGH CONTRAST ---
     render() {
         const fmt = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
         const rec = this.getFilteredRecords();
@@ -414,37 +452,19 @@ const app = {
         const fmt = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
         const textColor = this.theme === 'dark' ? '#94a3b8' : '#64748b';
 
-        // Line Chart
         const dailyData = {}; records.forEach(r => { if(!dailyData[r.date]) dailyData[r.date] = 0; if(r.type==='income') dailyData[r.date]+=r.amount; else dailyData[r.date]-=r.amount; });
         const dates = Object.keys(dailyData).sort((a,b) => new Date(a.split('/').reverse().join('-')) - new Date(b.split('/').reverse().join('-')));
         const ctxL = document.getElementById("lineChart").getContext("2d");
         const grad = ctxL.createLinearGradient(0,0,0,200); grad.addColorStop(0, this.theme==='dark'?'rgba(0, 243, 255, 0.2)':'rgba(14, 165, 233, 0.2)'); grad.addColorStop(1,'transparent');
         
-        this.charts.line = new Chart(ctxL, { 
-            type: 'line', 
-            data: { labels: dates, datasets: [{ label: 'Flujo Neto', data: dates.map(d=>dailyData[d]), borderColor: this.theme==='dark'?'#00f3ff':'#0ea5e9', backgroundColor: grad, fill:true, tension:0.4, borderWidth:2, pointRadius:4, pointBackgroundColor: this.theme==='dark'?'#050b14':'#fff' }] }, 
-            options: { 
-                responsive:true, maintainAspectRatio:false, 
-                plugins:{legend:{display:false}, tooltip: { backgroundColor: this.theme==='dark'?'#050b14':'#fff', titleColor: textColor, bodyColor: this.theme==='dark'?'#00f3ff':'#0ea5e9', borderColor: 'rgba(100,100,100,0.2)', borderWidth: 1 } }, 
-                scales:{ x:{grid:{display:false}, ticks:{color:textColor, font:{size:10}}}, y:{grid:{color:'rgba(100,100,100,0.1)'}, ticks:{color:textColor, font:{size:10}, callback: (v) => '$'+v }} } 
-            } 
-        });
+        this.charts.line = new Chart(ctxL, { type: 'line', data: { labels: dates, datasets: [{ label: 'Flujo Neto', data: dates.map(d=>dailyData[d]), borderColor: this.theme==='dark'?'#00f3ff':'#0ea5e9', backgroundColor: grad, fill:true, tension:0.4, borderWidth:2, pointRadius:4, pointBackgroundColor: this.theme==='dark'?'#050b14':'#fff' }] }, options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}, tooltip: { backgroundColor: this.theme==='dark'?'#050b14':'#fff', titleColor: textColor, bodyColor: this.theme==='dark'?'#00f3ff':'#0ea5e9', borderColor: 'rgba(100,100,100,0.2)', borderWidth: 1 } }, scales:{ x:{grid:{display:false}, ticks:{color:textColor, font:{size:10}}}, y:{grid:{color:'rgba(100,100,100,0.1)'}, ticks:{color:textColor, font:{size:10}, callback: (v) => '$'+v }} } } });
 
-        // Doughnut Chart
         const cat = {}; records.filter(r=>r.type==='expense').forEach(r=>{ cat[r.category]=(cat[r.category]||0)+r.amount });
         document.getElementById("chartTotal").textContent = fmt.format(exp);
         const ctxD = document.getElementById("doughnutChart").getContext("2d");
-        this.charts.doughnut = new Chart(ctxD, { 
-            type: 'doughnut', 
-            data: { labels: Object.keys(cat), datasets: [{ data: Object.values(cat), backgroundColor: ['#00f3ff','#8b5cf6','#f43f5e','#10b981','#f59e0b', '#6366f1'], borderWidth:0, hoverOffset:10 }] }, 
-            options: { 
-                responsive:true, maintainAspectRatio:false, cutout:'75%', 
-                plugins:{legend:{position:'right', labels:{color:textColor, font:{size:11}, boxWidth:10, padding:15}}, tooltip: { backgroundColor: this.theme==='dark'?'#050b14':'#fff', titleColor: this.theme==='dark'?'#fff':'#000', bodyColor: textColor, borderColor: 'rgba(100,100,100,0.1)', borderWidth: 1 } } 
-            } 
-        });
+        this.charts.doughnut = new Chart(ctxD, { type: 'doughnut', data: { labels: Object.keys(cat), datasets: [{ data: Object.values(cat), backgroundColor: ['#00f3ff','#8b5cf6','#f43f5e','#10b981','#f59e0b', '#6366f1'], borderWidth:0, hoverOffset:10 }] }, options: { responsive:true, maintainAspectRatio:false, cutout:'75%', plugins:{legend:{position:'right', labels:{color:textColor, font:{size:11}, boxWidth:10, padding:15}}, tooltip: { backgroundColor: this.theme==='dark'?'#050b14':'#fff', titleColor: this.theme==='dark'?'#fff':'#000', bodyColor: textColor, borderColor: 'rgba(100,100,100,0.1)', borderWidth: 1 } } } });
     },
 
-    // --- MODULES ---
     toggleSubForm(){ document.getElementById("subForm").classList.toggle("hidden"); },
     addSub(){ const n=document.getElementById("subName").value, a=Number(document.getElementById("subAmount").value), d=document.getElementById("subDay").value; if(!n || a<=0) return; this.data.subs.push({id:Date.now(), name:n, amount:a, day:d}); this.save(); this.renderSubs(); this.toggleSubForm(); },
     deleteSub(id){ this.data.subs = this.data.subs.filter(x=>x.id!==id); this.save(); this.renderSubs(); },
