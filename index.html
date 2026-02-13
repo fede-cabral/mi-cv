@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FORJAX Terminal - V25 HYPERION</title>
+    <title>FORJAX Terminal - V26 HYPERION PRO</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -26,13 +26,6 @@
                     },
                     animation: {
                         'spin-slow': 'spin 3s linear infinite',
-                        'pulse-glow': 'pulseGlow 2s infinite'
-                    },
-                    keyframes: {
-                        pulseGlow: {
-                            '0%, 100%': { boxShadow: '0 0 5px rgba(0, 243, 255, 0.2)' },
-                            '50%': { boxShadow: '0 0 20px rgba(0, 243, 255, 0.6)' },
-                        }
                     }
                 }
             }
@@ -100,8 +93,8 @@
             <div class="mb-8 inline-flex p-5 bg-cyan-500/10 border border-cyan-500/50 rounded-2xl shadow-neon-blue">
                 <i data-lucide="cpu" class="w-12 h-12 text-cyan-400"></i>
             </div>
-            <h2 class="text-5xl font-black mb-2 tracking-tighter text-white">FORJAX <span class="text-cyan-400">V25</span></h2>
-            <p class="text-slate-400 mb-8 font-mono text-xs uppercase tracking-widest">Hyperion System Ready</p>
+            <h2 class="text-5xl font-black mb-2 tracking-tighter text-white">FORJAX <span class="text-cyan-400">V26</span></h2>
+            <p class="text-slate-400 mb-8 font-mono text-xs uppercase tracking-widest">Hyperion Pro System</p>
             <input id="userInput" type="text" placeholder="ACCESS ID" class="w-full p-4 rounded-xl mb-4 text-center text-lg font-bold font-mono outline-none focus:ring-2 focus:ring-cyan-500 transition-all">
             <button onclick="app.initSession()" class="w-full bg-cyan-400 hover:bg-cyan-300 text-black font-black py-4 rounded-xl transition-all shadow-neon-blue">INICIAR SISTEMA</button>
         </div>
@@ -177,8 +170,8 @@
 
                 <div class="lg:col-span-8 space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="glass p-6 rounded-3xl"><h4 class="text-xs font-bold font-mono text-cyan-500 mb-4">TENDENCIA_DE_FLUJO</h4><div class="h-56 w-full"><canvas id="lineChart"></canvas></div></div>
-                        <div class="glass p-6 rounded-3xl"><h4 class="text-xs font-bold font-mono text-purple-500 mb-4">DISTRIBUCIÓN_DE_GASTOS</h4><div class="h-56 w-full flex justify-center"><canvas id="doughnutChart"></canvas></div></div>
+                        <div class="glass p-6 rounded-3xl"><h4 class="text-xs font-bold font-mono text-cyan-500 mb-4">TENDENCIA_DE_FLUJO (NETO)</h4><div class="h-56 w-full"><canvas id="lineChart"></canvas></div></div>
+                        <div class="glass p-6 rounded-3xl relative"><h4 class="text-xs font-bold font-mono text-purple-500 mb-4">DISTRIBUCIÓN_DE_GASTOS</h4><div class="h-56 w-full flex justify-center relative"><canvas id="doughnutChart"></canvas><div class="absolute inset-0 flex items-center justify-center pointer-events-none"><div class="text-center"><p class="text-[10px] text-slate-400 uppercase font-bold">Total Gastado</p><p id="chartTotal" class="text-sm font-black text-white font-mono">-</p></div></div></div></div>
                     </div>
 
                     <div class="glass rounded-3xl overflow-hidden border border-white/5">
@@ -199,83 +192,61 @@
             </div>
         </div>
 
+        <div id="viewSubs" class="hidden fade-in">
+            <div class="flex justify-between items-center mb-10">
+                <div><h2 class="text-3xl font-black text-white tracking-tighter">SUSCRIPCIONES</h2><p class="text-xs font-mono text-cyan-500">GASTOS FIJOS RECURRENTES</p></div>
+                <button onclick="app.toggleSubForm()" class="bg-cyan-500/20 hover:bg-cyan-500/40 text-cyan-400 px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all border border-cyan-500/30 shadow-neon-blue"><i data-lucide="plus"></i> NUEVA</button>
+            </div>
+            
+            <div id="subForm" class="hidden glass p-6 rounded-3xl mb-8 border border-cyan-500/20">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                    <div class="md:col-span-1"><label class="text-[10px] font-bold text-slate-500 ml-1">NOMBRE</label><input id="subName" placeholder="Ej: Netflix" class="w-full p-4 rounded-xl font-bold outline-none transition-all"></div>
+                    <div class="md:col-span-1"><label class="text-[10px] font-bold text-slate-500 ml-1">MONTO</label><input id="subAmount" type="number" placeholder="$" class="w-full p-4 rounded-xl font-bold font-mono outline-none transition-all"></div>
+                    <div class="md:col-span-1"><label class="text-[10px] font-bold text-slate-500 ml-1">DÍA VENC.</label><input id="subDay" type="number" placeholder="1-31" class="w-full p-4 rounded-xl font-bold font-mono outline-none transition-all"></div>
+                    <button onclick="app.addSub()" class="w-full bg-cyan-400 hover:bg-cyan-300 text-black p-4 rounded-xl font-black transition-all shadow-neon-blue">GUARDAR</button>
+                </div>
+            </div>
+            
+            <div id="subsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </div>
+
+        <div id="viewGoals" class="hidden fade-in">
+             <div class="flex justify-between items-center mb-10">
+                <div><h2 class="text-3xl font-black text-white tracking-tighter">METAS DE AHORRO</h2><p class="text-xs font-mono text-purple-500">OBJETIVOS FINANCIEROS</p></div>
+                <button onclick="app.addGoalPrompt()" class="bg-purple-500/20 hover:bg-purple-500/40 text-purple-400 px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all border border-purple-500/30 shadow-neon-purple"><i data-lucide="crosshair"></i> NUEVA META</button>
+            </div>
+             <div id="goalsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </div>
+
         <div id="viewMarket" class="hidden fade-in">
              <div class="flex justify-between items-center mb-10">
                 <div>
-                    <h2 class="text-4xl font-black text-white tracking-tighter flex items-center gap-3">
-                        <i data-lucide="globe-2" class="text-cyan-400 w-8 h-8"></i> MERCADO GLOBAL
-                    </h2>
+                    <h2 class="text-4xl font-black text-white tracking-tighter flex items-center gap-3"><i data-lucide="globe-2" class="text-cyan-400 w-8 h-8"></i> MERCADO GLOBAL</h2>
                     <p class="text-xs font-mono text-slate-500 mt-1">LIVE DATA FEED • FOREX • CRYPTO</p>
                 </div>
                 <button onclick="app.fetchFullMarket()" id="refreshBtn" class="group relative">
                     <div class="absolute inset-0 bg-cyan-400 blur-lg opacity-20 group-hover:opacity-40 transition-opacity"></div>
-                    <div class="relative bg-slate-900 border border-cyan-500/50 p-4 rounded-full text-cyan-400 group-hover:rotate-180 transition-transform duration-700">
-                        <i data-lucide="refresh-cw" id="spinIcon" class="w-6 h-6"></i>
-                    </div>
+                    <div class="relative bg-slate-900 border border-cyan-500/50 p-4 rounded-full text-cyan-400 group-hover:rotate-180 transition-transform duration-700"><i data-lucide="refresh-cw" id="spinIcon" class="w-6 h-6"></i></div>
                 </button>
             </div>
              
              <div class="glass p-8 rounded-3xl mb-12 relative overflow-hidden border border-cyan-500/20">
                 <div class="absolute top-0 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-[100px] pointer-events-none"></div>
-                
-                <h3 class="text-sm font-black text-cyan-400 mb-6 flex items-center gap-2 uppercase tracking-widest">
-                    <i data-lucide="binary" class="w-4 h-4"></i> Convertidor Universal
-                </h3>
-
+                <h3 class="text-sm font-black text-cyan-400 mb-6 flex items-center gap-2 uppercase tracking-widest"><i data-lucide="binary" class="w-4 h-4"></i> Convertidor Universal</h3>
                 <div class="flex flex-col md:flex-row gap-6 items-end relative z-10">
-                    <div class="flex-1 w-full">
-                        <label class="text-[10px] font-bold text-slate-500 ml-1 mb-2 block tracking-wider">CANTIDAD</label>
-                        <input id="calcAmount" type="number" value="1" onkeyup="app.calcCurrency()" class="w-full p-5 rounded-2xl text-2xl font-bold font-mono outline-none bg-slate-900/50 border border-slate-700 focus:border-cyan-400 transition-all">
-                    </div>
-                    
-                    <div class="flex-1 w-full">
-                         <label class="text-[10px] font-bold text-slate-500 ml-1 mb-2 block tracking-wider">MONEDA ORIGEN</label>
-                         <div class="relative">
-                            <select id="calcFrom" onchange="app.calcCurrency()" class="w-full p-5 pl-12 rounded-2xl font-bold appearance-none bg-slate-900/50 border border-slate-700 cursor-pointer focus:border-cyan-400 transition-all text-lg"></select>
-                            <div class="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" id="flagFrom"></div>
-                            <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"></i>
-                         </div>
-                    </div>
-
-                    <div class="pb-5">
-                        <button onclick="app.swapCalc()" class="p-3 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500 hover:text-black transition-all rotate-90 md:rotate-0"><i data-lucide="arrow-right-left" class="w-5 h-5"></i></button>
-                    </div>
-
-                    <div class="flex-1 w-full">
-                        <label class="text-[10px] font-bold text-slate-500 ml-1 mb-2 block tracking-wider">MONEDA DESTINO</label>
-                        <div class="relative">
-                           <select id="calcTo" onchange="app.calcCurrency()" class="w-full p-5 pl-12 rounded-2xl font-bold appearance-none bg-slate-900/50 border border-slate-700 cursor-pointer focus:border-cyan-400 transition-all text-lg"></select>
-                           <div class="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" id="flagTo"></div>
-                           <i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"></i>
-                        </div>
-                   </div>
-
-                    <div class="flex-1 w-full">
-                        <div class="bg-gradient-to-br from-slate-900 to-black border border-white/10 p-4 rounded-2xl text-center shadow-lg relative overflow-hidden group">
-                            <div class="absolute inset-0 bg-cyan-400/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                            <p class="text-[10px] font-bold text-slate-500 uppercase mb-1">Resultado Estimado</p>
-                            <p id="calcResult" class="text-3xl font-black text-cyan-400 font-mono blur-sensitive truncate">...</p>
-                        </div>
-                    </div>
+                    <div class="flex-1 w-full"><label class="text-[10px] font-bold text-slate-500 ml-1 mb-2 block tracking-wider">CANTIDAD</label><input id="calcAmount" type="number" value="1" onkeyup="app.calcCurrency()" class="w-full p-5 rounded-2xl text-2xl font-bold font-mono outline-none bg-slate-900/50 border border-slate-700 focus:border-cyan-400 transition-all"></div>
+                    <div class="flex-1 w-full"><label class="text-[10px] font-bold text-slate-500 ml-1 mb-2 block tracking-wider">MONEDA ORIGEN</label><div class="relative"><select id="calcFrom" onchange="app.calcCurrency()" class="w-full p-5 pl-12 rounded-2xl font-bold appearance-none bg-slate-900/50 border border-slate-700 cursor-pointer focus:border-cyan-400 transition-all text-lg"></select><div class="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" id="flagFrom"></div><i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"></i></div></div>
+                    <div class="pb-5"><button onclick="app.swapCalc()" class="p-3 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500 hover:text-black transition-all rotate-90 md:rotate-0"><i data-lucide="arrow-right-left" class="w-5 h-5"></i></button></div>
+                    <div class="flex-1 w-full"><label class="text-[10px] font-bold text-slate-500 ml-1 mb-2 block tracking-wider">MONEDA DESTINO</label><div class="relative"><select id="calcTo" onchange="app.calcCurrency()" class="w-full p-5 pl-12 rounded-2xl font-bold appearance-none bg-slate-900/50 border border-slate-700 cursor-pointer focus:border-cyan-400 transition-all text-lg"></select><div class="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" id="flagTo"></div><i data-lucide="chevron-down" class="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"></i></div></div>
+                    <div class="flex-1 w-full"><div class="bg-gradient-to-br from-slate-900 to-black border border-white/10 p-4 rounded-2xl text-center shadow-lg relative overflow-hidden group"><div class="absolute inset-0 bg-cyan-400/5 opacity-0 group-hover:opacity-100 transition-opacity"></div><p class="text-[10px] font-bold text-slate-500 uppercase mb-1">Resultado Estimado</p><p id="calcResult" class="text-3xl font-black text-cyan-400 font-mono blur-sensitive truncate">...</p></div></div>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2 mb-6 border-b border-white/5 pb-2">
-                <i data-lucide="cpu" class="w-5 h-5 text-purple-400"></i>
-                <h3 class="text-sm font-bold text-white uppercase tracking-wider">Criptoactivos (Top Cap)</h3>
-             </div>
+            <div class="flex items-center gap-2 mb-6 border-b border-white/5 pb-2"><i data-lucide="cpu" class="w-5 h-5 text-purple-400"></i><h3 class="text-sm font-bold text-white uppercase tracking-wider">Criptoactivos (Top Cap)</h3></div>
              <div id="marketGridCrypto" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12"></div>
-             
-             <div class="flex items-center gap-2 mb-6 border-b border-white/5 pb-2">
-                <i data-lucide="banknote" class="w-5 h-5 text-emerald-400"></i>
-                <h3 class="text-sm font-bold text-white uppercase tracking-wider">Forex & Fiat (vs USD)</h3>
-             </div>
+             <div class="flex items-center gap-2 mb-6 border-b border-white/5 pb-2"><i data-lucide="banknote" class="w-5 h-5 text-emerald-400"></i><h3 class="text-sm font-bold text-white uppercase tracking-wider">Forex & Fiat (vs USD)</h3></div>
              <div id="marketGridFiat" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4"></div>
         </div>
-
-        <div id="viewSubs" class="hidden fade-in text-center py-20"><h2 class="text-3xl font-bold text-white">MÓDULO DE SUSCRIPCIONES</h2><p class="text-slate-400">El sistema V25 mantiene las funciones de la V23 aquí.</p><button onclick="app.switchTab('wallet')" class="mt-4 text-cyan-400 underline">Volver al Dashboard</button></div>
-        <div id="viewGoals" class="hidden fade-in text-center py-20"><h2 class="text-3xl font-bold text-white">MÓDULO DE METAS</h2><p class="text-slate-400">El sistema V25 mantiene las funciones de la V23 aquí.</p><button onclick="app.switchTab('wallet')" class="mt-4 text-cyan-400 underline">Volver al Dashboard</button></div>
-
     </div>
 </div>
 
@@ -288,25 +259,14 @@ const app = {
     timeFilter: 'month', 
     data: { records: [], subs: [], goals: [] },
     rates: {}, charts: {}, privacy: false,
-    
-    // Lista de monedas para la calculadora (Código, País para bandera, Nombre)
-    currencies: [
-        {c:'USD', f:'us', n:'Dólar Americano'}, {c:'ARS', f:'ar', n:'Peso Argentino (Blue)'},
-        {c:'EUR', f:'eu', n:'Euro'}, {c:'BRL', f:'br', n:'Real Brasileño'},
-        {c:'GBP', f:'gb', n:'Libra Esterlina'}, {c:'JPY', f:'jp', n:'Yen Japonés'},
-        {c:'CNY', f:'cn', n:'Yuan Chino'}, {c:'MXN', f:'mx', n:'Peso Mexicano'},
-        {c:'CLP', f:'cl', n:'Peso Chileno'}, {c:'COP', f:'co', n:'Peso Colombiano'},
-        {c:'BTC', f:'un', n:'Bitcoin'}, {c:'ETH', f:'un', n:'Ethereum'},
-        {c:'USDT',f:'un', n:'Tether'}, {c:'SOL', f:'un', n:'Solana'}
-    ],
+    currencies: [{c:'USD', f:'us', n:'Dólar Americano'}, {c:'ARS', f:'ar', n:'Peso Argentino (Blue)'}, {c:'EUR', f:'eu', n:'Euro'}, {c:'BRL', f:'br', n:'Real Brasileño'}, {c:'GBP', f:'gb', n:'Libra Esterlina'}, {c:'JPY', f:'jp', n:'Yen Japonés'}, {c:'CNY', f:'cn', n:'Yuan Chino'}, {c:'MXN', f:'mx', n:'Peso Mexicano'}, {c:'CLP', f:'cl', n:'Peso Chileno'}, {c:'COP', f:'co', n:'Peso Colombiano'}, {c:'BTC', f:'un', n:'Bitcoin'}, {c:'ETH', f:'un', n:'Ethereum'}, {c:'USDT',f:'un', n:'Tether'}, {c:'SOL', f:'un', n:'Solana'}],
 
     init() {
         if (!this.user) { document.getElementById("loginScreen").classList.remove("hidden"); return; }
         document.getElementById("loginScreen").classList.add("hidden");
         document.getElementById("mainApp").classList.remove("hidden");
         document.getElementById("mainApp").classList.remove("opacity-0");
-        this.loadData(); this.render(); this.fillCalcSelects();
-        this.fetchFullMarket(); // Start fetching
+        this.loadData(); this.render(); this.renderSubs(); this.renderGoals(); this.fillCalcSelects(); this.fetchFullMarket();
         lucide.createIcons();
     },
 
@@ -319,10 +279,11 @@ const app = {
     save() {
         const p = this.user + "_";
         localStorage.setItem(p + "records", JSON.stringify(this.data.records));
+        localStorage.setItem(p + "subs", JSON.stringify(this.data.subs));
+        localStorage.setItem(p + "goals", JSON.stringify(this.data.goals));
         this.render();
     },
 
-    // --- NAVIGATION ---
     switchTab(tab) {
         ['viewWallet', 'viewSubs', 'viewGoals', 'viewMarket'].forEach(id => document.getElementById(id).classList.add('hidden'));
         document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
@@ -331,7 +292,7 @@ const app = {
         if(tab === 'market') this.fetchFullMarket();
     },
 
-    // --- CORE & CHARTS (V24 Logic retained) ---
+    // --- WALLET CORE ---
     addRecord(type) {
         const d = document.getElementById("transDesc").value;
         const a = Number(document.getElementById("transAmount").value);
@@ -373,143 +334,79 @@ const app = {
     updateCharts(inc, exp, records) {
         if(this.charts.line) this.charts.line.destroy();
         if(this.charts.doughnut) this.charts.doughnut.destroy();
+        const fmt = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
 
-        const dailyData = {};
-        records.forEach(r => { if(!dailyData[r.date]) dailyData[r.date] = {i:0, e:0}; if(r.type==='income') dailyData[r.date].i+=r.amount; else dailyData[r.date].e+=r.amount; });
+        // Line Chart Data
+        const dailyData = {}; records.forEach(r => { if(!dailyData[r.date]) dailyData[r.date] = 0; if(r.type==='income') dailyData[r.date]+=r.amount; else dailyData[r.date]-=r.amount; });
         const dates = Object.keys(dailyData).sort((a,b) => new Date(a.split('/').reverse().join('-')) - new Date(b.split('/').reverse().join('-')));
-        
         const ctxL = document.getElementById("lineChart").getContext("2d");
         const grad = ctxL.createLinearGradient(0,0,0,200); grad.addColorStop(0,'rgba(0, 243, 255, 0.2)'); grad.addColorStop(1,'transparent');
-        this.charts.line = new Chart(ctxL, { type: 'line', data: { labels: dates, datasets: [{ label: 'Neto', data: dates.map(d=>dailyData[d].i - dailyData[d].e), borderColor: '#00f3ff', backgroundColor: grad, fill:true, tension:0.4, borderWidth:2, pointRadius:0, pointHoverRadius:6 }] }, options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{display:false}, y:{display:false}} } });
-
-        const ctxD = document.getElementById("doughnutChart").getContext("2d");
+        
+        // Doughnut Chart Data
         const cat = {}; records.filter(r=>r.type==='expense').forEach(r=>{ cat[r.category]=(cat[r.category]||0)+r.amount });
-        this.charts.doughnut = new Chart(ctxD, { type: 'doughnut', data: { labels: Object.keys(cat), datasets: [{ data: Object.values(cat), backgroundColor: ['#00f3ff','#8b5cf6','#f43f5e','#10b981','#f59e0b'], borderWidth:0 }] }, options: { responsive:true, maintainAspectRatio:false, cutout:'80%', plugins:{legend:{position:'right', labels:{color:'#64748b', font:{size:10}, boxWidth:8}}} } });
+        document.getElementById("chartTotal").textContent = fmt.format(exp);
+        const ctxD = document.getElementById("doughnutChart").getContext("2d");
+
+        // Chart Configs with Axes and Tooltips
+        this.charts.line = new Chart(ctxL, { 
+            type: 'line', 
+            data: { labels: dates, datasets: [{ label: 'Flujo Neto', data: dates.map(d=>dailyData[d]), borderColor: '#00f3ff', backgroundColor: grad, fill:true, tension:0.4, borderWidth:2, pointRadius:3, pointBackgroundColor:'#050b14', pointBorderColor:'#00f3ff' }] }, 
+            options: { 
+                responsive:true, maintainAspectRatio:false, 
+                plugins:{legend:{display:false}, tooltip: { backgroundColor: '#050b14', titleColor: '#94a3b8', bodyColor: '#00f3ff', bodyFont: {family:'JetBrains Mono'}, borderColor: 'rgba(0,243,255,0.2)', borderWidth: 1, callbacks: { label: (c) => ` Neto: ${fmt.format(c.raw)}` } } }, 
+                scales:{ x:{grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'#64748b', font:{size:10}}}, y:{grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'#64748b', font:{size:10}, callback: (v) => '$'+v }} } 
+            } 
+        });
+
+        this.charts.doughnut = new Chart(ctxD, { 
+            type: 'doughnut', 
+            data: { labels: Object.keys(cat), datasets: [{ data: Object.values(cat), backgroundColor: ['#00f3ff','#8b5cf6','#f43f5e','#10b981','#f59e0b', '#6366f1'], borderWidth:0, hoverOffset:10 }] }, 
+            options: { 
+                responsive:true, maintainAspectRatio:false, cutout:'75%', 
+                plugins:{legend:{position:'right', labels:{color:'#94a3b8', font:{size:11}, boxWidth:10, padding:15}}, tooltip: { backgroundColor: '#050b14', titleColor: '#fff', bodyColor: '#94a3b8', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1, callbacks: { label: (c) => { const val = c.raw; const total = c.dataset.data.reduce((a,b)=>a+b,0); const pct = Math.round((val/total)*100); return ` ${fmt.format(val)} (${pct}%)`; } } } } 
+            } 
+        });
     },
 
-    // --- MARKET HYPERION ENGINE ---
+    // --- MODULES (V26 ACTIVE) ---
+    toggleSubForm(){ document.getElementById("subForm").classList.toggle("hidden"); },
+    addSub(){ const n=document.getElementById("subName").value, a=Number(document.getElementById("subAmount").value), d=document.getElementById("subDay").value; if(!n || a<=0) return; this.data.subs.push({id:Date.now(), name:n, amount:a, day:d}); this.save(); this.renderSubs(); this.toggleSubForm(); },
+    deleteSub(id){ this.data.subs = this.data.subs.filter(x=>x.id!==id); this.save(); this.renderSubs(); },
+    paySub(id) { const s = this.data.subs.find(x => x.id === id); this.data.records.unshift({ id: Date.now(), date: new Date().toLocaleDateString(), desc: `Pago Suscripción: ${s.name}`, amount: s.amount, category: 'Servicios', type: 'expense' }); this.save(); Swal.fire({toast:true, position:'bottom-end', icon:'success', title:`Pago registrado: ${s.name}`, showConfirmButton:false, timer:1500, background:'#1e293b', color:'#fff'}); },
+    renderSubs() {
+        const grid = document.getElementById("subsGrid"); const fmt = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
+        if(!this.data.subs.length){ grid.innerHTML=`<div class="col-span-full text-center py-12 opacity-30 font-mono">NO_ACTIVE_SUBSCRIPTIONS</div>`; return; }
+        grid.innerHTML = this.data.subs.map(s => `<div class="glass-card p-6 rounded-2xl relative group hover:-translate-y-1 transition-transform"><button onclick="app.deleteSub(${s.id})" class="absolute top-4 right-4 text-slate-600 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity"><i data-lucide="trash-2" class="w-4 h-4"></i></button><div class="flex items-center gap-4 mb-6"><div class="p-3 bg-cyan-500/10 rounded-xl text-cyan-400 shadow-neon-blue"><i data-lucide="zap" class="w-6 h-6"></i></div><div><h3 class="font-bold text-lg text-white leading-none">${s.name}</h3><p class="text-[10px] text-slate-400 font-bold mt-1 font-mono">VENCE DÍA ${s.day}</p></div></div><p class="text-3xl font-black blur-sensitive mb-6 text-white font-mono tracking-tight">${fmt.format(s.amount)}</p><button onclick="app.paySub(${s.id})" class="w-full bg-slate-900 hover:bg-cyan-500/10 border border-cyan-500/30 hover:border-cyan-400/50 py-3 rounded-xl text-xs font-bold transition-all text-cyan-400 hover:text-white tracking-wider">REGISTRAR PAGO</button></div>`).join('');
+        lucide.createIcons();
+    },
+
+    addGoalPrompt() { Swal.fire({title:'NUEVA META', html:'<input id="g1" class="swal2-input" placeholder="Nombre"><input id="g2" type="number" class="swal2-input" placeholder="Objetivo ($)">', background:'#050b14', color:'#fff', confirmButtonColor:'#8b5cf6', preConfirm:()=>[document.getElementById('g1').value,document.getElementById('g2').value]}).then(r=>{ if(r.value[0] && r.value[1]){ this.data.goals.push({id:Date.now(), name:r.value[0], target:Number(r.value[1]), current:0}); this.save(); this.renderGoals(); } }) },
+    depositGoal(id) { const g=this.data.goals.find(x=>x.id===id); Swal.fire({title:'DEPOSITAR',input:'number', background:'#050b14', color:'#fff', confirmButtonColor:'#8b5cf6'}).then(r=>{ if(r.value){ g.current+=Number(r.value); this.save(); this.renderGoals(); if(g.current>=g.target) confetti(); } }) },
+    deleteGoal(id) { this.data.goals = this.data.goals.filter(x=>x.id!==id); this.save(); this.renderGoals(); },
+    renderGoals() {
+        const grid = document.getElementById("goalsGrid"); const fmt = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
+        if(!this.data.goals.length){ grid.innerHTML=`<div class="col-span-full text-center py-12 opacity-30 font-mono">NO_ACTIVE_GOALS</div>`; return; }
+        grid.innerHTML = this.data.goals.map(g => { const pct = Math.min((g.current/g.target)*100, 100); return `<div class="glass-card p-6 rounded-2xl relative group hover:-translate-y-1 transition-transform"><button onclick="app.deleteGoal(${g.id})" class="absolute top-4 right-4 text-slate-600 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity"><i data-lucide="trash-2" class="w-4 h-4"></i></button><div class="flex justify-between items-center mb-2"><h3 class="font-bold text-lg text-white">${g.name}</h3><span class="text-[10px] font-black text-purple-400 bg-purple-500/10 border border-purple-500/30 px-2 py-1 rounded-lg font-mono">${Math.round(pct)}%</span></div><div class="w-full bg-slate-900 h-3 rounded-full overflow-hidden mb-6 border border-white/5"><div class="bg-gradient-to-r from-cyan-400 to-purple-500 h-full transition-all duration-1000 shadow-neon-purple" style="width: ${pct}%"></div></div><div class="flex justify-between items-end font-mono mb-4"><div><p class="text-[10px] text-slate-500 font-bold uppercase">AHORRADO</p><p class="font-bold blur-sensitive text-white text-sm">${fmt.format(g.current)}</p></div><div class="text-right"><p class="text-[10px] text-slate-500 font-bold uppercase">META</p><p class="font-bold blur-sensitive text-slate-400 text-sm">${fmt.format(g.target)}</p></div></div><button onclick="app.depositGoal(${g.id})" class="w-full bg-purple-500/10 text-purple-400 hover:bg-purple-500 hover:text-white py-3 rounded-xl font-bold transition-all border border-purple-500/30 text-xs tracking-wider shadow-neon-purple">+ DEPOSITAR</button></div>`; }).join('');
+        lucide.createIcons();
+    },
+
+    // --- MARKET & UTILS ---
     async fetchFullMarket() {
-        const icon = document.getElementById("spinIcon");
-        icon.classList.add("animate-spin-slow"); // Circular Animation
-
-        const gc = document.getElementById("marketGridCrypto");
-        const gf = document.getElementById("marketGridFiat");
-        
-        this.rates = {'USD':1}; // Reset base
-
-        // 1. Dólar Blue (ARG)
-        try { 
-            const r=await fetch("https://dolarapi.com/v1/dolares/blue"); const d=await r.json(); 
-            document.getElementById("dolarVal").innerText=`$${d.venta}`; this.rates['ARS'] = 1/d.venta;
-        } catch(e){}
-
-        // 2. Crypto (Top 8 now)
-        try {
-            const r=await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=8&sparkline=false"); const d=await r.json();
-            d.forEach(c => this.rates[c.symbol.toUpperCase()] = c.current_price);
-            gc.innerHTML = d.map(c => `
-                <div class="glass-card p-4 rounded-xl flex items-center gap-4 cursor-default group">
-                    <img src="${c.image}" class="w-10 h-10 rounded-full grayscale group-hover:grayscale-0 transition-all">
-                    <div>
-                        <h4 class="font-bold text-white leading-none">${c.symbol.toUpperCase()}</h4>
-                        <p class="text-[10px] text-slate-500 font-bold group-hover:text-cyan-400">${c.name}</p>
-                    </div>
-                    <div class="ml-auto text-right">
-                        <p class="font-mono font-bold text-white">$${c.current_price.toLocaleString()}</p>
-                        <p class="text-[10px] font-bold ${c.price_change_percentage_24h>=0?'text-emerald-400':'text-rose-400'}">
-                            ${c.price_change_percentage_24h>=0?'▲':'▼'} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}%
-                        </p>
-                    </div>
-                </div>
-            `).join('');
-        } catch(e){}
-        
-        // 3. Forex (Major Pairs + Latam)
-        try {
-            // Using a broader API or mocking key pairs if API fails for strict realism in styling
-            const r=await fetch("https://api.frankfurter.app/latest?from=USD"); const d=await r.json(); 
-            Object.assign(this.rates, d.rates); // Populate calculator logic
-            
-            const displayCurrencies = [
-                {c:'EUR', n:'Euro', f:'eu'}, {c:'GBP', n:'Libra', f:'gb'}, {c:'JPY', n:'Yen', f:'jp'},
-                {c:'BRL', n:'Real', f:'br'}, {c:'MXN', n:'Peso MX', f:'mx'}
-            ];
-
-            gf.innerHTML = displayCurrencies.map(x => {
-                const val = d.rates[x.c];
-                return `
-                <div class="glass-card p-4 rounded-xl flex flex-col items-center text-center gap-2 group hover:border-cyan-500/30">
-                    <span class="fi fi-${x.f} text-3xl rounded shadow-lg grayscale group-hover:grayscale-0 transition-all"></span>
-                    <div>
-                        <span class="text-xs font-bold text-slate-500 block">${x.n}</span>
-                        <span class="font-mono font-black text-xl text-white tracking-tight">${val ? val.toFixed(2) : '-'}</span>
-                    </div>
-                </div>`
-            }).join('');
-        } catch(e){}
-
-        setTimeout(() => icon.classList.remove("animate-spin-slow"), 2000); // Stop anim
+        document.getElementById("spinIcon").classList.add("animate-spin-slow");
+        const gc = document.getElementById("marketGridCrypto"); const gf = document.getElementById("marketGridFiat");
+        this.rates = {'USD':1};
+        try { const r=await fetch("https://dolarapi.com/v1/dolares/blue"); const d=await r.json(); document.getElementById("dolarVal").innerText=`$${d.venta}`; this.rates['ARS'] = 1/d.venta; } catch(e){}
+        try { const r=await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=8&sparkline=false"); const d=await r.json(); d.forEach(c => this.rates[c.symbol.toUpperCase()] = c.current_price); gc.innerHTML = d.map(c => `<div class="glass-card p-4 rounded-xl flex items-center gap-4 cursor-default group"><img src="${c.image}" class="w-10 h-10 rounded-full grayscale group-hover:grayscale-0 transition-all"><div><h4 class="font-bold text-white leading-none">${c.symbol.toUpperCase()}</h4><p class="text-[10px] text-slate-500 font-bold group-hover:text-cyan-400">${c.name}</p></div><div class="ml-auto text-right"><p class="font-mono font-bold text-white">$${c.current_price.toLocaleString()}</p><p class="text-[10px] font-bold ${c.price_change_percentage_24h>=0?'text-emerald-400':'text-rose-400'}">${c.price_change_percentage_24h>=0?'▲':'▼'} ${Math.abs(c.price_change_percentage_24h).toFixed(2)}%</p></div></div>`).join(''); } catch(e){}
+        try { const r=await fetch("https://api.frankfurter.app/latest?from=USD"); const d=await r.json(); Object.assign(this.rates, d.rates); const list = [{c:'EUR', n:'Euro', f:'eu'}, {c:'GBP', n:'Libra', f:'gb'}, {c:'JPY', n:'Yen', f:'jp'}, {c:'BRL', n:'Real', f:'br'}, {c:'MXN', n:'Peso MX', f:'mx'}]; gf.innerHTML = list.map(x => `<div class="glass-card p-4 rounded-xl flex flex-col items-center text-center gap-2 group hover:border-cyan-500/30"><span class="fi fi-${x.f} text-3xl rounded shadow-lg grayscale group-hover:grayscale-0 transition-all"></span><div><span class="text-xs font-bold text-slate-500 block">${x.n}</span><span class="font-mono font-black text-xl text-white tracking-tight">${d.rates[x.c] ? d.rates[x.c].toFixed(2) : '-'}</span></div></div>`).join(''); } catch(e){}
+        setTimeout(() => document.getElementById("spinIcon").classList.remove("animate-spin-slow"), 2000);
     },
-
-    // --- QUANTUM CALCULATOR ---
-    fillCalcSelects() { 
-        const opts = this.currencies.map(o => `<option value="${o.c}" data-flag="fi-${o.f}">${o.c} - ${o.n}</option>`).join('');
-        const s1=document.getElementById("calcFrom"), s2=document.getElementById("calcTo");
-        if(s1.innerHTML.length < 50) { s1.innerHTML=opts; s2.innerHTML=opts; s1.value='USD'; s2.value='ARS'; }
-        this.updateFlags();
-    },
-    updateFlags() {
-        const s1 = document.getElementById("calcFrom");
-        const s2 = document.getElementById("calcTo");
-        const f1 = this.currencies.find(c => c.c === s1.value)?.f || 'un';
-        const f2 = this.currencies.find(c => c.c === s2.value)?.f || 'un';
-        document.getElementById("flagFrom").innerHTML = `<span class="fi fi-${f1} rounded"></span>`;
-        document.getElementById("flagTo").innerHTML = `<span class="fi fi-${f2} rounded"></span>`;
-    },
-    calcCurrency() { 
-        this.updateFlags();
-        const a=parseFloat(document.getElementById("calcAmount").value)||0;
-        const f=document.getElementById("calcFrom").value;
-        const t=document.getElementById("calcTo").value;
-        
-        // Base Logic (USD Normalized)
-        let rateFrom = this.rates[f] || 1; 
-        let rateTo = this.rates[t] || 1;
-        
-        // Special case for Crypto (usually priced in USD in this.rates) or special handling
-        // Simple cross rate: (Amount / RateFromUSD) * RateToUSD ? 
-        // Logic: All rates in this.rates are "How much of X for 1 USD". 
-        // Example: EUR = 0.92 (1 USD = 0.92 EUR). ARS = 0.001 (Stored as inverted? No, usually 1 USD = 1000 ARS).
-        // Let's assume standard API: rates[EUR] = 0.92 means 1 USD = 0.92 EUR.
-        // So to go From EUR to ARS: (Amount / 0.92) * 1000.
-        
-        // Adjustment for manually set rates (ARS, Crypto)
-        // If ARS rate is stored as 1/1000 (0.001), then logic is * rate. 
-        // Let's normalize everything to "Price in USD" for Crypto, and "Units per USD" for Fiat.
-        
-        // Quick Fix for Display Logic based on standard APIs:
-        let valInUSD = 0;
-        if (f === 'USD') valInUSD = a;
-        else if (['BTC','ETH','SOL','USDT'].includes(f)) valInUSD = a * rateFrom; // Crypto rates are price in USD
-        else valInUSD = a / rateFrom; // Fiat rates are units per USD
-
-        let finalVal = 0;
-        if (t === 'USD') finalVal = valInUSD;
-        else if (['BTC','ETH','SOL','USDT'].includes(t)) finalVal = valInUSD / rateTo;
-        else finalVal = valInUSD * rateTo;
-
-        document.getElementById("calcResult").innerText = finalVal.toLocaleString(undefined, {maximumFractionDigits: 4});
-    },
-    swapCalc() { 
-        const f=document.getElementById("calcFrom"), t=document.getElementById("calcTo");
-        [f.value, t.value] = [t.value, f.value];
-        this.calcCurrency(); 
-    },
-
-    // --- SETTINGS & UTILS ---
-    openSettings() { Swal.fire({title: 'AJUSTES', text:'Panel de configuración V25', background:'#050b14', color:'#fff'}); },
+    fillCalcSelects() { const opts = this.currencies.map(o => `<option value="${o.c}" data-flag="fi-${o.f}">${o.c} - ${o.n}</option>`).join(''); const s1=document.getElementById("calcFrom"), s2=document.getElementById("calcTo"); if(s1.innerHTML.length < 50) { s1.innerHTML=opts; s2.innerHTML=opts; s1.value='USD'; s2.value='ARS'; } this.updateFlags(); },
+    updateFlags() { const s1=document.getElementById("calcFrom"), s2=document.getElementById("calcTo"); document.getElementById("flagFrom").innerHTML = `<span class="fi fi-${this.currencies.find(c => c.c === s1.value)?.f || 'un'} rounded"></span>`; document.getElementById("flagTo").innerHTML = `<span class="fi fi-${this.currencies.find(c => c.c === s2.value)?.f || 'un'} rounded"></span>`; },
+    calcCurrency() { this.updateFlags(); const a=parseFloat(document.getElementById("calcAmount").value)||0, f=document.getElementById("calcFrom").value, t=document.getElementById("calcTo").value; let rateFrom = this.rates[f]||1, rateTo = this.rates[t]||1; let valInUSD = f==='USD'?a:(['BTC','ETH','SOL','USDT'].includes(f)?a*rateFrom:a/rateFrom); let finalVal = t==='USD'?valInUSD:(['BTC','ETH','SOL','USDT'].includes(t)?valInUSD/rateTo:valInUSD*rateTo); document.getElementById("calcResult").innerText = finalVal.toLocaleString(undefined, {maximumFractionDigits: 4}); },
+    swapCalc() { const f=document.getElementById("calcFrom"), t=document.getElementById("calcTo"); [f.value, t.value] = [t.value, f.value]; this.calcCurrency(); },
+    openSettings() { Swal.fire({title: 'AJUSTES', text:'Panel de configuración V26', background:'#050b14', color:'#fff'}); },
     togglePrivacy(){ this.privacy=!this.privacy; document.body.classList.toggle("privacy-active"); document.getElementById("btnPrivacy").classList.toggle("text-cyan-400"); },
-    exportProExcel() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([["Fecha","Desc","Cat","Monto"],...this.data.records.map(r=>[r.date,r.desc,r.category,r.amount])]), "Data"); XLSX.writeFile(wb, "ForjaxV25.xlsx"); },
+    exportProExcel() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([["Fecha","Desc","Cat","Monto"],...this.data.records.map(r=>[r.date,r.desc,r.category,r.amount])]), "Data"); XLSX.writeFile(wb, "ForjaxV26.xlsx"); },
     initSession(){ const v=document.getElementById("userInput").value; if(v.length>2){localStorage.setItem("currentUser",v);location.reload();} },
     logout(){ localStorage.removeItem("currentUser");location.reload();}
 };
