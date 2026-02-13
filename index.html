@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FORJAX Terminal - Global Forex</title>
+    <title>FORJAX Terminal - V6 Manager</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -74,9 +74,12 @@
             <i data-lucide="wallet"></i> Mi Billetera
         </button>
         <button onclick="app.switchTab('market')" id="btnMarket" class="px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all text-slate-400 hover:text-white hover:bg-white/5">
-            <i data-lucide="globe"></i> Forex Global
+            <i data-lucide="globe"></i> Forex
         </button>
         <div class="w-px h-6 bg-white/10 mx-2"></div>
+        <button onclick="app.openSettings()" class="p-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all">
+            <i data-lucide="settings" class="w-5 h-5"></i>
+        </button>
         <button onclick="app.toggleTheme()" class="p-2.5 rounded-xl text-slate-400 hover:text-yellow-400 hover:bg-white/5 transition-all">
             <i id="themeIcon" data-lucide="sun" class="w-5 h-5"></i>
         </button>
@@ -88,21 +91,34 @@
     <div class="pt-28 max-w-[1400px] mx-auto px-6 pb-12">
         
         <div id="viewWallet" class="fade-in">
+            
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-2xl font-bold">Dashboard</h2>
+                    <p class="text-sm text-slate-400">Resumen Financiero</p>
+                </div>
+                <div class="glass p-1 rounded-xl flex gap-1">
+                    <button onclick="app.setFilter('month')" id="filterMonth" class="px-4 py-2 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white shadow-lg">Este Mes</button>
+                    <button onclick="app.setFilter('prev')" id="filterPrev" class="px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white hover:bg-white/5">Mes Pasado</button>
+                    <button onclick="app.setFilter('all')" id="filterAll" class="px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white hover:bg-white/5">Histórico</button>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
                 <div class="glass p-6 rounded-3xl border-b-4 border-emerald-500 hover-scale">
-                    <p class="text-xs font-bold uppercase tracking-wider opacity-60 mb-1">Ingresos Totales</p>
+                    <p class="text-xs font-bold uppercase tracking-wider opacity-60 mb-1">Ingresos</p>
                     <h2 class="text-3xl font-black text-emerald-500" id="bIncome">$0</h2>
                 </div>
                 <div class="glass p-6 rounded-3xl border-b-4 border-rose-500 hover-scale">
-                    <p class="text-xs font-bold uppercase tracking-wider opacity-60 mb-1">Gastos Totales</p>
+                    <p class="text-xs font-bold uppercase tracking-wider opacity-60 mb-1">Gastos</p>
                     <h2 class="text-3xl font-black text-rose-500" id="bExpense">$0</h2>
                 </div>
                 <div class="glass p-6 rounded-3xl border-b-4 border-blue-500 hover-scale">
-                    <p class="text-xs font-bold uppercase tracking-wider opacity-60 mb-1">Balance Neto</p>
+                    <p class="text-xs font-bold uppercase tracking-wider opacity-60 mb-1">Balance</p>
                     <h2 class="text-3xl font-black text-blue-500" id="bNet">$0</h2>
                 </div>
                 <div class="glass p-6 rounded-3xl border-b-4 border-violet-500 hover-scale flex flex-col justify-center">
-                    <p class="text-xs font-bold uppercase tracking-wider opacity-60 mb-1">Capital en USD</p>
+                    <p class="text-xs font-bold uppercase tracking-wider opacity-60 mb-1">Capital USD</p>
                     <div class="flex items-baseline gap-2">
                         <h2 class="text-3xl font-black text-white" id="capitalUsd">US$ 0</h2>
                         <span class="text-xs text-emerald-400 font-bold bg-emerald-500/10 px-2 py-1 rounded" id="dolarRateTag">...</span>
@@ -155,7 +171,7 @@
                                     <h4 class="font-bold text-base text-blue-400 uppercase tracking-wide flex items-center gap-2">
                                         <i data-lucide="target" class="w-5 h-5"></i> Presupuesto
                                     </h4>
-                                    <p class="text-xs text-slate-500 mt-1">Progreso mensual</p>
+                                    <p class="text-xs text-slate-500 mt-1">Mensual</p>
                                 </div>
                                 <span id="budgetPercent" class="text-xl font-black text-white bg-blue-600 px-3 py-1 rounded-lg shadow-lg shadow-blue-600/20">0%</span>
                             </div>
@@ -194,8 +210,8 @@
                             <h3 class="font-bold flex items-center gap-2"><i data-lucide="list"></i> Movimientos</h3>
                             <div class="flex gap-2">
                                 <input id="searchInput" onkeyup="app.render()" type="text" placeholder="Buscar..." class="bg-black/20 border-none rounded-lg px-3 py-1.5 text-sm w-32 focus:w-48 transition-all outline-none">
-                                <button onclick="app.exportProExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-bold flex items-center gap-2 shadow-lg shadow-emerald-600/20 transition-all hover:scale-105">
-                                    <i data-lucide="file-spreadsheet" class="w-5 h-5"></i> REPORTE CFO
+                                <button onclick="app.exportProExcel()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 shadow-lg shadow-emerald-600/20">
+                                    <i data-lucide="file-spreadsheet" class="w-4 h-4"></i> CFO
                                 </button>
                             </div>
                         </div>
@@ -242,25 +258,19 @@
                         <label class="text-xs text-slate-500 mb-1 block">Monto</label>
                         <input id="calcAmount" type="number" value="1" onkeyup="app.calcCurrency()" class="w-full p-3 rounded-xl text-lg font-bold outline-none focus:ring-2 focus:ring-blue-500 transition-all">
                     </div>
-                    
                     <div class="flex-1 w-full">
                         <label class="text-xs text-slate-500 mb-1 block">De</label>
-                        <select id="calcFrom" onchange="app.calcCurrency()" class="w-full p-3 rounded-xl font-bold cursor-pointer outline-none focus:ring-2 focus:ring-blue-500 text-white bg-slate-800">
-                            </select>
+                        <select id="calcFrom" onchange="app.calcCurrency()" class="w-full p-3 rounded-xl font-bold cursor-pointer outline-none focus:ring-2 focus:ring-blue-500 text-white bg-slate-800"></select>
                     </div>
-
                     <div class="flex items-center justify-center pt-5">
                         <button onclick="app.swapCalc()" class="p-2 rounded-full bg-white/5 hover:bg-white/10 transition-all">
                             <i data-lucide="arrow-right-left" class="w-5 h-5 text-slate-400"></i>
                         </button>
                     </div>
-
                     <div class="flex-1 w-full">
                         <label class="text-xs text-slate-500 mb-1 block">A</label>
-                        <select id="calcTo" onchange="app.calcCurrency()" class="w-full p-3 rounded-xl font-bold cursor-pointer outline-none focus:ring-2 focus:ring-blue-500 text-white bg-slate-800">
-                             </select>
+                        <select id="calcTo" onchange="app.calcCurrency()" class="w-full p-3 rounded-xl font-bold cursor-pointer outline-none focus:ring-2 focus:ring-blue-500 text-white bg-slate-800"></select>
                     </div>
-
                     <div class="flex-1 w-full bg-blue-600/10 p-3 rounded-xl border border-blue-500/20 text-center">
                         <p class="text-xs text-blue-400 uppercase font-bold mb-1">Resultado</p>
                         <p id="calcResult" class="text-2xl font-black text-white">...</p>
@@ -269,19 +279,16 @@
             </div>
 
             <h3 class="text-xl font-bold text-white mb-4 pl-2 border-l-4 border-emerald-500">🇦🇷 Argentina</h3>
-            <div id="marketGridArg" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-                <div class="col-span-full text-center py-10">
-                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-emerald-500"></div>
-                </div>
-            </div>
+            <div id="marketGridArg" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10"></div>
 
             <h3 class="text-xl font-bold text-white mb-4 pl-2 border-l-4 border-blue-500">🌎 Divisas Mundiales (Forex)</h3>
-            <div id="marketGridWorld" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                 </div>
+            <div id="marketGridWorld" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6"></div>
         </div>
 
     </div>
 </div>
+
+<input type="file" id="importFile" class="hidden" accept=".json" onchange="app.restoreData(this)">
 
 <script>
 /* ====================== CORE DEL SISTEMA ====================== */
@@ -289,6 +296,7 @@ const app = {
     user: localStorage.getItem("currentUser"),
     theme: localStorage.getItem("theme") || 'dark',
     currentTab: 'wallet',
+    timeFilter: 'month', // 'month', 'prev', 'all'
     data: { records: [], budget: 0 },
     rates: {}, 
     charts: {},
@@ -311,6 +319,7 @@ const app = {
         }
     },
 
+    /* --- GESTIÓN DE PESTAÑAS --- */
     switchTab(tab) {
         this.currentTab = tab;
         const walletView = document.getElementById("viewWallet");
@@ -318,20 +327,124 @@ const app = {
         const btnWallet = document.getElementById("btnWallet");
         const btnMarket = document.getElementById("btnMarket");
 
+        const activeClass = "bg-blue-600 text-white shadow-lg";
+        const inactiveClass = "text-slate-400 hover:text-white hover:bg-white/5";
+        const baseClass = "px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all ";
+
         if (tab === 'wallet') {
             walletView.classList.remove("hidden");
             marketView.classList.add("hidden");
-            btnWallet.className = "px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all bg-blue-600 text-white shadow-lg";
-            btnMarket.className = "px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all text-slate-400 hover:text-white hover:bg-white/5";
+            btnWallet.className = baseClass + activeClass;
+            btnMarket.className = baseClass + inactiveClass;
         } else {
             walletView.classList.add("hidden");
             marketView.classList.remove("hidden");
-            btnWallet.className = "px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all text-slate-400 hover:text-white hover:bg-white/5";
-            btnMarket.className = "px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 transition-all bg-blue-600 text-white shadow-lg";
+            btnWallet.className = baseClass + inactiveClass;
+            btnMarket.className = baseClass + activeClass;
             this.fetchFullMarket();
         }
     },
 
+    /* --- FILTROS DE TIEMPO (NUEVO) --- */
+    setFilter(filter) {
+        this.timeFilter = filter;
+        
+        // Actualizar UI de botones
+        const btns = {
+            'month': document.getElementById("filterMonth"),
+            'prev': document.getElementById("filterPrev"),
+            'all': document.getElementById("filterAll")
+        };
+
+        const activeClass = "bg-blue-600 text-white shadow-lg";
+        const inactiveClass = "text-slate-400 hover:text-white hover:bg-white/5";
+
+        Object.keys(btns).forEach(key => {
+            btns[key].className = `px-4 py-2 rounded-lg text-xs font-bold transition-all ${key === filter ? activeClass : inactiveClass}`;
+        });
+
+        this.render(); // Redibujar todo con el filtro nuevo
+    },
+
+    getFilteredRecords() {
+        if (this.timeFilter === 'all') return this.data.records;
+
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+
+        return this.data.records.filter(r => {
+            // Convertir fecha string dd/mm/yyyy a objeto Date
+            const [day, month, year] = r.date.split('/').map(Number);
+            const recordDate = new Date(year, month - 1, day);
+
+            if (this.timeFilter === 'month') {
+                return recordDate.getMonth() === currentMonth && recordDate.getFullYear() === currentYear;
+            } 
+            if (this.timeFilter === 'prev') {
+                const prevDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                return recordDate.getMonth() === prevDate.getMonth() && recordDate.getFullYear() === prevDate.getFullYear();
+            }
+            return true;
+        });
+    },
+
+    /* --- BACKUP & RESTORE (NUEVO) --- */
+    openSettings() {
+        Swal.fire({
+            title: 'Configuración Avanzada',
+            html: `
+                <div class="grid grid-cols-2 gap-4 mt-4">
+                    <button onclick="app.downloadBackup()" class="bg-blue-600 text-white p-4 rounded-xl font-bold hover:bg-blue-700 transition-all flex flex-col items-center gap-2">
+                        <i data-lucide="download-cloud" class="w-8 h-8"></i> Exportar Datos
+                    </button>
+                    <button onclick="document.getElementById('importFile').click()" class="bg-slate-700 text-white p-4 rounded-xl font-bold hover:bg-slate-600 transition-all flex flex-col items-center gap-2">
+                        <i data-lucide="upload-cloud" class="w-8 h-8"></i> Restaurar Datos
+                    </button>
+                </div>
+                <p class="text-xs text-slate-400 mt-4">Tus datos están seguros en tu navegador. Haz una copia regularmente.</p>
+            `,
+            showConfirmButton: false,
+            background: this.theme === 'dark' ? '#0f172a' : '#fff',
+            color: this.theme === 'dark' ? '#fff' : '#000',
+            didOpen: () => lucide.createIcons()
+        });
+    },
+
+    downloadBackup() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.data));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", `Backup_Forjax_${this.user}_${new Date().toISOString().split('T')[0]}.json`);
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+        Swal.close();
+    },
+
+    restoreData(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const importedData = JSON.parse(e.target.result);
+                if (importedData.records && Array.isArray(importedData.records)) {
+                    this.data = importedData;
+                    this.save();
+                    Swal.fire("¡Éxito!", "Datos restaurados correctamente. La página se recargará.", "success").then(() => location.reload());
+                } else {
+                    throw new Error("Formato inválido");
+                }
+            } catch (err) {
+                Swal.fire("Error", "El archivo de respaldo está dañado o no es válido.", "error");
+            }
+        };
+        reader.readAsText(file);
+    },
+
+    /* --- DATA ENGINE --- */
     loadData() {
         const prefix = this.user + "_";
         this.data.records = JSON.parse(localStorage.getItem(prefix + "records")) || [];
@@ -349,14 +462,11 @@ const app = {
         const desc = document.getElementById("transDesc").value;
         const amount = Number(document.getElementById("transAmount").value);
         const category = document.getElementById("transCategory").value;
-
         if (!desc || amount <= 0) return Swal.fire({toast:true, position:'top', icon:'warning', title:'Faltan datos', showConfirmButton:false, timer:2000});
-
         this.data.records.unshift({ id: Date.now(), date: new Date().toLocaleDateString(), desc, amount, category, type });
         document.getElementById("transDesc").value = "";
         document.getElementById("transAmount").value = "";
         this.save();
-        
         const Toast = Swal.mixin({ toast: true, position: 'bottom-end', showConfirmButton: false, timer: 3000, timerProgressBar: true });
         Toast.fire({ icon: 'success', title: 'Operación Registrada' });
     },
@@ -371,10 +481,15 @@ const app = {
         this.save();
     },
 
+    /* --- RENDER ENGINE (CON FILTROS) --- */
     render() {
         const formatter = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
-        const totalInc = this.data.records.filter(r => r.type === 'income').reduce((acc, curr) => acc + curr.amount, 0);
-        const totalExp = this.data.records.filter(r => r.type === 'expense').reduce((acc, curr) => acc + curr.amount, 0);
+        
+        // USAMOS LOS REGISTROS FILTRADOS
+        const visibleRecords = this.getFilteredRecords();
+
+        const totalInc = visibleRecords.filter(r => r.type === 'income').reduce((acc, curr) => acc + curr.amount, 0);
+        const totalExp = visibleRecords.filter(r => r.type === 'expense').reduce((acc, curr) => acc + curr.amount, 0);
         const balance = totalInc - totalExp;
         
         document.getElementById("bIncome").textContent = formatter.format(totalInc);
@@ -384,6 +499,8 @@ const app = {
 
         document.getElementById("budgetInput").value = this.data.budget || "";
         if(this.data.budget > 0) {
+            // Nota: El presupuesto se compara contra el gasto del mes (si el filtro es mes)
+            // Si el filtro es "Todo", comparar presupuesto mensual es raro, pero lo dejamos visualmente.
             const percent = Math.min((totalExp / this.data.budget) * 100, 100);
             document.getElementById("budgetBar").style.width = `${percent}%`;
             document.getElementById("budgetBar").className = `h-5 rounded-full transition-all duration-1000 relative ${percent > 90 ? 'bg-rose-500' : percent > 50 ? 'bg-yellow-500' : 'bg-blue-500'}`;
@@ -392,11 +509,11 @@ const app = {
         }
 
         const searchTerm = document.getElementById("searchInput")?.value.toLowerCase() || "";
-        const filtered = this.data.records.filter(r => r.desc.toLowerCase().includes(searchTerm) || r.category.toLowerCase().includes(searchTerm));
+        const filtered = visibleRecords.filter(r => r.desc.toLowerCase().includes(searchTerm) || r.category.toLowerCase().includes(searchTerm));
         
         const tbody = document.getElementById("historyTable");
         if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-12 opacity-30 font-bold text-lg">SIN MOVIMIENTOS</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-12 opacity-30 font-bold text-lg">SIN DATOS EN ESTE PERIODO</td></tr>`;
         } else {
             tbody.innerHTML = filtered.map(r => `
                 <tr class="hover:bg-slate-50 dark:hover:bg-white/5 transition-all group border-b border-white/5 last:border-0">
@@ -416,250 +533,101 @@ const app = {
             `).join('');
         }
 
-        if(searchTerm === "") this.updateCharts(totalInc, totalExp);
+        if(searchTerm === "") this.updateCharts(totalInc, totalExp, visibleRecords);
         lucide.createIcons();
     },
 
+    /* --- APIs --- */
     async fetchDolarSimple() {
         try {
             const res = await fetch("https://dolarapi.com/v1/dolares/blue");
             const data = await res.json();
             document.getElementById("dolarRateTag").textContent = `@ $${data.venta}`;
+            // Calculamos capital en USD basado en el balance TOTAL, no el filtrado
             const totalInc = this.data.records.filter(r => r.type === 'income').reduce((acc, curr) => acc + curr.amount, 0);
             const totalExp = this.data.records.filter(r => r.type === 'expense').reduce((acc, curr) => acc + curr.amount, 0);
-            const balance = totalInc - totalExp;
-            if(data.venta > 0) document.getElementById("capitalUsd").textContent = `US$ ${(balance / data.venta).toLocaleString('en-US', {maximumFractionDigits: 0})}`;
+            if(data.venta > 0) document.getElementById("capitalUsd").textContent = `US$ ${((totalInc - totalExp) / data.venta).toLocaleString('en-US', {maximumFractionDigits: 0})}`;
         } catch(e) {}
     },
 
-    // --- MERCADO FOREX GLOBAL ---
     async fetchFullMarket() {
         const gridArg = document.getElementById("marketGridArg");
         const gridWorld = document.getElementById("marketGridWorld");
         const icon = document.getElementById("refreshIcon");
         icon.classList.add("animate-spin");
-        
         this.rates = { 'USD': 1, 'EUR': 0.92, 'BRL': 5.0, 'ARS_BLUE': 0.001 }; 
 
-        // 1. ARGENTINA
         try {
             const res = await fetch("https://dolarapi.com/v1/dolares");
             const data = await res.json();
             const filtered = data.filter(d => d.casa === "oficial" || d.casa === "blue");
-            
             filtered.forEach(d => {
                 if(d.casa === 'blue') this.rates['ARS_BLUE'] = 1/d.venta; 
                 if(d.casa === 'oficial') this.rates['ARS_OFICIAL'] = 1/d.venta;
             });
+            gridArg.innerHTML = filtered.map(d => `<div class="glass p-6 rounded-3xl relative overflow-hidden group hover:bg-white/5 transition-all border border-emerald-500/30"><div class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div><div class="flex items-center gap-3 mb-4"><div class="p-3 rounded-xl bg-emerald-500/20 text-emerald-400"><i data-lucide="dollar-sign" class="w-6 h-6"></i></div><h3 class="font-bold text-lg text-slate-200">Dólar ${d.nombre}</h3></div><div class="grid grid-cols-2 gap-4 mb-2"><div class="bg-black/20 p-3 rounded-xl"><p class="text-[10px] uppercase font-bold text-slate-500 mb-1">Compra</p><p class="text-xl font-black text-white">$${d.compra}</p></div><div class="bg-black/20 p-3 rounded-xl border border-emerald-500/20"><p class="text-[10px] uppercase font-bold text-slate-500 mb-1">Venta</p><p class="text-xl font-black text-emerald-400">$${d.venta}</p></div></div></div>`).join('');
+        } catch (e) {}
 
-            gridArg.innerHTML = filtered.map(d => `
-                <div class="glass p-6 rounded-3xl relative overflow-hidden group hover:bg-white/5 transition-all border border-emerald-500/30">
-                    <div class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="p-3 rounded-xl bg-emerald-500/20 text-emerald-400"><i data-lucide="dollar-sign" class="w-6 h-6"></i></div>
-                        <h3 class="font-bold text-lg text-slate-200">Dólar ${d.nombre}</h3>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 mb-2">
-                        <div class="bg-black/20 p-3 rounded-xl">
-                            <p class="text-[10px] uppercase font-bold text-slate-500 mb-1">Compra</p>
-                            <p class="text-xl font-black text-white">$${d.compra}</p>
-                        </div>
-                        <div class="bg-black/20 p-3 rounded-xl border border-emerald-500/20">
-                            <p class="text-[10px] uppercase font-bold text-slate-500 mb-1">Venta</p>
-                            <p class="text-xl font-black text-emerald-400">$${d.venta}</p>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        } catch (e) { console.error(e); }
-
-        // 2. MUNDO (Forex)
         try {
             const res = await fetch("https://api.frankfurter.app/latest?from=USD");
             const data = await res.json();
-            const r = data.rates;
-            Object.assign(this.rates, r);
-
-            const currencies = [
-                {code: 'EUR', name: 'Euro', flag: '🇪🇺'}, {code: 'GBP', name: 'Libra Esterlina', flag: '🇬🇧'},
-                {code: 'JPY', name: 'Yen Japonés', flag: '🇯🇵'}, {code: 'BRL', name: 'Real Brasil', flag: '🇧🇷'},
-                {code: 'CLP', name: 'Peso Chileno', flag: '🇨🇱'}, {code: 'MXN', name: 'Peso Mexicano', flag: '🇲🇽'},
-                {code: 'CAD', name: 'Dólar Canadá', flag: '🇨🇦'}, {code: 'AUD', name: 'Dólar Austral', flag: '🇦🇺'},
-                {code: 'CNY', name: 'Yuan Chino', flag: '🇨🇳'}, {code: 'CHF', name: 'Franco Suizo', flag: '🇨🇭'}
-            ];
-
-            gridWorld.innerHTML = currencies.map(c => {
-                const val = r[c.code];
-                if(!val) return ''; 
-                return `
-                <div class="glass p-4 rounded-2xl hover:bg-white/5 transition-all border border-blue-500/10 hover:border-blue-500/40 group">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-2xl">${c.flag}</span>
-                        <span class="text-xs font-bold text-slate-500 bg-black/30 px-2 py-1 rounded">${c.code}</span>
-                    </div>
-                    <p class="text-sm font-bold text-slate-300 truncate">${c.name}</p>
-                    <p class="text-lg font-mono font-bold text-blue-400 mt-1">${val.toFixed(2)}</p>
-                    <p class="text-[10px] text-slate-600">1 USD = ${val.toFixed(2)} ${c.code}</p>
-                </div>`;
-            }).join('');
-        } catch (e) { 
-            gridWorld.innerHTML = `<div class="col-span-full text-center text-slate-500 p-4">Datos internacionales no disponibles momentáneamente.</div>`;
-        }
+            Object.assign(this.rates, data.rates);
+            const currencies = [{code:'EUR',name:'Euro',flag:'🇪🇺'},{code:'GBP',name:'Libra',flag:'🇬🇧'},{code:'JPY',name:'Yen',flag:'🇯🇵'},{code:'BRL',name:'Real',flag:'🇧🇷'},{code:'CLP',name:'Peso CL',flag:'🇨🇱'},{code:'MXN',name:'Peso MX',flag:'🇲🇽'},{code:'CAD',name:'Dólar CA',flag:'🇨🇦'},{code:'AUD',name:'Dólar AU',flag:'🇦🇺'},{code:'CNY',name:'Yuan',flag:'🇨🇳'},{code:'CHF',name:'Franco',flag:'🇨🇭'}];
+            gridWorld.innerHTML = currencies.map(c => { const val = data.rates[c.code]; if(!val) return ''; return `<div class="glass p-4 rounded-2xl hover:bg-white/5 transition-all border border-blue-500/10 hover:border-blue-500/40 group"><div class="flex justify-between items-center mb-2"><span class="text-2xl">${c.flag}</span><span class="text-xs font-bold text-slate-500 bg-black/30 px-2 py-1 rounded">${c.code}</span></div><p class="text-sm font-bold text-slate-300 truncate">${c.name}</p><p class="text-lg font-mono font-bold text-blue-400 mt-1">${val.toFixed(2)}</p><p class="text-[10px] text-slate-600">1 USD = ${val.toFixed(2)} ${c.code}</p></div>`; }).join('');
+        } catch (e) { gridWorld.innerHTML = `<div class="col-span-full text-center text-slate-500 p-4">Sin datos mundiales.</div>`; }
 
         setTimeout(() => icon.classList.remove("animate-spin"), 1000);
         lucide.createIcons();
     },
 
-    /* --- CALCULADORA LOGIC --- */
     fillCalcSelects() {
-        const selFrom = document.getElementById("calcFrom");
-        const selTo = document.getElementById("calcTo");
-        
-        const options = [
-            {v: 'USD', t: '🇺🇸 Dólar (USD)'}, {v: 'ARS_BLUE', t: '🇦🇷 Peso Blue'}, {v: 'ARS_OFICIAL', t: '🇦🇷 Peso Oficial'},
-            {v: 'EUR', t: '🇪🇺 Euro'}, {v: 'BRL', t: '🇧🇷 Real'}, {v: 'GBP', t: '🇬🇧 Libra'}, {v: 'JPY', t: '🇯🇵 Yen'},
-            {v: 'CLP', t: '🇨🇱 Peso Chileno'}, {v: 'MXN', t: '🇲🇽 Peso Mexicano'}
-        ];
-
-        const html = options.map(o => `<option value="${o.v}">${o.t}</option>`).join('');
-        selFrom.innerHTML = html;
-        selTo.innerHTML = html;
-        selTo.value = 'EUR';
+        const h = [{v:'USD',t:'🇺🇸 Dólar'},{v:'ARS_BLUE',t:'🇦🇷 Blue'},{v:'ARS_OFICIAL',t:'🇦🇷 Oficial'},{v:'EUR',t:'🇪🇺 Euro'},{v:'BRL',t:'🇧🇷 Real'},{v:'GBP',t:'🇬🇧 Libra'},{v:'JPY',t:'🇯🇵 Yen'},{v:'CLP',t:'🇨🇱 Peso CL'},{v:'MXN',t:'🇲🇽 Peso MX'}].map(o=>`<option value="${o.v}">${o.t}</option>`).join('');
+        const s1=document.getElementById("calcFrom"), s2=document.getElementById("calcTo");
+        if(s1.innerHTML === "") { s1.innerHTML=h; s2.innerHTML=h; s2.value='EUR'; }
     },
 
     calcCurrency() {
-        const amount = parseFloat(document.getElementById("calcAmount").value) || 0;
-        const from = document.getElementById("calcFrom").value;
-        const to = document.getElementById("calcTo").value;
-        const resEl = document.getElementById("calcResult");
-        
-        const safeRates = { ...this.rates }; 
-        if(!safeRates[from]) safeRates[from] = 1; 
-        if(!safeRates[to]) safeRates[to] = 1;
-
-        let amountInUSD = 0;
-        if (from === 'USD') amountInUSD = amount;
-        else if (from.includes('ARS')) amountInUSD = amount * safeRates[from];
-        else amountInUSD = amount / safeRates[from];
-
-        let finalAmount = 0;
-        if (to === 'USD') finalAmount = amountInUSD;
-        else if (to.includes('ARS')) finalAmount = amountInUSD / safeRates[to];
-        else finalAmount = amountInUSD * safeRates[to];
-
-        resEl.textContent = finalAmount.toLocaleString(undefined, {maximumFractionDigits: 2});
+        const amount = parseFloat(document.getElementById("calcAmount").value)||0, from = document.getElementById("calcFrom").value, to = document.getElementById("calcTo").value;
+        const rates = {...this.rates}; if(!rates[from]) rates[from]=1; if(!rates[to]) rates[to]=1;
+        let usd = from==='USD'?amount:(from.includes('ARS')?amount*rates[from]:amount/rates[from]);
+        let final = to==='USD'?usd:(to.includes('ARS')?usd/rates[to]:usd*rates[to]);
+        document.getElementById("calcResult").textContent = final.toLocaleString(undefined,{maximumFractionDigits:2});
     },
+    swapCalc() { const f=document.getElementById("calcFrom"), t=document.getElementById("calcTo"), tmp=f.value; f.value=t.value; t.value=tmp; this.calcCurrency(); },
 
-    swapCalc() {
-        const from = document.getElementById("calcFrom");
-        const to = document.getElementById("calcTo");
-        const temp = from.value;
-        from.value = to.value;
-        to.value = temp;
-        this.calcCurrency();
-    },
-
-    /* =================== EXCEL NIVEL "BIG FOUR" =================== */
     exportProExcel() {
         const wb = XLSX.utils.book_new();
+        const headerStyle = { font: { bold: true, color: { rgb: "FFFFFF" } }, fill: { fgColor: { rgb: "0F172A" } }, alignment: { horizontal: "center", vertical: "center" } };
+        const titleStyle = { font: { bold: true, sz: 18, color: { rgb: "3B82F6" } } };
+        const moneyGreen = { numFmt: "$ #,##0", font: { color: { rgb: "10B981" } } };
+        const moneyRed = { numFmt: "$ #,##0", font: { color: { rgb: "EF4444" } } };
+
+        const visibleRecords = this.getFilteredRecords(); // Exportar solo lo filtrado
+        const totalInc = visibleRecords.filter(r => r.type === 'income').reduce((acc, curr) => acc + curr.amount, 0);
+        const totalExp = visibleRecords.filter(r => r.type === 'expense').reduce((acc, curr) => acc + curr.amount, 0);
         
-        // --- ESTILOS CORPORATIVOS ---
-        const borderThin = { style: "thin", color: { rgb: "D1D5DB" } };
-        const borderThick = { style: "medium", color: { rgb: "374151" } };
-        
-        const sHeaderDark = { font: { bold: true, color: { rgb: "FFFFFF" }, sz: 11, name: "Arial" }, fill: { fgColor: { rgb: "1E3A8A" } }, alignment: { horizontal: "center", vertical: "center" }, border: { bottom: borderThick, top: borderThin, left: borderThin, right: borderThin } };
-        const sTitle = { font: { bold: true, sz: 16, color: { rgb: "1E3A8A" }, name: "Arial" }, alignment: { horizontal: "left" } };
-        const sSubtitle = { font: { italic: true, sz: 10, color: { rgb: "6B7280" }, name: "Arial" } };
-        const sData = { font: { sz: 10, name: "Arial" }, border: { bottom: borderThin, left: borderThin, right: borderThin } };
-        const sDataCenter = { ...sData, alignment: { horizontal: "center" } };
-        const sDataBold = { ...sData, font: { ...sData.font, bold: true } };
-        
-        const sCurrency = { ...sData, numFmt: "$ #,##0", alignment: { horizontal: "right" } };
-        const sCurrencyBold = { ...sCurrency, font: { bold: true } };
-        const sCurrencyGreen = { ...sCurrency, font: { color: { rgb: "059669" }, bold: true } };
-        const sCurrencyRed = { ...sCurrency, font: { color: { rgb: "DC2626" }, bold: true } };
-        const sPercent = { ...sData, numFmt: "0.0%", alignment: { horizontal: "center" }, font: { bold: true } };
-        const sSectionHeader = { font: { bold: true, sz: 12, color: { rgb: "111827" }, name: "Arial" }, border: { bottom: borderThick } };
+        const wsDash = XLSX.utils.aoa_to_sheet([["REPORTE CFO"],[`Periodo: ${this.timeFilter === 'month' ? 'Este Mes' : 'Histórico'}`],[""],["Ingresos", totalInc],["Gastos", totalExp],["Balance", totalInc - totalExp]]);
+        wsDash['A1'].s = titleStyle;
+        XLSX.utils.book_append_sheet(wb, wsDash, "Resumen");
 
-        // --- CÁLCULOS ---
-        const totalInc = this.data.records.filter(r => r.type === 'income').reduce((acc, curr) => acc + curr.amount, 0);
-        const totalExp = this.data.records.filter(r => r.type === 'expense').reduce((acc, curr) => acc + curr.amount, 0);
-        const balance = totalInc - totalExp;
-        const savingRate = totalInc > 0 ? (balance / totalInc) : 0;
-        const budgetExec = this.data.budget > 0 ? (totalExp / this.data.budget) : 0;
-
-        // --- HOJA 1: DASHBOARD EJECUTIVO ---
-        const dashData = [
-            ["FORJAX FINANCIAL TERMINAL - REPORTE CFO", "", "", ""],
-            [`Generado por: ${this.user.toUpperCase()} | Fecha: ${new Date().toLocaleDateString()}`, "", "", ""],
-            ["", "", "", ""], // Espacio
-            ["RESUMEN OPERATIVO DEL PERÍODO", "", "", ""], // Seccion 1
-            ["CONCEPTO", "RESULTADO", "", "ANÁLISIS RAPIDO"],
-            ["Ingresos Totales", totalInc, "", "Flujo de entrada"],
-            ["Gastos Operativos", totalExp, "", "Flujo de salida"],
-            ["BALANCE NETO", balance, "", balance >= 0 ? "Superávit" : "Déficit"],
-            ["", "", "", ""], // Espacio
-            ["ANÁLISIS DE EFICIENCIA & PRESUPUESTO", "", "", ""], // Seccion 2
-            ["MÉTRICA", "VALOR", "OBJETIVO", "ESTADO"],
-            ["Margen de Ahorro", savingRate, "> 20%", savingRate > 0.2 ? "Excelente" : savingRate > 0 ? "Regular" : "Crítico"],
-            ["Ejecución Presupuestaria", budgetExec, "< 90%", budgetExec < 0.9 ? "Bajo Control" : budgetExec < 1 ? "Alerta" : "Excedido"],
-            ["Presupuesto Total", this.data.budget, "", ""]
-        ];
-
-        const wsDash = XLSX.utils.aoa_to_sheet(dashData);
-        
-        // Estructura
-        wsDash['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 3 } }, { s: { r: 1, c: 0 }, e: { r: 1, c: 3 } }, { s: { r: 3, c: 0 }, e: { r: 3, c: 3 } }, { s: { r: 7, c: 0 }, e: { r: 7, c: 1 } }, { s: { r: 9, c: 0 }, e: { r: 9, c: 3 } }];
-        wsDash['!cols'] = [{ wch: 25 }, { wch: 20 }, { wch: 15 }, { wch: 20 }];
-        
-        // Aplicar Estilos Dash
-        wsDash['A1'].s = sTitle; wsDash['A2'].s = sSubtitle;
-        wsDash['A4'].s = wsDash['A10'].s = sSectionHeader;
-        ["A5","B5","D5","A11","B11","C11","D11"].forEach(c => { if(wsDash[c]) wsDash[c].s = sHeaderDark; });
-        wsDash['A6'].s = wsDash['A7'].s = sDataBold;
-        wsDash['B6'].s = sCurrencyGreen; wsDash['B7'].s = sCurrencyRed;
-        wsDash['A8'].s = sDataBold; wsDash['B8'].s = balance >= 0 ? sCurrencyGreen : sCurrencyRed; wsDash['B8'].s.border = { top: borderThick, bottom: borderThick };
-        wsDash['B12'].s = wsDash['B13'].s = sPercent;
-        wsDash['B14'].s = sCurrencyBold;
-        ["D6","D7","D8","A12","C12","D12","A13","C13","D13","A14"].forEach(c => { if(wsDash[c] && !wsDash[c].s) wsDash[c].s = sDataCenter; });
-
-        XLSX.utils.book_append_sheet(wb, wsDash, "Dashboard Ejecutivo");
-
-        // --- HOJA 2: REGISTRO TRANSACCIONAL ---
-        const transData = [
-            ["REGISTRO DETALLADO DE OPERACIONES", "", "", "", ""],
-            ["", "", "", "", ""],
-            ["FECHA", "DESCRIPCIÓN", "CATEGORÍA", "TIPO", "MONTO"]
-        ];
-        this.data.records.forEach(r => transData.push([r.date, r.desc, r.category, r.type.toUpperCase(), r.amount]));
-
+        const transData = [["FECHA", "DESCRIPCIÓN", "CATEGORÍA", "TIPO", "MONTO"], ...visibleRecords.map(r => [r.date, r.desc, r.category, r.type.toUpperCase(), r.amount])];
         const wsTrans = XLSX.utils.aoa_to_sheet(transData);
-        wsTrans['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }];
-        wsTrans['!cols'] = [{ wch: 12 }, { wch: 40 }, { wch: 18 }, { wch: 12 }, { wch: 18 }];
-        wsTrans['A1'].s = sTitle;
-        ["A3", "B3", "C3", "D3", "E3"].forEach(c => wsTrans[c].s = sHeaderDark);
-
-        for (let i = 3; i < transData.length; i++) {
-            const isExp = transData[i][3] === 'GASTO';
-            wsTrans[XLSX.utils.encode_cell({r:i, c:0})].s = sDataCenter;
-            wsTrans[XLSX.utils.encode_cell({r:i, c:1})].s = sData;
-            wsTrans[XLSX.utils.encode_cell({r:i, c:2})].s = sDataCenter;
-            wsTrans[XLSX.utils.encode_cell({r:i, c:3})].s = sDataCenter;
-            wsTrans[XLSX.utils.encode_cell({r:i, c:4})].s = isExp ? sCurrencyRed : sCurrencyGreen;
-        }
-
-        XLSX.utils.book_append_sheet(wb, wsTrans, "Registro Transaccional");
-        XLSX.writeFile(wb, `FORJAX_Reporte_CFO_${new Date().toISOString().split('T')[0]}.xlsx`);
+        wsTrans['A1'].s = wsTrans['B1'].s = wsTrans['C1'].s = wsTrans['D1'].s = wsTrans['E1'].s = headerStyle;
+        for (let i = 1; i < transData.length; i++) wsTrans[XLSX.utils.encode_cell({ r: i, c: 4 })].s = transData[i][3] === 'GASTO' ? moneyRed : moneyGreen;
+        XLSX.utils.book_append_sheet(wb, wsTrans, "Detalle");
+        XLSX.writeFile(wb, `FORJAX_CFO_${this.user}.xlsx`);
     },
 
-    updateCharts(inc, exp) {
+    updateCharts(inc, exp, records) {
         const ctxBar = document.getElementById("barChart").getContext("2d");
         const ctxPie = document.getElementById("pieChart").getContext("2d");
         if (this.charts.bar) this.charts.bar.destroy();
         if (this.charts.pie) this.charts.pie.destroy();
         const c = { bg: this.theme === 'dark' ? '#94a3b8' : '#475569' };
+        
         this.charts.bar = new Chart(ctxBar, { type: 'bar', data: { labels: ['Ingresos', 'Gastos'], datasets: [{ data: [inc, exp], backgroundColor: ['#10b981', '#f43f5e'], borderRadius: 6, barThickness: 40 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { ticks: { color: c.bg } }, x: { grid: { display: false }, ticks: { color: c.bg } } } } });
-        const catData = {}; this.data.records.filter(r => r.type === 'expense').forEach(r => { catData[r.category] = (catData[r.category] || 0) + r.amount; });
+        
+        const catData = {}; records.filter(r => r.type === 'expense').forEach(r => { catData[r.category] = (catData[r.category] || 0) + r.amount; });
         this.charts.pie = new Chart(ctxPie, { type: 'doughnut', data: { labels: Object.keys(catData), datasets: [{ data: Object.values(catData), backgroundColor: ['#3b82f6', '#8b5cf6', '#f59e0b', '#ec4899', '#64748b'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: c.bg, boxWidth: 10, font: {size:10} } } }, cutout: '75%' } });
     },
 
