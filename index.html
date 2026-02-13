@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FORJAX Terminal - V20 SINGULARITY</title>
+    <title>FORJAX Terminal - V21 PHOENIX</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -29,21 +29,24 @@
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap');
         :root { --accent: 59, 130, 246; }
         body { font-family: 'Outfit', sans-serif; transition: all 0.3s ease; }
-        .glass { backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .dark .glass { background: rgba(15, 23, 42, 0.7); border-color: rgba(255,255,255,0.05); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); }
-        .hover-scale:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.2); }
-        .fade-in { animation: fadeIn 0.5s ease-out forwards; opacity: 0; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        /* Glassmorphism Restaurado */
+        .glass { backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); background: rgba(15, 23, 42, 0.6); transition: all 0.3s ease; }
+        .glass:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        
         .dark input, .dark select { background: #1e293b; color: #fff; border: 1px solid #334155; }
         .privacy-active .blur-sensitive { filter: blur(6px); transition: filter 0.3s ease; user-select: none; }
         .blur-sensitive { transition: filter 0.3s ease; }
         
-        /* V20 Styles */
-        .xp-bar-glow { box-shadow: 0 0 10px rgba(var(--accent), 0.6); }
-        .mic-listening { animation: micPulse 1.5s infinite; background-color: #ef4444 !important; border-color: #f87171 !important; color: white !important; }
-        @keyframes micPulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
-        .heatmap-cell { transition: all 0.2s; } .heatmap-cell:hover { transform: scale(1.2); z-index: 10; border: 1px solid white; }
+        /* Custom Scrollbar */
+        .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        /* Animaciones */
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 
@@ -56,8 +59,8 @@
             <div class="mb-8 inline-flex p-5 bg-blue-600 rounded-2xl shadow-2xl">
                 <i data-lucide="layout-dashboard" class="w-10 h-10 text-white"></i>
             </div>
-            <h2 class="text-4xl font-extrabold mb-2 tracking-tight">FORJAX <span class="text-blue-500">V20</span></h2>
-            <p class="text-slate-400 mb-8 font-medium">Singularity Update</p>
+            <h2 class="text-4xl font-extrabold mb-2 tracking-tight">FORJAX <span class="text-blue-500">V21</span></h2>
+            <p class="text-slate-400 mb-8 font-medium">Phoenix Update (Fix)</p>
             <input id="userInput" type="text" placeholder="Identificación" class="w-full p-4 rounded-xl mb-4 text-center text-lg font-bold outline-none focus:ring-2 focus:ring-blue-500 transition-all">
             <button onclick="app.initSession()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition-all shadow-lg">ACCEDER</button>
         </div>
@@ -66,7 +69,7 @@
 
 <div id="mainApp" class="hidden opacity-0 transition-opacity duration-700">
     
-    <nav class="fixed top-6 left-1/2 -translate-x-1/2 z-50 glass px-2 py-2 rounded-2xl flex items-center gap-1 shadow-2xl overflow-x-auto no-scrollbar max-w-[95vw]">
+    <nav class="fixed top-6 left-1/2 -translate-x-1/2 z-50 glass px-2 py-2 rounded-2xl flex items-center gap-1 shadow-2xl overflow-x-auto custom-scroll max-w-[95vw]">
         <button onclick="app.switchTab('wallet')" id="btnWallet" class="px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 bg-blue-600 text-white shadow-lg"><i data-lucide="wallet"></i> Wallet</button>
         <button onclick="app.switchTab('subs')" id="btnSubs" class="px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 text-slate-400 hover:bg-white/5"><i data-lucide="zap"></i> Subs</button>
         <button onclick="app.switchTab('goals')" id="btnGoals" class="px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 text-slate-400 hover:bg-white/5"><i data-lucide="target"></i> Metas</button>
@@ -74,82 +77,58 @@
         <div class="w-px h-6 bg-white/10 mx-2 hidden md:block"></div>
         <button onclick="app.togglePrivacy()" id="btnPrivacy" class="p-2.5 rounded-xl text-slate-400 hover:text-emerald-400 hover:bg-white/5"><i id="eyeIcon" data-lucide="eye"></i></button>
         <button onclick="app.openSettings()" class="p-2.5 rounded-xl text-slate-400 hover:text-white hover:bg-white/5"><i data-lucide="settings"></i></button>
+        <button onclick="app.toggleTheme()" class="p-2.5 rounded-xl text-slate-400 hover:text-yellow-400 hover:bg-white/5"><i id="themeIcon" data-lucide="sun"></i></button>
         <button onclick="app.logout()" class="p-2.5 rounded-xl text-slate-400 hover:text-rose-500 hover:bg-white/5"><i data-lucide="power"></i></button>
     </nav>
-
-    <div class="fixed top-0 left-0 w-full h-1.5 z-[60]">
-        <div id="xpBar" class="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 xp-bar-glow transition-all duration-1000" style="width: 0%"></div>
-    </div>
-    <div class="fixed top-2 right-4 z-[50] text-[10px] font-bold text-white uppercase tracking-widest opacity-80 mix-blend-difference">
-        Lvl <span id="levelNum">1</span>: <span id="levelTitle">Novato</span>
-    </div>
 
     <div class="pt-28 max-w-[1400px] mx-auto px-6 pb-12">
         
         <div id="viewWallet" class="fade-in">
             <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                <div><h2 class="text-2xl font-bold">Command Center</h2><p class="text-sm text-slate-400">V20 Singularity</p></div>
+                <div><h2 class="text-2xl font-bold">Dashboard</h2><p class="text-sm text-slate-400">Resumen Financiero</p></div>
                 
-                <button id="voiceBtn" onclick="app.startVoice()" class="glass px-6 py-3 rounded-full flex items-center gap-3 border border-slate-700 hover:border-blue-500 transition-all group">
-                    <i data-lucide="mic" class="w-5 h-5 text-slate-400 group-hover:text-white transition-colors"></i>
-                    <span id="voiceText" class="text-sm font-bold text-slate-300">Hablar con IA</span>
-                </button>
-
                 <div class="glass p-1 rounded-xl flex gap-1">
-                    <button onclick="app.setFilter('month')" id="filterMonth" class="px-4 py-2 rounded-lg text-xs font-bold bg-blue-600 text-white">Este Mes</button>
-                    <button onclick="app.setFilter('all')" id="filterAll" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:bg-white/5">Todo</button>
+                    <button onclick="app.setFilter('month')" id="filterMonth" class="px-4 py-2 rounded-lg text-xs font-bold bg-blue-600 text-white transition-all">Este Mes</button>
+                    <button onclick="app.setFilter('all')" id="filterAll" class="px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:bg-white/5 transition-all">Histórico</button>
                 </div>
             </div>
 
-            <div class="mb-8 overflow-x-auto">
-                <div class="flex items-end gap-1 h-16" id="heatmapContainer">
-                    </div>
-            </div>
-
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                <div class="glass p-6 rounded-3xl border-b-4 border-emerald-500 hover-scale"><p class="text-xs font-bold opacity-60">INGRESOS</p><h2 class="text-3xl font-black text-emerald-500 blur-sensitive" id="bIncome">$0</h2></div>
-                <div class="glass p-6 rounded-3xl border-b-4 border-rose-500 hover-scale"><p class="text-xs font-bold opacity-60">GASTOS</p><h2 class="text-3xl font-black text-rose-500 blur-sensitive" id="bExpense">$0</h2></div>
-                <div class="glass p-6 rounded-3xl border-b-4 border-blue-500 hover-scale"><p class="text-xs font-bold opacity-60">BALANCE</p><h2 class="text-3xl font-black text-blue-500 blur-sensitive" id="bNet">$0</h2></div>
-                <div class="glass p-6 rounded-3xl border-b-4 border-violet-500 hover-scale"><p class="text-xs font-bold opacity-60">DÓLAR BLUE</p><div class="flex gap-2"><h2 class="text-3xl font-black text-white" id="dolarVal">$0</h2></div></div>
+                <div class="glass p-6 rounded-3xl border-b-4 border-emerald-500"><p class="text-xs font-bold opacity-60">INGRESOS</p><h2 class="text-3xl font-black text-emerald-500 blur-sensitive" id="bIncome">$0</h2></div>
+                <div class="glass p-6 rounded-3xl border-b-4 border-rose-500"><p class="text-xs font-bold opacity-60">GASTOS</p><h2 class="text-3xl font-black text-rose-500 blur-sensitive" id="bExpense">$0</h2></div>
+                <div class="glass p-6 rounded-3xl border-b-4 border-blue-500"><p class="text-xs font-bold opacity-60">BALANCE</p><h2 class="text-3xl font-black text-blue-500 blur-sensitive" id="bNet">$0</h2></div>
+                <div class="glass p-6 rounded-3xl border-b-4 border-violet-500"><p class="text-xs font-bold opacity-60">DÓLAR BLUE</p><h2 class="text-3xl font-black text-white" id="dolarVal">$0</h2></div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 <div class="lg:col-span-4 space-y-6">
                     <div class="glass p-6 rounded-3xl">
-                        <h3 class="flex items-center gap-2 text-lg font-bold mb-6 text-blue-500"><i data-lucide="cpu"></i> Input Manual</h3>
+                        <h3 class="flex items-center gap-2 text-lg font-bold mb-6 text-blue-500"><i data-lucide="mouse-pointer-2"></i> Nuevo Movimiento</h3>
                         <div class="space-y-4">
                             <div class="relative"><i data-lucide="type" class="absolute left-4 top-3.5 w-5 h-5 opacity-50"></i><input id="transDesc" type="text" placeholder="Descripción" class="w-full pl-12 p-3 rounded-xl font-medium outline-none focus:ring-2 focus:ring-blue-500"></div>
                             <div class="flex gap-3">
                                 <div class="relative w-1/2"><i data-lucide="dollar-sign" class="absolute left-3 top-3.5 w-5 h-5 opacity-50"></i><input id="transAmount" type="number" placeholder="Monto" class="w-full pl-10 p-3 rounded-xl font-medium outline-none focus:ring-2 focus:ring-blue-500"></div>
-                                <select id="transCategory" class="w-1/2 p-3 rounded-xl font-medium outline-none focus:ring-2 focus:ring-blue-500 bg-slate-800"><option value="Ingreso">💼 Ingreso</option><option value="Hogar">🏠 Hogar</option><option value="Comida">🍔 Comida</option><option value="Servicios">💡 Servicios</option><option value="Transporte">🚗 Transporte</option><option value="Ocio">🍿 Ocio</option><option value="Otros">📦 Otros</option></select>
+                                <select id="transCategory" class="w-1/2 p-3 rounded-xl font-medium outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer bg-slate-800"><option value="Ingreso">💼 Ingreso</option><option value="Hogar">🏠 Hogar</option><option value="Comida">🍔 Comida</option><option value="Servicios">💡 Servicios</option><option value="Transporte">🚗 Transporte</option><option value="Ocio">🍿 Ocio</option><option value="Otros">📦 Otros</option></select>
                             </div>
                             <div class="grid grid-cols-2 gap-3 pt-2">
-                                <button onclick="app.addRecord('income')" class="bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-bold shadow-lg">INGRESO</button>
-                                <button onclick="app.addRecord('expense')" class="bg-rose-600 hover:bg-rose-500 text-white py-3 rounded-xl font-bold shadow-lg">GASTO</button>
+                                <button onclick="app.addRecord('income')" class="bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-bold shadow-lg">INGRESO (+)</button>
+                                <button onclick="app.addRecord('expense')" class="bg-rose-600 hover:bg-rose-500 text-white py-3 rounded-xl font-bold shadow-lg">GASTO (-)</button>
                             </div>
-                        </div>
-                        
-                        <div class="mt-8 pt-6 border-t border-white/10">
-                            <div class="flex justify-between items-center mb-4"><h4 class="font-bold text-rose-500 uppercase flex gap-2"><i data-lucide="skull" class="w-4 h-4"></i> Deudas</h4><button onclick="app.addDebt()" class="text-xs bg-rose-500/20 text-rose-400 px-2 py-1 rounded hover:bg-rose-500 hover:text-white"><i data-lucide="plus"></i></button></div>
-                            <div id="debtGrid" class="space-y-3 max-h-[200px] overflow-y-auto custom-scroll pr-1"></div>
                         </div>
                     </div>
                 </div>
 
                 <div class="lg:col-span-8 space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="glass p-5 rounded-3xl"><h4 class="text-xs font-bold opacity-60 mb-4">FLUJO</h4><div class="h-48"><canvas id="barChart"></canvas></div></div>
-                        <div class="glass p-5 rounded-3xl"><h4 class="text-xs font-bold opacity-60 mb-4">DISTRIBUCIÓN</h4><div class="h-48 flex justify-center"><canvas id="pieChart"></canvas></div></div>
-                    </div>
-                    
                     <div class="glass rounded-3xl overflow-hidden border border-white/5">
                         <div class="p-5 border-b border-white/5 flex justify-between items-center bg-white/5">
-                            <h3 class="font-bold flex items-center gap-2"><i data-lucide="database"></i> Logs</h3>
-                            <button onclick="app.exportProExcel()" class="bg-emerald-600 px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2"><i data-lucide="download"></i> Excel</button>
+                            <h3 class="font-bold flex items-center gap-2"><i data-lucide="list"></i> Movimientos</h3>
+                            <button onclick="app.exportProExcel()" class="bg-emerald-600 px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-2 hover:bg-emerald-500"><i data-lucide="download"></i> Excel</button>
                         </div>
                         <div class="overflow-x-auto max-h-[400px] custom-scroll">
                             <table class="w-full text-left">
-                                <thead class="sticky top-0 bg-[#0f172a] z-10 text-xs uppercase opacity-70"><tr><th class="px-6 py-4">Fecha</th><th class="px-6 py-4">Desc</th><th class="px-6 py-4 text-right">Monto</th><th class="px-6 py-4 text-center">x</th></tr></thead>
+                                <thead class="sticky top-0 bg-[#0f172a] z-10 text-xs uppercase opacity-70">
+                                    <tr><th class="px-6 py-4">Fecha</th><th class="px-6 py-4">Desc</th><th class="px-6 py-4">Cat</th><th class="px-6 py-4 text-right">Monto</th><th class="px-6 py-4 text-center">x</th></tr>
+                                </thead>
                                 <tbody id="historyTable" class="divide-y divide-white/5 text-sm font-medium"></tbody>
                             </table>
                         </div>
@@ -159,22 +138,43 @@
         </div>
 
         <div id="viewSubs" class="hidden fade-in">
-            <div class="flex justify-between mb-8">
-                <h2 class="text-2xl font-bold">Suscripciones</h2>
-                <button onclick="app.toggleSubForm()" class="bg-blue-600 px-6 py-2 rounded-xl font-bold text-white">Nueva</button>
+            <div class="flex justify-between items-center mb-8">
+                <div><h2 class="text-2xl font-bold flex items-center gap-2"><i data-lucide="zap" class="text-yellow-500"></i> Suscripciones</h2><p class="text-sm text-slate-400">Gastos Fijos Mensuales</p></div>
+                <button onclick="app.toggleSubForm()" class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded-xl font-bold text-white shadow-lg transition-all">Nueva</button>
             </div>
-            <div id="subForm" class="hidden glass p-4 mb-4 grid grid-cols-1 md:grid-cols-4 gap-2"><input id="subName" placeholder="Nombre" class="p-2 rounded bg-slate-800"><input id="subAmount" type="number" placeholder="$" class="p-2 rounded bg-slate-800"><input id="subDay" type="number" placeholder="Día" class="p-2 rounded bg-slate-800"><button onclick="app.addSub()" class="bg-emerald-600 text-white rounded font-bold">Guardar</button></div>
-            <div id="subsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+            
+            <div id="subForm" class="hidden glass p-6 rounded-3xl mb-8 border border-blue-500/30">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                    <input id="subName" placeholder="Nombre (ej: Netflix)" class="p-3 rounded-xl bg-slate-800 border border-white/10 outline-none focus:border-blue-500 w-full">
+                    <input id="subAmount" type="number" placeholder="Monto" class="p-3 rounded-xl bg-slate-800 border border-white/10 outline-none focus:border-blue-500 w-full">
+                    <input id="subDay" type="number" placeholder="Día Vencimiento" class="p-3 rounded-xl bg-slate-800 border border-white/10 outline-none focus:border-blue-500 w-full">
+                    <button onclick="app.addSub()" class="bg-emerald-600 hover:bg-emerald-500 text-white p-3 rounded-xl font-bold w-full shadow-lg">Guardar</button>
+                </div>
+            </div>
+            
+            <div id="subsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
         </div>
 
         <div id="viewGoals" class="hidden fade-in">
-             <div class="flex justify-between mb-8"><h2 class="text-2xl font-bold">Metas</h2><button onclick="app.addGoalPrompt()" class="bg-purple-600 px-6 py-2 rounded-xl font-bold text-white">Nueva</button></div>
-             <div id="goalsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+             <div class="flex justify-between items-center mb-8">
+                <div><h2 class="text-2xl font-bold flex items-center gap-2"><i data-lucide="trophy" class="text-purple-500"></i> Metas de Ahorro</h2><p class="text-sm text-slate-400">Tus objetivos</p></div>
+                <button onclick="app.addGoalPrompt()" class="bg-purple-600 hover:bg-purple-500 px-6 py-2 rounded-xl font-bold text-white shadow-lg transition-all">Nueva Meta</button>
+            </div>
+             <div id="goalsGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
         </div>
 
         <div id="viewMarket" class="hidden fade-in">
-             <h2 class="text-2xl font-bold mb-6">Mercado Crypto & Forex</h2>
-             <div id="marketGrid" class="grid grid-cols-1 md:grid-cols-4 gap-4"></div>
+             <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold flex items-center gap-2"><i data-lucide="globe" class="text-emerald-500"></i> Mercado Financiero</h2>
+                <button onclick="app.fetchFullMarket()" class="bg-slate-700 hover:bg-slate-600 p-2 rounded-full"><i data-lucide="refresh-cw"></i></button>
+            </div>
+             
+             <h3 class="text-lg font-bold text-slate-400 mb-4 uppercase tracking-wider">Criptomonedas</h3>
+             <div id="marketGridCrypto" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8"></div>
+             
+             <h3 class="text-lg font-bold text-slate-400 mb-4 uppercase tracking-wider">Monedas Fiat</h3>
+             <div id="marketGridFiat" class="grid grid-cols-1 md:grid-cols-4 gap-6"></div>
         </div>
     </div>
 </div>
@@ -184,15 +184,23 @@
 <script>
 const app = {
     user: localStorage.getItem("currentUser"),
-    data: { records: [], subs: [], goals: [], debts: [], xp: 0 }, // V20: xp added
-    rates: {}, charts: {}, privacy: false, recognition: null,
+    theme: localStorage.getItem("theme") || 'dark',
+    currentTab: 'wallet',
+    timeFilter: 'month', 
+    data: { records: [], subs: [], goals: [] },
+    rates: {}, privacy: false,
 
     init() {
+        this.applyTheme();
         if (!this.user) { document.getElementById("loginScreen").classList.remove("hidden"); return; }
         document.getElementById("loginScreen").classList.add("hidden");
         document.getElementById("mainApp").classList.remove("hidden");
         document.getElementById("mainApp").classList.remove("opacity-0");
-        this.loadData(); this.render(); this.renderSubs(); this.renderGoals(); this.fetchMarket(); this.initVoice();
+        this.loadData(); 
+        this.render(); 
+        this.renderSubs(); 
+        this.renderGoals(); 
+        this.fetchFullMarket();
         lucide.createIcons();
     },
 
@@ -201,166 +209,217 @@ const app = {
         this.data.records = JSON.parse(localStorage.getItem(p + "records")) || [];
         this.data.subs = JSON.parse(localStorage.getItem(p + "subs")) || [];
         this.data.goals = JSON.parse(localStorage.getItem(p + "goals")) || [];
-        this.data.debts = JSON.parse(localStorage.getItem(p + "debts")) || [];
-        this.data.xp = Number(localStorage.getItem(p + "xp")) || 0;
-        this.checkLevel();
     },
     save() {
         const p = this.user + "_";
         localStorage.setItem(p + "records", JSON.stringify(this.data.records));
         localStorage.setItem(p + "subs", JSON.stringify(this.data.subs));
         localStorage.setItem(p + "goals", JSON.stringify(this.data.goals));
-        localStorage.setItem(p + "debts", JSON.stringify(this.data.debts));
-        localStorage.setItem(p + "xp", this.data.xp);
-        this.checkLevel(); this.render();
+        this.render();
     },
 
-    /* --- V20 RPG SYSTEM --- */
-    checkLevel() {
-        const levels = ["Vagabundo", "Ahorrador", "Inversor", "Broker", "Magnate", "Ballena", "Iluminati"];
-        const xp = this.data.xp;
-        let lvl = 1;
-        if(xp > 100) lvl=2; if(xp > 500) lvl=3; if(xp > 1000) lvl=4; if(xp > 2500) lvl=5; if(xp > 5000) lvl=6; if(xp > 10000) lvl=7;
-        
-        document.getElementById("levelNum").innerText = lvl;
-        document.getElementById("levelTitle").innerText = levels[lvl-1] || "Dios";
-        
-        // Progress to next level logic (simplified)
-        let nextXp = lvl === 1 ? 100 : (lvl === 2 ? 500 : (lvl === 3 ? 1000 : 5000));
-        let percent = Math.min((xp / nextXp) * 100, 100);
-        document.getElementById("xpBar").style.width = `${percent}%`;
-    },
-    gainXP(amount) {
-        this.data.xp += amount;
-        this.save();
-        const toast = Swal.mixin({toast: true, position: 'top-right', showConfirmButton: false, timer: 1500});
-        toast.fire({icon: 'info', title: `+${amount} XP`});
-    },
-
-    /* --- V20 VOICE COMMAND (JARVIS) --- */
-    initVoice() {
-        if ('webkitSpeechRecognition' in window) {
-            this.recognition = new webkitSpeechRecognition();
-            this.recognition.continuous = false;
-            this.recognition.lang = 'es-AR';
-            this.recognition.onstart = () => {
-                document.getElementById("voiceBtn").classList.add("mic-listening");
-                document.getElementById("voiceText").innerText = "Escuchando...";
-            };
-            this.recognition.onend = () => {
-                document.getElementById("voiceBtn").classList.remove("mic-listening");
-                document.getElementById("voiceText").innerText = "Hablar con IA";
-            };
-            this.recognition.onresult = (event) => {
-                const text = event.results[0][0].transcript.toLowerCase();
-                this.processVoice(text);
-            };
-        } else {
-            document.getElementById("voiceBtn").style.display = 'none';
-        }
-    },
-    startVoice() { if(this.recognition) this.recognition.start(); },
-    processVoice(text) {
-        // Simple Parser: "Gasto 500 en Comida"
-        console.log("Heard:", text);
-        const numbers = text.match(/\d+/);
-        if(!numbers) { Swal.fire("Error", "No entendí el monto", "error"); return; }
-        
-        const amount = Number(numbers[0]);
-        let type = text.includes("ingreso") || text.includes("gané") || text.includes("cobre") ? 'income' : 'expense';
-        let desc = text.replace(amount, "").replace("gasto", "").replace("ingreso", "").replace("en", "").trim();
-        if(!desc) desc = "Voz IA";
-        
-        this.addRecordDirect(type, desc, amount, "Otros");
-        Swal.fire("IA Procesada", `${type === 'income' ? '+' : '-'}$${amount} - ${desc}`, "success");
-    },
-
-    /* --- V20 HEATMAP --- */
-    renderHeatmap() {
-        const container = document.getElementById("heatmapContainer");
-        const days = 30;
-        let html = '';
-        const now = new Date();
-        
-        // Generate last 30 days data map
-        const activity = {};
-        this.data.records.forEach(r => {
-            // date format dd/mm/yyyy
-            const parts = r.date.split('/');
-            // Make ISO key yyyy-mm-dd (approx)
-            const key = `${parts[2]}-${parts[1].padStart(2,'0')}-${parts[0].padStart(2,'0')}`;
-            if(!activity[key]) activity[key] = 0;
-            activity[key]++;
+    // --- CORE LOGIC (FIXED BALANCE) ---
+    getFilteredRecords() {
+        if (this.timeFilter === 'all') return this.data.records;
+        const now = new Date(); const m = now.getMonth(); const y = now.getFullYear();
+        return this.data.records.filter(r => { 
+            const [d, rm, ry] = r.date.split('/').map(Number); 
+            return (rm - 1) === m && ry === y; 
         });
-
-        for(let i = days; i >= 0; i--) {
-            const d = new Date();
-            d.setDate(now.getDate() - i);
-            const key = d.toISOString().split('T')[0];
-            const count = activity[key] || 0;
-            
-            let colorClass = "bg-slate-800";
-            if(count > 0) colorClass = "bg-blue-900";
-            if(count > 2) colorClass = "bg-blue-700";
-            if(count > 5) colorClass = "bg-blue-500";
-            if(count > 10) colorClass = "bg-emerald-400 shadow-[0_0_10px_#34d399]";
-
-            html += `<div title="${key}: ${count} ops" class="heatmap-cell flex-1 rounded-sm mx-[1px] ${colorClass}" style="height: ${Math.max(20, Math.min(100, count * 10))}%"></div>`;
-        }
-        container.innerHTML = html;
     },
 
-    /* --- CORE LOGIC --- */
     addRecord(type) {
         const d = document.getElementById("transDesc").value;
         const a = Number(document.getElementById("transAmount").value);
         const c = document.getElementById("transCategory").value;
-        if(!d || a<=0) return;
-        this.addRecordDirect(type, d, a, c);
-        document.getElementById("transDesc").value=""; document.getElementById("transAmount").value="";
-    },
-    addRecordDirect(type, desc, amount, cat) {
-        this.data.records.unshift({ id:Date.now(), date:new Date().toLocaleDateString(), desc, amount, category:cat, type });
-        this.gainXP(type === 'income' ? 20 : 10); // Gain XP
+        if(!d || a<=0) return Swal.fire("Error", "Faltan datos", "error");
+        
+        this.data.records.unshift({ 
+            id: Date.now(), 
+            date: new Date().toLocaleDateString(), 
+            desc: d, 
+            amount: a, 
+            category: c, 
+            type: type 
+        });
+        
+        document.getElementById("transDesc").value=""; 
+        document.getElementById("transAmount").value="";
         this.save();
+        Swal.fire({toast:true, position:'bottom-end', icon:'success', title:'Guardado', showConfirmButton:false, timer:1500});
     },
-    deleteRecord(id) { this.data.records = this.data.records.filter(r=>r.id!==id); this.save(); },
     
-    // Renders
+    deleteRecord(id) { 
+        this.data.records = this.data.records.filter(r=>r.id!==id); 
+        this.save(); 
+    },
+
+    // --- RENDERING WALLET ---
     render() {
         const fmt = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
-        const rec = this.data.records; // Simplificado: muestra todo. Filtros removidos para V20 clean code
+        const rec = this.getFilteredRecords();
+        
+        // CÁLCULO DE BALANCE CORREGIDO (GASTOS RESTAN)
         const inc = rec.filter(r=>r.type==='income').reduce((a,c)=>a+c.amount,0);
         const exp = rec.filter(r=>r.type==='expense').reduce((a,c)=>a+c.amount,0);
+        const bal = inc - exp;
+
         document.getElementById("bIncome").textContent = fmt.format(inc);
         document.getElementById("bExpense").textContent = fmt.format(exp);
-        document.getElementById("bNet").textContent = fmt.format(inc-exp);
-        
-        this.renderHeatmap(); // V20 Call
+        document.getElementById("bNet").textContent = fmt.format(bal);
+        document.getElementById("bNet").className = `text-3xl font-black blur-sensitive ${bal >= 0 ? 'text-blue-500' : 'text-rose-500'}`;
 
+        // UPDATE TABLE
         const tb = document.getElementById("historyTable");
-        tb.innerHTML = rec.slice(0, 50).map(r => `<tr><td class="px-6 py-3 opacity-70">${r.date}</td><td class="px-6 py-3 font-bold">${r.desc}</td><td class="px-6 py-3 text-right ${r.type==='income'?'text-emerald-500':'text-rose-500'} blur-sensitive">${fmt.format(r.amount)}</td><td class="text-center"><button onclick="app.deleteRecord(${r.id})" class="text-slate-500 hover:text-white">x</button></td></tr>`).join('');
+        if(rec.length === 0) {
+            tb.innerHTML = `<tr><td colspan="5" class="text-center py-10 opacity-50">Sin movimientos este mes</td></tr>`;
+        } else {
+            tb.innerHTML = rec.map(r => `
+                <tr class="hover:bg-white/5 transition-all border-b border-white/5">
+                    <td class="px-6 py-4 opacity-70">${r.date}</td>
+                    <td class="px-6 py-4 font-bold">${r.desc}</td>
+                    <td class="px-6 py-4"><span class="bg-slate-800 px-2 py-1 rounded text-xs">${r.category}</span></td>
+                    <td class="px-6 py-4 text-right font-bold ${r.type==='income'?'text-emerald-500':'text-rose-500'} blur-sensitive">
+                        ${r.type==='income'?'+':'-'}${fmt.format(r.amount)}
+                    </td>
+                    <td class="text-center"><button onclick="app.deleteRecord(${r.id})" class="text-slate-500 hover:text-rose-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>
+                </tr>`).join('');
+        }
+        lucide.createIcons();
+    },
+
+    // --- MODULES: SUBS, GOALS, MARKET (RESTORED VISUALS) ---
+    renderSubs() {
+        const grid = document.getElementById("subsGrid");
+        const fmt = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
+        if(!this.data.subs.length){ grid.innerHTML=`<div class="col-span-full text-center py-10 opacity-50">Sin suscripciones</div>`; return; }
         
-        this.updateCharts(inc, exp, rec);
+        grid.innerHTML = this.data.subs.map(s => `
+            <div class="glass p-6 rounded-3xl relative group">
+                <button onclick="app.deleteSub(${s.id})" class="absolute top-4 right-4 text-slate-500 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity"><i data-lucide="trash" class="w-4 h-4"></i></button>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="p-3 bg-blue-600/20 rounded-xl text-blue-500"><i data-lucide="zap" class="w-6 h-6"></i></div>
+                    <div><h3 class="font-bold text-lg">${s.name}</h3><p class="text-xs text-slate-400">Vence día ${s.day}</p></div>
+                </div>
+                <p class="text-2xl font-black blur-sensitive mb-4">${fmt.format(s.amount)}</p>
+                <button onclick="app.paySub(${s.id})" class="w-full bg-slate-700 hover:bg-slate-600 py-2 rounded-xl text-sm font-bold transition-all">Registrar Pago</button>
+            </div>
+        `).join('');
+        lucide.createIcons();
     },
     
-    // Charts, Market, Etc (Minified for brevity)
-    updateCharts(i,e,r){ const b=document.getElementById("barChart").getContext("2d"); const p=document.getElementById("pieChart").getContext("2d"); if(this.charts.b)this.charts.b.destroy(); if(this.charts.p)this.charts.p.destroy(); this.charts.b=new Chart(b,{type:'bar',data:{labels:['In','Out'],datasets:[{data:[i,e],backgroundColor:['#10b981','#f43f5e']}]}}); const c={};r.filter(x=>x.type==='expense').forEach(x=>c[x.category]=(c[x.category]||0)+x.amount); this.charts.p=new Chart(p,{type:'doughnut',data:{labels:Object.keys(c),datasets:[{data:Object.values(c)}]}}); },
-    async fetchMarket(){ try{const r=await fetch("https://dolarapi.com/v1/dolares/blue");const d=await r.json();document.getElementById("dolarVal").innerText=`$${d.venta}`; this.fetchCrypto();}catch(e){} },
-    async fetchCrypto(){ const g=document.getElementById("marketGrid"); try{const r=await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=4&sparkline=false");const d=await r.json(); g.innerHTML=d.map(c=>`<div class="glass p-3 rounded-xl flex items-center gap-2"><img src="${c.image}" class="w-6 h-6 rounded-full"><div class="flex-1"><h4 class="font-bold text-white text-xs">${c.symbol.toUpperCase()}</h4><span class="text-xs text-slate-400">$${c.current_price}</span></div></div>`).join('');}catch(e){}},
-    
-    // Helpers
-    switchTab(t){ ['viewWallet','viewSubs','viewGoals','viewMarket'].forEach(x=>document.getElementById(x).classList.add("hidden")); document.getElementById('view'+t.charAt(0).toUpperCase()+t.slice(1)).classList.remove("hidden"); },
-    togglePrivacy(){ this.privacy=!this.privacy; document.body.classList.toggle("privacy-active"); },
+    paySub(id) {
+        const s = this.data.subs.find(x => x.id === id);
+        this.addRecord('expense'); // Trick to use existing logic, but easier:
+        this.data.records.unshift({ id: Date.now(), date: new Date().toLocaleDateString(), desc: `Pago: ${s.name}`, amount: s.amount, category: 'Servicios', type: 'expense' });
+        this.save();
+        Swal.fire("Pago registrado", `${s.name} pagado`, "success");
+    },
+    toggleSubForm(){ document.getElementById("subForm").classList.toggle("hidden"); },
+    addSub(){ 
+        const n=document.getElementById("subName").value, a=Number(document.getElementById("subAmount").value), d=document.getElementById("subDay").value;
+        if(!n || a<=0) return;
+        this.data.subs.push({id:Date.now(), name:n, amount:a, day:d});
+        this.save(); this.renderSubs(); this.toggleSubForm();
+    },
+    deleteSub(id){ this.data.subs = this.data.subs.filter(x=>x.id!==id); this.save(); this.renderSubs(); },
+
+    renderGoals() {
+        const grid = document.getElementById("goalsGrid");
+        const fmt = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
+        if(!this.data.goals.length){ grid.innerHTML=`<div class="col-span-full text-center py-10 opacity-50">Sin metas</div>`; return; }
+        
+        grid.innerHTML = this.data.goals.map(g => {
+            const pct = Math.min((g.current/g.target)*100, 100);
+            return `
+            <div class="glass p-6 rounded-3xl relative group">
+                <button onclick="app.deleteGoal(${g.id})" class="absolute top-4 right-4 text-slate-500 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-opacity"><i data-lucide="trash" class="w-4 h-4"></i></button>
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="font-bold text-lg">${g.name}</h3>
+                    <span class="text-sm font-bold text-purple-400">${Math.round(pct)}%</span>
+                </div>
+                <div class="w-full bg-slate-700 h-3 rounded-full overflow-hidden mb-4">
+                    <div class="bg-purple-500 h-full transition-all duration-1000" style="width: ${pct}%"></div>
+                </div>
+                <div class="flex justify-between items-end">
+                    <div><p class="text-xs text-slate-400">Ahorrado</p><p class="font-bold blur-sensitive">${fmt.format(g.current)}</p></div>
+                    <div><p class="text-xs text-slate-400 text-right">Meta</p><p class="font-bold blur-sensitive">${fmt.format(g.target)}</p></div>
+                </div>
+                <button onclick="app.depositGoal(${g.id})" class="mt-4 w-full bg-purple-600/20 text-purple-400 hover:bg-purple-600 hover:text-white py-2 rounded-xl font-bold transition-all">+ Depositar</button>
+            </div>`;
+        }).join('');
+        lucide.createIcons();
+    },
+    addGoalPrompt() { Swal.fire({title:'Nueva Meta', html:'<input id="g1" class="swal2-input" placeholder="Nombre"><input id="g2" type="number" class="swal2-input" placeholder="Objetivo ($)">', preConfirm:()=>[document.getElementById('g1').value,document.getElementById('g2').value]}).then(r=>{ if(r.value){ this.data.goals.push({id:Date.now(), name:r.value[0], target:Number(r.value[1]), current:0}); this.save(); this.renderGoals(); } }) },
+    depositGoal(id) { const g=this.data.goals.find(x=>x.id===id); Swal.fire({title:'Depositar',input:'number'}).then(r=>{ if(r.value){ g.current+=Number(r.value); this.save(); this.renderGoals(); if(g.current>=g.target) confetti(); } }) },
+    deleteGoal(id) { this.data.goals = this.data.goals.filter(x=>x.id!==id); this.save(); this.renderGoals(); },
+
+    // --- MARKET (RESTAURADO) ---
+    async fetchFullMarket() {
+        const gc = document.getElementById("marketGridCrypto");
+        const gf = document.getElementById("marketGridFiat");
+        
+        // Dolar Blue
+        try { 
+            const r=await fetch("https://dolarapi.com/v1/dolares/blue"); const d=await r.json(); 
+            document.getElementById("dolarVal").innerText=`$${d.venta}`;
+            gf.innerHTML = `<div class="glass p-5 rounded-2xl border-l-4 border-emerald-500"><h4 class="font-bold text-slate-300">Dólar Blue</h4><div class="flex justify-between mt-2"><div class="text-center"><p class="text-xs opacity-50">COMPRA</p><p class="font-bold text-xl">$${d.compra}</p></div><div class="text-center"><p class="text-xs opacity-50">VENTA</p><p class="font-bold text-xl text-emerald-400">$${d.venta}</p></div></div></div>`;
+        } catch(e){}
+
+        // Crypto
+        try {
+            const r=await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=4&sparkline=false");
+            const d=await r.json();
+            gc.innerHTML = d.map(c => `
+                <div class="glass p-5 rounded-2xl flex items-center gap-4 hover:bg-white/5 transition-all">
+                    <img src="${c.image}" class="w-10 h-10 rounded-full">
+                    <div>
+                        <h4 class="font-bold text-white leading-none">${c.symbol.toUpperCase()}</h4>
+                        <p class="text-xs text-slate-400">${c.name}</p>
+                    </div>
+                    <div class="ml-auto text-right">
+                        <p class="font-mono font-bold text-lg">$${c.current_price.toLocaleString()}</p>
+                        <p class="text-xs font-bold ${c.price_change_percentage_24h>=0?'text-emerald-400':'text-rose-400'}">${c.price_change_percentage_24h.toFixed(2)}%</p>
+                    </div>
+                </div>
+            `).join('');
+        } catch(e){ gc.innerHTML="<p class='col-span-4 text-center opacity-50'>API Limit Reached</p>"; }
+    },
+
+    // --- SETTINGS (DATA CENTER STYLE RESTORED) ---
+    openSettings() {
+        Swal.fire({
+            title: '<div class="flex flex-col items-center gap-2 mb-2"><div class="p-3 rounded-full bg-blue-500/10 text-blue-400"><i data-lucide="server" class="w-8 h-8"></i></div><span class="text-2xl font-black text-white tracking-tight">DATA CENTER</span></div>',
+            html: `
+                <div class="grid grid-cols-1 gap-4 mt-2">
+                    <button onclick="app.downloadBackup()" class="group relative w-full text-left outline-none">
+                        <div class="relative bg-slate-900 border border-blue-500/30 group-hover:border-blue-400 p-5 rounded-2xl flex items-center gap-5 transition-all shadow-xl">
+                            <div class="h-12 w-12 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition-all"><i data-lucide="download-cloud" class="w-6 h-6"></i></div>
+                            <div><h3 class="font-bold text-white text-lg">Exportar Backup</h3><p class="text-xs text-slate-400">Descargar JSON seguro</p></div>
+                        </div>
+                    </button>
+                    <button onclick="document.getElementById('importFile').click()" class="group relative w-full text-left outline-none">
+                        <div class="relative bg-slate-900 border border-purple-500/30 group-hover:border-purple-400 p-5 rounded-2xl flex items-center gap-5 transition-all shadow-xl">
+                            <div class="h-12 w-12 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400 group-hover:bg-purple-500 group-hover:text-white transition-all"><i data-lucide="upload-cloud" class="w-6 h-6"></i></div>
+                            <div><h3 class="font-bold text-white text-lg">Restaurar Datos</h3><p class="text-xs text-slate-400">Importar archivo previo</p></div>
+                        </div>
+                    </button>
+                </div>`,
+            showConfirmButton: false, showCloseButton: true, background: '#0f172a', color: '#fff', width: '450px', padding: '2em', didOpen: () => lucide.createIcons()
+        });
+    },
+
+    // --- UTILS ---
+    switchTab(t){ ['viewWallet','viewSubs','viewGoals','viewMarket'].forEach(x=>document.getElementById(x).classList.add("hidden")); document.getElementById('view'+t.charAt(0).toUpperCase()+t.slice(1)).classList.remove("hidden"); if(t==='market')this.fetchFullMarket(); },
+    setFilter(f){ this.timeFilter=f; this.render(); },
+    togglePrivacy(){ this.privacy=!this.privacy; document.body.classList.toggle("privacy-active"); document.getElementById("btnPrivacy").classList.toggle("text-emerald-400"); },
+    toggleTheme(){ this.theme = this.theme==='dark'?'light':'dark'; this.applyTheme(); },
+    applyTheme(){ document.documentElement.className = this.theme; document.getElementById("themeIcon").setAttribute('data-lucide', this.theme==='dark'?'sun':'moon'); localStorage.setItem("theme", this.theme); },
+    downloadBackup() { const s = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(this.data)); const a = document.createElement('a'); a.href = s; a.download = `Backup_${this.user}.json`; a.click(); },
+    restoreData(i) { const f = i.files[0]; const r = new FileReader(); r.onload = (e) => { this.data = JSON.parse(e.target.result); this.save(); location.reload(); }; r.readAsText(f); },
+    exportProExcel() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([["Fecha","Desc","Monto"],...this.data.records.map(r=>[r.date,r.desc,r.amount])]), "Data"); XLSX.writeFile(wb, "ForjaxData.xlsx"); },
     initSession(){ const v=document.getElementById("userInput").value; if(v.length>2){localStorage.setItem("currentUser",v);location.reload();} },
-    logout(){ localStorage.removeItem("currentUser");location.reload();},
-    
-    // Modules: Subs/Goals/Debts
-    renderSubs(){ const g=document.getElementById("subsGrid"); if(!this.data.subs.length){g.innerHTML="";return;} g.innerHTML=this.data.subs.map(s=>`<div class="glass p-4 rounded-xl flex justify-between"><span>${s.name}</span><span class="blur-sensitive">$${s.amount}</span></div>`).join(''); },
-    toggleSubForm(){document.getElementById("subForm").classList.toggle("hidden")}, addSub(){const n=document.getElementById("subName").value,a=Number(document.getElementById("subAmount").value),d=document.getElementById("subDay").value; this.data.subs.push({id:Date.now(),name:n,amount:a,day:d});this.save();this.renderSubs();},
-    renderGoals(){ const g=document.getElementById("goalsGrid"); if(!this.data.goals.length){g.innerHTML="";return;} g.innerHTML=this.data.goals.map(x=>`<div class="glass p-4 rounded-xl flex justify-between"><span>${x.name}</span><span>${Math.round((x.current/x.target)*100)}%</span></div>`).join(''); },
-    addGoalPrompt(){ Swal.fire({title:'Meta', html:'<input id="g1" class="swal2-input"><input id="g2" type="number" class="swal2-input">', preConfirm:()=>[document.getElementById('g1').value,document.getElementById('g2').value]}).then(r=>{if(r.value){this.data.goals.push({id:Date.now(),name:r.value[0],target:Number(r.value[1]),current:0});this.save();this.renderGoals();}})},
-    addDebt(){ Swal.fire({title:'Deuda', html:'<input id="d1" class="swal2-input"><input id="d2" type="number" class="swal2-input">', preConfirm:()=>[document.getElementById('d1').value,document.getElementById('d2').value]}).then(r=>{if(r.value){this.data.debts.push({id:Date.now(),name:r.value[0],total:Number(r.value[1]),paid:0});this.save();this.renderDebts();}})}, renderDebts(){ const g=document.getElementById("debtGrid"); if(!g)return; g.innerHTML=this.data.debts.map(d=>`<div class="p-2 bg-slate-800 rounded flex justify-between"><span>${d.name}</span><span class="blur-sensitive">$${d.total-d.paid}</span></div>`).join(''); }
+    logout(){ localStorage.removeItem("currentUser");location.reload();}
 };
 app.init();
 </script>
