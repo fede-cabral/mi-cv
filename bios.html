@@ -3,74 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FORJAX BIOS - Human Intelligence Terminal</title>
+    <title>FORJAX BIOS - Advanced Human Intelligence</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    colors: { neon: '#00f3ff', bio: '#ff2d55' },
+                    boxShadow: {
+                        'neon-blue': '0 0 25px rgba(0, 243, 255, 0.6)',
+                        'neon-bio': '0 0 25px rgba(255, 45, 85, 0.6)',
+                        'glass-card': '0 8px 32px 0 rgba(31, 38, 135, 0.37)'
+                    },
+                    animation: {
+                        'spin-slow': 'spin 8s linear infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'bio-pulse': 'bioPulse 2s infinite'
+                    },
+                    keyframes: {
+                        bioPulse: {
+                            '0%, 100%': { opacity: 1, transform: 'scale(1)' },
+                            '50%': { opacity: 0.8, transform: 'scale(1.05)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
-        body { 
-            font-family: 'Outfit', sans-serif; 
-            background-color: #050b14; 
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #050b14;
             color: #f8fafc;
-            background-image: radial-gradient(circle at 50% 0%, #0c1220 0%, #050b14 80%);
+            background-image:
+                radial-gradient(circle at 50% 0%, #0c1220 0%, #050b14 80%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300f3ff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            overflow-x: hidden;
         }
-        .glass { background: rgba(10, 15, 30, 0.8); backdrop-filter: blur(15px); border: 1px solid rgba(0, 243, 255, 0.1); }
-        .neon-text { text-shadow: 0 0 10px rgba(0, 243, 255, 0.5); }
-        .bios-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .glass {
+            background: rgba(10, 15, 30, 0.75);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 243, 255, 0.15);
+            box-shadow: var(--tw-shadow-glass-card);
+            transition: all 0.3s ease;
+        }
+        .glass:hover {
+            border-color: rgba(0, 243, 255, 0.4);
+            box-shadow: var(--tw-shadow-neon-blue);
+            transform: translateY(-2px);
+        }
+        .neon-text { text-shadow: 0 0 15px rgba(0, 243, 255, 0.8); }
+        .bio-text { text-shadow: 0 0 15px rgba(255, 45, 85, 0.8); }
+        .bios-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+        .energy-bar-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .energy-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00f3ff, #00c2ff);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.7);
+            position: relative;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .energy-bar::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        .risk-card-pulse { animation: bio-pulse 2s infinite; }
+        .pulse-dot {
+            width: 8px; height: 8px; background-color: #ff2d55; border-radius: 50%;
+            box-shadow: 0 0 10px #ff2d55; animation: bio-pulse 1.5s infinite;
+        }
     </style>
 </head>
 <body class="p-6 md:p-12">
 
     <header class="max-w-7xl mx-auto flex justify-between items-center mb-12">
         <div class="flex items-center gap-4">
-            <a href="index.html" class="p-3 glass rounded-full hover:bg-white/10 transition-all text-cyan-400">
-                <i data-lucide="arrow-left"></i>
+            <a href="index.html" class="p-3 glass rounded-full hover:bg-cyan-500/10 transition-all text-cyan-400 group relative">
+                <div class="absolute inset-0 bg-cyan-400 blur-md opacity-0 group-hover:opacity-30 transition-opacity rounded-full"></div>
+                <i data-lucide="arrow-left" class="relative z-10"></i>
             </a>
             <div>
-                <h1 class="text-3xl font-black tracking-tighter uppercase neon-text">Forjax <span class="text-cyan-400">BIOS</span></h1>
-                <p class="text-[10px] font-mono text-slate-500 uppercase tracking-[0.3em]">Neural & Financial Correlation</p>
+                <h1 class="text-4xl font-black tracking-tighter uppercase neon-text">Forjax <span class="text-cyan-400">BIOS</span></h1>
+                <p class="text-xs font-mono text-slate-500 uppercase tracking-[0.35em] neon-text">Neural & Financial Correlation Engine</p>
             </div>
         </div>
-        <div class="glass px-6 py-3 rounded-2xl flex items-center gap-4 border-cyan-500/20">
-            <div class="animate-pulse h-3 w-3 bg-cyan-400 rounded-full shadow-[0_0_10px_#00f3ff]"></div>
-            <span class="text-xs font-black font-mono">LINKED_TO_V30</span>
+        <div class="glass px-6 py-3 rounded-2xl flex items-center gap-4 border-cyan-500/30 relative overflow-hidden group">
+            <div class="absolute inset-0 bg-cyan-400/10 blur-md opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div class="relative flex h-3 w-3">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500 shadow-[0_0_10px_#00f3ff]"></span>
+            </div>
+            <span class="text-xs font-black font-mono relative z-10 tracking-wider">LINKED_TO_V30_CORE</span>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto space-y-8">
+    <main class="max-w-7xl mx-auto space-y-10">
         
         <div class="bios-grid">
-            <div class="glass p-8 rounded-[2rem] border-l-4 border-cyan-400">
-                <p class="text-[10px] font-bold text-slate-500 uppercase mb-2 tracking-widest">Biological ROI</p>
-                <h2 id="bioRoi" class="text-5xl font-black mb-4">--</h2>
-                <p class="text-xs text-slate-400 leading-relaxed">Este índice mide cuánto dinero generás por cada punto de estrés registrado. <span class="text-cyan-400 font-bold">Un ratio mayor a 1.5 indica alta eficiencia cognitiva.</span></p>
+            <div class="glass p-8 rounded-[2.5rem] border-l-[6px] border-cyan-400 relative overflow-hidden group">
+                <div class="absolute -right-10 -top-10 text-cyan-500/10 animate-spin-slow"><i data-lucide="brain-circuit" class="w-40 h-40"></i></div>
+                <p class="text-[10px] font-bold text-cyan-300 uppercase mb-2 tracking-widest neon-text">Biological ROI Factor</p>
+                <h2 id="bioRoi" class="text-6xl font-black mb-4 font-mono neon-text">--</h2>
+                <p class="text-xs text-slate-300 leading-relaxed font-light">Índice de eficiencia cognitiva: Retorno financiero por unidad de estrés. <span class="text-cyan-400 font-bold neon-text">>1.5x es óptimo.</span></p>
             </div>
 
-            <div class="glass p-8 rounded-[2rem] flex flex-col justify-center relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-4 opacity-5"><i data-lucide="battery-low" class="w-24 h-24"></i></div>
-                <p class="text-[10px] font-bold text-slate-500 uppercase mb-2 tracking-widest">Estado de Energía Vital</p>
-                <div class="flex items-end gap-2 mb-4">
-                    <span id="energyVal" class="text-5xl font-black">--%</span>
-                    <span class="text-xs font-bold text-cyan-500 pb-2 uppercase">Capacidad Actual</span>
+            <div class="glass p-8 rounded-[2.5rem] flex flex-col justify-center relative overflow-hidden group">
+                <div class="absolute -right-8 -bottom-8 text-cyan-500/10 group-hover:text-cyan-500/20 transition-colors animate-pulse-slow"><i data-lucide="battery-charging" class="w-36 h-36"></i></div>
+                <p class="text-[10px] font-bold text-cyan-300 uppercase mb-2 tracking-widest neon-text">Bio-Energy Reserves</p>
+                <div class="flex items-baseline gap-2 mb-6">
+                    <span id="energyVal" class="text-6xl font-black font-mono neon-text">--%</span>
+                    <span class="text-xs font-bold text-cyan-500 pb-1 uppercase tracking-wider">Capacidad Vital</span>
                 </div>
-                <div class="w-full bg-white/5 h-2 rounded-full overflow-hidden">
-                    <div id="energyBar" class="h-full bg-cyan-400 transition-all duration-1000" style="width: 0%"></div>
+                <div class="energy-bar-container h-4 w-full">
+                    <div id="energyBar" class="energy-bar" style="width: 0%"></div>
                 </div>
             </div>
 
-            <div class="glass p-8 rounded-[2rem] border-l-4 border-rose-500 bg-rose-500/5">
-                <p class="text-[10px] font-bold text-rose-400 uppercase mb-2 tracking-widest">Predicción de Riesgo</p>
-                <h2 id="riskStatus" class="text-xl font-black uppercase text-white mb-2 italic">Calculando...</h2>
-                <p class="text-[11px] text-slate-400">Basado en tus últimos gastos bajo estrés, el sistema predice tu nivel de fatiga financiera.</p>
+            <div id="riskCard" class="glass p-8 rounded-[2.5rem] border-l-[6px] border-rose-500 bg-rose-500/10 relative overflow-hidden group">
+                <div class="absolute -right-10 -top-10 text-rose-500/20 animate-pulse-slow"><i data-lucide="alert-triangle" class="w-40 h-40"></i></div>
+                <p class="text-[10px] font-bold text-rose-300 uppercase mb-2 tracking-widest bio-text">Neural Risk Assessment</p>
+                <h2 id="riskStatus" class="text-2xl font-black uppercase text-white mb-4 italic bio-text flex items-center gap-3">
+                    <span class="pulse-dot hidden" id="riskDot"></span> Calculando...
+                </h2>
+                <p class="text-xs text-slate-300 leading-relaxed font-light">Predicción de fatiga financiera basada en patrones de gasto bajo estrés y reservas de energía.</p>
             </div>
         </div>
 
-        <div class="glass p-10 rounded-[2.5rem] border border-white/5">
-            <h3 class="text-sm font-black uppercase tracking-widest mb-8 flex items-center gap-2">
-                <i data-lucide="bar-chart-3" class="text-cyan-400"></i> Performance Map: Energy vs. Capital
+        <div class="glass p-10 rounded-[3rem] border border-cyan-500/20 relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-b from-cyan-500/5 to-transparent pointer-events-none"></div>
+            <h3 class="text-sm font-black uppercase tracking-[0.2em] mb-10 flex items-center gap-3 neon-text">
+                <i data-lucide="activity" class="text-cyan-400 w-5 h-5"></i> Performance Map: Energy vs. Capital Flow
             </h3>
-            <div class="h-[400px]">
+            <div class="h-[450px] relative z-10">
                 <canvas id="correlationChart"></canvas>
             </div>
         </div>
@@ -106,17 +185,33 @@
                 document.getElementById("bioRoi").innerText = bioEfficiency + "x";
 
                 // Energía simulada basada en volumen de transacciones (a más transacciones, más fatiga)
-                const energy = Math.max(15, 100 - (records.length * 2));
+                // y un poco de aleatoriedad para la demo
+                let energy = Math.max(15, 100 - (records.length * 1.5) - (Math.random() * 10));
+                energy = Math.round(energy);
                 document.getElementById("energyVal").innerText = energy + "%";
                 document.getElementById("energyBar").style.width = energy + "%";
 
                 const risk = document.getElementById("riskStatus");
+                const riskCard = document.getElementById("riskCard");
+                const riskDot = document.getElementById("riskDot");
+
                 if (energy < 40) {
                     risk.innerText = "ALTA PROBABILIDAD DE BURNOUT";
-                    risk.className = "text-xl font-black uppercase text-rose-500 mb-2 italic animate-pulse";
+                    risk.className = "text-2xl font-black uppercase text-rose-400 mb-4 italic bio-text flex items-center gap-3";
+                    riskCard.classList.add('risk-card-pulse', 'border-rose-500', 'bg-rose-500/20');
+                    riskCard.classList.remove('border-emerald-500', 'bg-emerald-500/10');
+                     riskDot.classList.remove('hidden');
                 } else {
-                    risk.innerText = "ESTADO COGNITIVO ESTABLE";
-                    risk.className = "text-xl font-black uppercase text-emerald-400 mb-2 italic";
+                    risk.innerText = "ESTADO COGNITIVO ÓPTIMO";
+                    risk.className = "text-2xl font-black uppercase text-emerald-400 mb-4 italic neon-text flex items-center gap-3";
+                    riskCard.classList.remove('risk-card-pulse', 'border-rose-500', 'bg-rose-500/20');
+                    riskCard.classList.add('border-emerald-500', 'bg-emerald-500/10');
+                    riskDot.classList.add('hidden');
+                    // Cambiar icono y color de borde para estado óptimo
+                    riskCard.querySelector('.text-rose-300').classList.replace('text-rose-300', 'text-emerald-300');
+                    riskCard.querySelector('.text-rose-500\\/20').classList.replace('text-rose-500/20', 'text-emerald-500/20');
+                    riskCard.querySelector('i').setAttribute('data-lucide', 'shield-check');
+                    lucide.createIcons();
                 }
             },
 
@@ -124,37 +219,96 @@
                 const ctx = document.getElementById('correlationChart').getContext('2d');
                 const lastRecords = records.slice(0, 15).reverse();
 
+                // Gradiente para el área bajo la curva
+                const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                gradient.addColorStop(0, 'rgba(0, 243, 255, 0.3)');
+                gradient.addColorStop(1, 'rgba(0, 243, 255, 0)');
+
                 new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: lastRecords.map(r => r.desc),
                         datasets: [
                             {
-                                label: 'Monto de Operación',
+                                label: 'Capital Flow',
                                 data: lastRecords.map(r => r.amount),
                                 borderColor: '#00f3ff',
-                                borderWidth: 4,
+                                borderWidth: 3,
+                                pointBackgroundColor: '#050b14',
+                                pointBorderColor: '#00f3ff',
+                                pointBorderWidth: 2,
+                                pointRadius: 6,
+                                pointHoverRadius: 8,
                                 tension: 0.4,
                                 fill: true,
-                                backgroundColor: 'rgba(0, 243, 255, 0.05)'
+                                backgroundColor: gradient
                             },
                             {
-                                label: 'Fatiga Estimada',
-                                data: lastRecords.map((r, i) => (i * 10) + 20), // Simulación de curva de fatiga
+                                label: 'Neural Fatigue Estimation',
+                                data: lastRecords.map((r, i) => (i * 8) + 30 + (Math.random() * 10)), // Simulación de curva de fatiga más orgánica
                                 borderColor: '#ff2d55',
-                                borderDash: [5, 5],
+                                borderDash: [8, 8],
                                 borderWidth: 2,
-                                tension: 0.4
+                                pointBackgroundColor: '#ff2d55',
+                                pointBorderColor: '#fff',
+                                pointRadius: 4,
+                                tension: 0.5,
+                                yAxisID: 'y1'
                             }
                         ]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
+                        interaction: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(5, 11, 20, 0.9)',
+                                titleColor: '#fff',
+                                bodyColor: '#fff',
+                                borderColor: 'rgba(0, 243, 255, 0.3)',
+                                borderWidth: 1,
+                                titleFont: { family: 'JetBrains Mono' },
+                                bodyFont: { family: 'JetBrains Mono' },
+                                padding: 12,
+                                displayColors: false,
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            if (context.datasetIndex === 0) {
+                                                label += new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(context.parsed.y);
+                                            } else {
+                                                label += Math.round(context.parsed.y) + '%';
+                                            }
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
                         scales: {
-                            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' } },
-                            x: { grid: { display: false }, ticks: { color: '#64748b' } }
+                            y: {
+                                grid: { color: 'rgba(255,255,255,0.05)' },
+                                ticks: { color: '#64748b', font: { family: 'JetBrains Mono' } }
+                            },
+                            y1: {
+                                position: 'right',
+                                grid: { display: false },
+                                ticks: { color: '#ff2d55', font: { family: 'JetBrains Mono' }, callback: (v) => v + '%' },
+                                min: 0, max: 100
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { color: '#64748b', font: { family: 'JetBrains Mono' }, maxRotation: 45, minRotation: 45 }
+                            }
                         }
                     }
                 });
