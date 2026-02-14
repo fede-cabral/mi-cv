@@ -76,10 +76,7 @@
         .nav-btn.active { box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
         .dark .nav-btn.active { background: #00f3ff; color: #050b14; }
         .light .nav-btn.active { background: #0284c7; color: white; box-shadow: 0 0 20px rgba(2, 132, 199, 0.3); }
-        <a href="bios.html" class="nav-btn hover:text-cyan-400 transition-all">
-    <i data-lucide="activity" class="w-4 h-4 text-cyan-400"></i> BIOS TERMINAL
-</a>
-
+        
         /* SweetAlert */
         div:where(.swal2-container) div:where(.swal2-popup) {
             background: #0f172a !important; border: 2px solid #1e293b !important; color: #fff !important; border-radius: 1.5rem !important;
@@ -121,6 +118,7 @@
                 <button onclick="app.initSession()" class="w-full bg-gradient-to-r from-cyan-500 to-cyan-400 hover:from-cyan-400 hover:to-cyan-300 text-black font-black py-4 rounded-xl transition-all shadow-neon-blue hover:shadow-[0_0_30px_rgba(0,243,255,0.8)] relative overflow-hidden group">
                     <span class="relative z-10 tracking-wider">INICIAR SISTEMA</span>
                     <div class="absolute inset-0 h-full w-full bg-white/20 skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    
                 </button>
             </div>
         </div>
@@ -147,7 +145,9 @@
             <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
                 <div><h2 class="text-4xl font-black tracking-tighter text-white">DASHBOARD</h2><p class="text-xs font-mono text-cyan-500">SYSTEM STATUS: ONLINE</p></div>
                 <div class="glass p-1 rounded-lg flex gap-1">
-                    <button onclick="app.setFilter('month')" id="filterMonth" class="px-6 py-2 rounded-md text-xs font-bold bg-cyan-400 text-black shadow-neon-blue transition-all">ESTE MES</button>
+                    <a href="bios.html" class="nav-btn hover:text-cyan-400 transition-all">
+    <i data-lucide="activity" class="w-4 h-4 text-cyan-400"></i> BIOS TERMINAL
+</a>                    <button onclick="app.setFilter('month')" id="filterMonth" class="px-6 py-2 rounded-md text-xs font-bold bg-cyan-400 text-black shadow-neon-blue transition-all">ESTE MES</button>
                     <button onclick="app.setFilter('all')" id="filterAll" class="px-6 py-2 rounded-md text-xs font-bold text-slate-400 hover:text-white transition-all">HISTÓRICO</button>
                 </div>
             </div>
