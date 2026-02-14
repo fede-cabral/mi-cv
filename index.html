@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FORJAX BIOS - V31 Prototype</title>
+    <title>FORJAX Terminal - V31 BIOS LEAN</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -18,9 +19,8 @@
             theme: {
                 extend: {
                     fontFamily: { sans: ['Outfit', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
-                    colors: { dark: '#050b14', neon: '#00f3ff', bio: '#ff2d55' },
-                    boxShadow: { 'neon-blue': '0 0 15px rgba(0, 243, 255, 0.3)', 'neon-bio': '0 0 15px rgba(255, 45, 85, 0.3)' },
-                    animation: { 'pulse-fast': 'pulse 0.8s cubic-bezier(0.4, 0, 0.6, 1) infinite' }
+                    colors: { dark: '#050b14', neon: '#00f3ff' },
+                    boxShadow: { 'neon-blue': '0 0 15px rgba(0, 243, 255, 0.3)' }
                 }
             }
         }
@@ -28,22 +28,34 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
-        body { font-family: 'Outfit', sans-serif; transition: all 0.3s; background-color: #050b14; color: #f8fafc; }
-        .glass { background: rgba(10, 15, 30, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .nav-container { position: fixed; top: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 50; padding: 0.4rem; border-radius: 999px; display: flex; gap: 0.3rem; backdrop-filter: blur(20px); background: rgba(5, 11, 20, 0.9); border: 1px solid rgba(255,255,255,0.1); }
+        body { font-family: 'Outfit', sans-serif; transition: background-color 0.3s; background-color: #050b14; color: #f8fafc; }
+        .dark body { background-image: radial-gradient(circle at 50% 0%, #111827 0%, #050b14 60%); }
+        .glass { background: rgba(10, 15, 30, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glass-card { background: #0f172a; border: 1px solid rgba(255,255,255,0.08); transition: all 0.3s; }
+        .glass-card:hover { transform: translateY(-3px); border-color: rgba(0, 243, 255, 0.4); }
+        .nav-container { position: fixed; top: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 50; padding: 0.4rem; border-radius: 999px; display: flex; gap: 0.3rem; background: rgba(5, 11, 20, 0.9); border: 1px solid rgba(255,255,255,0.1); }
         .nav-btn { padding: 0.6rem 1.4rem; border-radius: 999px; font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; color: #94a3b8; }
-        .nav-btn.active { background: #00f3ff; color: #050b14; box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); }
-        .bio-pulse { animation: bio-pulse 1s infinite; }
-        @keyframes bio-pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
+        .nav-btn.active { box-shadow: 0 0 20px rgba(0, 243, 255, 0.4); background: #00f3ff; color: #050b14; }
         .blur-sensitive { transition: filter 0.3s ease; }
         body.privacy-active .blur-sensitive { filter: blur(8px); }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 
 <body class="min-h-[100dvh] pb-20">
 
-<div id="mainApp">
-    
+<div id="loginScreen" class="fixed inset-0 z-[60] flex items-center justify-center bg-[#050b14]">
+    <div class="relative w-full max-w-md p-8 text-center fade-in">
+        <div class="glass relative p-10 rounded-3xl border border-cyan-500/30">
+            <img src="forjax_logo_metal.png" alt="FORJAX" class="mx-auto mb-8 max-h-32 drop-shadow-[0_0_15px_rgba(0,243,255,0.5)]">
+            <input id="userInput" type="text" placeholder="ACCESS ID" class="w-full p-4 rounded-xl mb-4 text-center text-lg font-bold font-mono outline-none dark:bg-[#111827] dark:text-white border-slate-700">
+            <button onclick="app.initSession()" class="w-full bg-cyan-400 hover:bg-cyan-300 text-black font-black py-4 rounded-xl shadow-neon-blue">ENTRAR</button>
+        </div>
+    </div>
+</div>
+
+<div id="mainApp" class="hidden opacity-0 transition-opacity duration-700">
     <nav class="nav-container">
         <button onclick="app.switchTab('wallet')" id="btnWallet" class="nav-btn active"><i data-lucide="wallet" class="w-4 h-4"></i> WALLET</button>
         <button onclick="app.switchTab('bios')" id="btnBios" class="nav-btn"><i data-lucide="activity" class="w-4 h-4"></i> BIOS</button>
@@ -55,89 +67,66 @@
     <div class="pt-28 max-w-[1400px] mx-auto px-6">
         
         <div id="viewWallet" class="fade-in">
-            <div class="flex flex-col md:flex-row justify-between items-start mb-8 gap-4">
-                <div>
-                    <h2 class="text-4xl font-black tracking-tighter uppercase">Terminal <span class="text-cyan-400">V31 BIOS</span></h2>
-                    <p class="text-xs font-mono text-cyan-500">SYSTEM STATUS: BIO-INTEGRATION ACTIVE</p>
-                </div>
-                <div class="glass p-4 rounded-2xl flex items-center gap-6 border-cyan-500/30">
-                    <div class="flex items-center gap-3 border-r border-white/10 pr-6">
-                        <div class="bio-pulse"><i data-lucide="heart" class="text-bio fill-bio w-6 h-6"></i></div>
-                        <div>
-                            <p class="text-[10px] font-bold text-slate-500 uppercase">BPM Actual</p>
-                            <p id="bpmVal" class="text-xl font-black font-mono">72</p>
-                        </div>
-                    </div>
-                    <div>
-                        <p class="text-[10px] font-bold text-slate-500 uppercase">Batería Humana</p>
-                        <div class="w-32 h-2 bg-slate-800 rounded-full mt-1 overflow-hidden">
-                            <div id="bioEnergyBar" class="h-full bg-gradient-to-r from-bio to-emerald-400" style="width: 85%"></div>
-                        </div>
-                    </div>
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                <div><h2 class="text-4xl font-black tracking-tighter">DASHBOARD</h2><p class="text-xs font-mono text-cyan-500">SYSTEM STATUS: ONLINE</p></div>
+                <div class="glass p-1 rounded-lg flex gap-1">
+                    <button onclick="app.setFilter('month')" class="px-6 py-2 rounded-md text-xs font-bold bg-cyan-400 text-black">ESTE MES</button>
+                    <button onclick="app.setFilter('all')" class="px-6 py-2 rounded-md text-xs font-bold text-slate-400">HISTÓRICO</button>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                <div class="glass p-6 rounded-2xl border-l-4 border-emerald-500">
-                    <p class="text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-widest">Efectivo Disponible</p>
-                    <h2 class="text-4xl font-black text-white blur-sensitive" id="bNet">$0</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+                    <p class="text-[10px] font-bold font-mono text-emerald-400 mb-1">INGRESOS NETOS</p>
+                    <h2 class="text-3xl font-black text-white blur-sensitive" id="bIncome">$0</h2>
                 </div>
-                <div class="glass p-6 rounded-2xl border-l-4 border-bio">
-                    <p class="text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-widest">Gasto en Fatiga</p>
-                    <h2 class="text-4xl font-black text-white blur-sensitive" id="bBioLoss">$0</h2>
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+                    <p class="text-[10px] font-bold font-mono text-rose-400 mb-1">GASTOS TOTALES</p>
+                    <h2 class="text-3xl font-black text-white blur-sensitive" id="bExpense">$0</h2>
                 </div>
-                <div class="glass p-6 rounded-2xl border-l-4 border-cyan-400">
-                    <p class="text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-widest">Ratio Eficiencia</p>
-                    <h2 class="text-4xl font-black text-white" id="bEfficiency">1.2x</h2>
+                <div class="glass-card p-6 rounded-2xl relative overflow-hidden group border-l-2 border-cyan-400">
+                    <p class="text-[10px] font-bold font-mono text-cyan-400 mb-1">BALANCE GLOBAL</p>
+                    <h2 class="text-3xl font-black text-white blur-sensitive" id="bNet">$0</h2>
+                </div>
+                <div class="glass-card p-6 rounded-2xl">
+                    <p class="text-[10px] font-bold font-mono text-slate-400">DÓLAR BLUE</p>
+                    <h2 class="text-2xl font-black text-white" id="dolarVal">$0</h2>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 <div class="lg:col-span-4">
                     <div class="glass p-8 rounded-3xl relative overflow-hidden">
-                        <div id="bioWarning" class="hidden absolute inset-0 bg-bio/20 backdrop-blur-sm z-20 flex flex-col items-center justify-center text-center p-6">
-                            <i data-lucide="alert-triangle" class="w-12 h-12 text-white mb-2"></i>
-                            <p class="font-black text-white uppercase text-sm leading-tight">BLOQUEO BIOS: AGOTAMIENTO DETECTADO</p>
-                            <p class="text-[10px] text-white/80 mt-2 uppercase">Tu cortisol está muy alto. Descansá 15 min antes de operar.</p>
-                            <button onclick="app.dismissBioWarning()" class="mt-4 text-[10px] font-bold border border-white/40 px-4 py-2 rounded-lg">IGNORAR RIESGO</button>
-                        </div>
-
-                        <h3 class="flex items-center gap-2 text-lg font-bold mb-6 uppercase"><i data-lucide="plus" class="text-cyan-400"></i> Nueva Operación</h3>
+                        <h3 class="flex items-center gap-2 text-lg font-bold mb-6 text-white uppercase"><i data-lucide="plus" class="text-cyan-400"></i> Nueva Transacción</h3>
                         <div class="space-y-4">
-                            <div><label class="text-[10px] font-bold text-slate-500 uppercase ml-1">Detalle</label><input id="transDesc" type="text" class="w-full p-4 rounded-xl font-bold outline-none border border-transparent focus:border-cyan-400"></div>
-                            <div><label class="text-[10px] font-bold text-slate-500 uppercase ml-1">Monto ($)</label><input id="transAmount" type="number" class="w-full p-4 rounded-xl font-bold font-mono outline-none"></div>
-                            
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-500 uppercase ml-1">¿Nivel de estrés al operar?</label>
-                                <div class="flex gap-2 mt-2">
-                                    <button onclick="app.setStress(1)" class="flex-1 p-2 rounded-lg bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 text-[10px] font-black">ZEN</button>
-                                    <button onclick="app.setStress(5)" class="flex-1 p-2 rounded-lg bg-yellow-500/20 text-yellow-500 border border-yellow-500/30 text-[10px] font-black">OK</button>
-                                    <button onclick="app.setStress(10)" class="flex-1 p-2 rounded-lg bg-bio/20 text-bio border border-bio/30 text-[10px] font-black">ALTO</button>
+                            <div><label class="text-[10px] font-bold text-slate-500 ml-1 uppercase">Detalle</label><input id="transDesc" type="text" class="w-full p-4 rounded-xl font-bold outline-none border border-transparent focus:border-cyan-400 dark:bg-[#111827]"></div>
+                            <div class="flex gap-3">
+                                <div class="w-1/2"><label class="text-[10px] font-bold text-slate-500 ml-1 uppercase">Monto</label><input id="transAmount" type="number" class="w-full p-4 rounded-xl font-bold font-mono outline-none dark:bg-[#111827]"></div>
+                                <div class="w-1/2"><label class="text-[10px] font-bold text-slate-500 ml-1 uppercase">Bio-Estado</label>
+                                    <select id="bioStress" class="w-full p-4 rounded-xl font-bold outline-none cursor-pointer dark:bg-[#111827]">
+                                        <option value="1">🧘 Zen (Calma)</option>
+                                        <option value="5">😐 Normal</option>
+                                        <option value="10">🔥 Estrés (Impulso)</option>
+                                    </select>
                                 </div>
                             </div>
-
                             <div class="grid grid-cols-2 gap-3 pt-4">
-                                <button onclick="app.addRecord('income')" class="bg-emerald-500 text-black py-4 rounded-xl font-black uppercase tracking-widest shadow-neon-blue">Ingreso</button>
-                                <button id="btnExpense" onclick="app.addRecord('expense')" class="bg-bio text-white py-4 rounded-xl font-black uppercase tracking-widest shadow-neon-bio">Gasto</button>
+                                <button onclick="app.addRecord('income')" class="bg-emerald-500/10 hover:bg-emerald-500 hover:text-black border border-emerald-500/50 text-emerald-400 py-4 rounded-xl font-black uppercase transition-all">Ingreso</button>
+                                <button onclick="app.addRecord('expense')" class="bg-rose-500/10 hover:bg-rose-500 hover:text-black border border-rose-500/50 text-rose-400 py-4 rounded-xl font-black uppercase transition-all">Gasto</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="lg:col-span-8 space-y-6">
-                    <div class="glass p-6 rounded-3xl h-64">
-                        <h4 class="text-xs font-bold font-mono text-cyan-400 mb-4 uppercase">Correlación Biografía vs Capital</h4>
-                        <canvas id="bioChart"></canvas>
-                    </div>
-
-                    <div class="glass rounded-3xl overflow-hidden">
-                        <div class="p-6 border-b border-white/5 bg-black/20 flex justify-between items-center">
-                            <h3 class="font-bold text-xs uppercase tracking-widest">Historial de Operaciones</h3>
-                            <span class="text-[10px] font-mono text-cyan-500">Filtrando por: BIOS-OK</span>
+                <div class="lg:col-span-8">
+                    <div class="glass rounded-3xl overflow-hidden border border-white/5">
+                        <div class="p-6 border-b border-white/5 flex justify-between items-center bg-black/20">
+                            <h3 class="font-bold text-xs uppercase tracking-widest">Historial Pro</h3>
+                            <button onclick="app.exportProExcel()" class="bg-emerald-500 text-black px-4 py-2 rounded-lg text-xs font-black uppercase shadow-neon-blue">Exportar</button>
                         </div>
-                        <div class="max-h-[300px] overflow-y-auto">
+                        <div class="overflow-x-auto max-h-[400px]">
                             <table class="w-full text-left">
-                                <thead class="bg-slate-900/50 text-[10px] uppercase text-slate-500 font-bold">
+                                <thead class="sticky top-0 bg-[#0f172a] text-[10px] uppercase text-slate-400 font-bold border-b border-slate-700">
                                     <tr><th class="px-6 py-4">Fecha</th><th class="px-6 py-4">Desc</th><th class="px-6 py-4 text-right">Monto</th><th class="px-6 py-4 text-center">Bio-Score</th></tr>
                                 </thead>
                                 <tbody id="historyTable" class="divide-y divide-white/5 text-sm font-mono"></tbody>
@@ -151,24 +140,21 @@
         <div id="viewBios" class="hidden fade-in">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="glass p-8 rounded-3xl">
-                    <h2 class="text-2xl font-black mb-6 uppercase">Configuración Biométrica</h2>
-                    <div class="space-y-6">
-                        <div class="flex justify-between items-center">
-                            <div><p class="font-bold uppercase">Sincronización Automática</p><p class="text-xs text-slate-500">Conectar con Apple Health / Google Fit</p></div>
-                            <div class="w-12 h-6 bg-cyan-500 rounded-full relative"><div class="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div></div>
-                        </div>
-                        <div class="flex justify-between items-center opacity-50">
-                            <div><p class="font-bold uppercase">Scanner de Retina</p><p class="text-xs text-slate-500">Solo acceso por biometría ocular</p></div>
-                            <div class="w-12 h-6 bg-slate-700 rounded-full relative"><div class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full"></div></div>
-                        </div>
-                    </div>
+                    <h2 class="text-2xl font-black mb-6 uppercase">Energy Insights</h2>
+                    <div class="h-64"><canvas id="bioLineChart"></canvas></div>
+                    <p class="text-xs text-slate-500 mt-4 uppercase font-mono tracking-widest">Analizando correlación entre fatiga y pérdida de capital...</p>
                 </div>
-                <div class="glass p-8 rounded-3xl flex flex-col items-center justify-center text-center">
-                    <div class="w-32 h-32 rounded-full border-4 border-cyan-400 flex items-center justify-center mb-4">
-                        <i data-lucide="cpu" class="w-16 h-16 text-cyan-400"></i>
+                <div class="glass p-8 rounded-3xl flex flex-col justify-center">
+                    <div class="flex justify-between items-end mb-4">
+                        <p class="text-sm font-bold uppercase tracking-widest text-cyan-400">Eficiencia de Vida</p>
+                        <p id="efficiencyVal" class="text-4xl font-black">--</p>
                     </div>
-                    <h3 class="text-xl font-black uppercase">Próximo Módulo: AI-Oracle</h3>
-                    <p class="text-sm text-slate-500 mt-2 italic">"El sistema aprenderá a predecir tus gastos antes de que sientas el impulso."</p>
+                    <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div id="energyBar" class="h-full bg-cyan-400 transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                    <p class="text-[10px] text-slate-500 mt-6 uppercase leading-relaxed">
+                        Cuando el **Bio-Score** es bajo, el sistema detecta que tus gastos son un 30% más propensos a ser emocionales. Forjax BIOS te ayuda a auditar no solo tu bolsillo, sino tu mente.
+                    </p>
                 </div>
             </div>
         </div>
@@ -178,155 +164,107 @@
 
 <script>
 const app = {
-    user: "FORJAX_CORE",
-    currentStress: 1,
-    energy: 85,
-    data: { records: JSON.parse(localStorage.getItem("bios_records")) || [] },
+    user: localStorage.getItem("currentUser"),
+    data: { records: JSON.parse(localStorage.getItem("forjax_bios_data")) || [] },
     charts: {},
 
     init() {
+        if (!this.user) { document.getElementById("loginScreen").classList.remove("hidden"); return; }
+        document.getElementById("loginScreen").classList.add("hidden");
+        document.getElementById("mainApp").classList.remove("hidden");
+        document.getElementById("mainApp").classList.remove("opacity-0");
         this.render();
-        this.startBpmSimulator();
-        this.updateEnergyVisuals();
+        this.fetchDolar();
         if (typeof lucide !== 'undefined') lucide.createIcons();
-    },
-
-    startBpmSimulator() {
-        setInterval(() => {
-            const base = this.currentStress > 5 ? 90 : 65;
-            const fluctuation = Math.floor(Math.random() * 10);
-            document.getElementById("bpmVal").innerText = base + fluctuation;
-        }, 2000);
-    },
-
-    setStress(val) {
-        this.currentStress = val;
-        this.energy = Math.max(0, 100 - (val * 10));
-        this.updateEnergyVisuals();
-        
-        if(val === 10) {
-            document.getElementById("bioWarning").classList.remove("hidden");
-        }
-    },
-
-    dismissBioWarning() {
-        document.getElementById("bioWarning").classList.add("hidden");
-    },
-
-    updateEnergyVisuals() {
-        const bar = document.getElementById("bioEnergyBar");
-        bar.style.width = this.energy + "%";
-        if(this.energy < 30) bar.style.backgroundColor = "#ff2d55";
-        else bar.style.backgroundColor = "#00f3ff";
     },
 
     addRecord(type) {
         const d = document.getElementById("transDesc").value;
         const a = Math.abs(Number(document.getElementById("transAmount").value));
+        const s = Number(document.getElementById("bioStress").value);
         if(!d || a<=0) return;
 
-        const newRec = {
+        this.data.records.unshift({
             id: Date.now(),
-            date: new Date().toLocaleDateString(),
+            date: new Date().toLocaleDateString('es-AR'),
             desc: d,
             amount: a,
             type: type,
-            stress: this.currentStress,
-            energyAtTime: this.energy
-        };
+            stress: s,
+            energy: 100 - (s * 9)
+        });
 
-        this.data.records.unshift(newRec);
-        localStorage.setItem("bios_records", JSON.stringify(this.data.records));
-        
+        localStorage.setItem("forjax_bios_data", JSON.stringify(this.data.records));
         document.getElementById("transDesc").value = "";
         document.getElementById("transAmount").value = "";
-        
         this.render();
         if(type === 'income') confetti();
     },
 
-    switchTab(tab) {
-        document.getElementById("viewWallet").classList.toggle("hidden", tab !== 'wallet');
-        document.getElementById("viewBios").classList.toggle("hidden", tab !== 'bios');
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('btn' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
-    },
-
     render() {
-        const fmt = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' });
-        const net = this.data.records.reduce((acc, r) => acc + (r.type === 'income' ? r.amount : -r.amount), 0);
-        const bioLoss = this.data.records.filter(r => r.type === 'expense' && r.stress > 5).reduce((acc, r) => acc + r.amount, 0);
-
-        document.getElementById("bNet").innerText = fmt.format(net);
-        document.getElementById("bBioLoss").innerText = fmt.format(bioLoss);
+        const fmt = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 });
+        const inc = this.data.records.filter(r=>r.type==='income').reduce((a,c)=>a+c.amount,0);
+        const exp = this.data.records.filter(r=>r.type==='expense').reduce((a,c)=>a+c.amount,0);
         
-        const history = document.getElementById("historyTable");
-        history.innerHTML = this.data.records.map(r => `
+        document.getElementById("bIncome").textContent = fmt.format(inc);
+        document.getElementById("bExpense").textContent = fmt.format(exp);
+        document.getElementById("bNet").textContent = fmt.format(inc - exp);
+
+        document.getElementById("historyTable").innerHTML = this.data.records.map(r => `
             <tr class="hover:bg-white/5 transition-all">
                 <td class="px-6 py-4 opacity-50">${r.date}</td>
                 <td class="px-6 py-4 font-bold uppercase">${r.desc}</td>
-                <td class="px-6 py-4 text-right font-black ${r.type === 'income' ? 'text-emerald-400' : 'text-bio'}">
-                    ${r.type === 'income' ? '+' : '-'}${fmt.format(r.amount)}
-                </td>
+                <td class="px-6 py-4 text-right font-black ${r.type==='income'?'text-emerald-400':'text-rose-400'} blur-sensitive">${fmt.format(r.amount)}</td>
                 <td class="px-6 py-4 text-center">
-                    <span class="px-3 py-1 rounded-full text-[10px] font-black ${r.stress > 5 ? 'bg-bio/20 text-bio' : 'bg-emerald-500/20 text-emerald-500'}">
-                        ${r.stress > 5 ? 'DANGER' : 'ZEN'}
+                    <span class="text-[9px] font-black px-2 py-1 rounded border ${r.stress > 5 ? 'border-rose-500/50 text-rose-500' : 'border-cyan-500/50 text-cyan-400'}">
+                        ${r.stress > 5 ? 'EMOCIONAL' : 'OPTIMO'}
                     </span>
                 </td>
             </tr>
         `).join('');
 
-        this.updateChart();
+        this.updateBioStats();
     },
 
-    updateChart() {
-        const ctx = document.getElementById("bioChart").getContext("2d");
-        if(this.charts.bio) this.charts.bio.destroy();
-
-        const lastRecords = [...this.data.records].reverse().slice(-10);
+    updateBioStats() {
+        const avgEnergy = this.data.records.length ? 
+            this.data.records.reduce((a,c)=>a+c.energy,0) / this.data.records.length : 100;
         
+        document.getElementById("energyBar").style.width = avgEnergy + "%";
+        document.getElementById("efficiencyVal").innerText = Math.round(avgEnergy) + "%";
+        this.renderBioChart();
+    },
+
+    renderBioChart() {
+        const ctx = document.getElementById("bioLineChart").getContext("2d");
+        if(this.charts.bio) this.charts.bio.destroy();
+        const last = [...this.data.records].reverse().slice(-7);
         this.charts.bio = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: lastRecords.map(r => r.desc),
-                datasets: [
-                    {
-                        label: 'Nivel Energía',
-                        data: lastRecords.map(r => r.energyAtTime),
-                        borderColor: '#00f3ff',
-                        backgroundColor: 'rgba(0, 243, 255, 0.1)',
-                        fill: true,
-                        tension: 0.4,
-                        yAxisID: 'y'
-                    },
-                    {
-                        label: 'Monto Operación',
-                        data: lastRecords.map(r => r.amount / 100), // Escalado para el gráfico
-                        borderColor: '#ff2d55',
-                        borderDash: [5, 5],
-                        tension: 0,
-                        yAxisID: 'y1'
-                    }
-                ]
+                labels: last.map(r => r.date),
+                datasets: [{ label: 'Energía', data: last.map(r=>r.energy), borderColor: '#00f3ff', tension: 0.4, fill: true, backgroundColor: 'rgba(0, 243, 255, 0.05)' }]
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { display: false },
-                    y: { position: 'left', min: 0, max: 100, ticks: { color: '#64748b' } },
-                    y1: { position: 'right', grid: { display: false }, ticks: { display: false } }
-                }
-            }
+            options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{display:false}, y:{ticks:{color:'#64748b', font:{size:10}}}} }
         });
     },
 
-    logout() { location.reload(); }
-};
+    switchTab(tab) {
+        document.getElementById("viewWallet").classList.toggle("hidden", tab !== 'wallet');
+        document.getElementById("viewBios").classList.toggle("hidden", tab !== 'bios');
+        document.getElementById("viewMarket").classList.toggle("hidden", tab !== 'market');
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+    },
 
+    async fetchDolar() {
+        try { const r=await fetch("https://dolarapi.com/v1/dolares/blue"); const d=await r.json(); document.getElementById("dolarVal").innerText=`$${d.venta}`; } catch(e){}
+    },
+
+    initSession(){ const v=document.getElementById("userInput").value; if(v.length>2){localStorage.setItem("currentUser",v);location.reload();} },
+    logout(){ localStorage.removeItem("currentUser");location.reload();}
+};
 app.init();
 </script>
-
 </body>
 </html>
