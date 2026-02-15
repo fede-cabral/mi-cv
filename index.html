@@ -303,6 +303,50 @@
 
 <script>
 const app = {
+    // --- MOTOR DE SONIDO (NO REQUIERE ARCHIVOS) ---
+    audioCtx: new (window.AudioContext || window.webkitAudioContext)(),
+    
+    playSound(type) {
+        if (!this.audioCtx) return;
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+
+        const now = this.audioCtx.currentTime;
+        
+        if (type === 'click') {
+            // Sonido seco y tecnológico (Click de interfaz)
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, now);
+            osc.frequency.exponentialRampToValueAtTime(300, now + 0.05);
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+            osc.start(now);
+            osc.stop(now + 0.05);
+        } 
+        else if (type === 'success') {
+            // Sonido de "Tarea Completada" (Tipo Zelda o Mario)
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(500, now);
+            osc.frequency.linearRampToValueAtTime(1000, now + 0.1);
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+            osc.start(now);
+            osc.stop(now + 0.3);
+        }
+        else if (type === 'error') {
+            // Sonido de "Acceso Denegado"
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(150, now);
+            osc.frequency.linearRampToValueAtTime(100, now + 0.2);
+            gain.gain.setValueAtTime(0.1, now);
+            gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+            osc.start(now);
+            osc.stop(now + 0.2);
+        }
+    },
+    // ----------------------------------------------
     user: localStorage.getItem("currentUser"),
     theme: localStorage.getItem("theme") || 'dark',
     currentTab: 'wallet',
@@ -449,7 +493,10 @@ const app = {
             c = raw.charAt(0).toUpperCase() + raw.slice(1);
         }
 
-        if(!d || a<=0) return Swal.fire({toast:true, position:'top', icon:'warning', title:'Datos incompletos', showConfirmButton:false, timer:1500, background: this.theme==='dark'?'#1e293b':'#fff', color: this.theme==='dark'?'#fff':'#000'});
+        if(!d || a<=0) {
+    this.playSound('error'); // <--- AGREGAR ESTO
+    return Swal.fire({...});
+}
         
         // Guardamos incluyendo el bio-estado (b)
         this.data.records.unshift({ 
@@ -733,6 +780,13 @@ const app = {
     initSession(){ const v=document.getElementById("userInput").value; if(v.length>2){localStorage.setItem("currentUser",v);location.reload();} },
     logout(){ localStorage.removeItem("currentUser");location.reload();}
 };
+    // Agrega sonido a TODOS los botones automáticamente
+document.addEventListener('click', (e) => {
+    if(e.target.closest('button') || e.target.closest('a')) {
+        app.audioCtx.resume(); // Necesario para desbloquear audio en navegadores
+        app.playSound('click');
+    }
+});
 app.init();
 </script>
 </body>
