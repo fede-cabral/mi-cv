@@ -440,6 +440,7 @@ const app = {
     addRecord(type) {
         const d = document.getElementById("transDesc").value;
         const a = Math.abs(Number(document.getElementById("transAmount").value));
+        const b = Number(document.getElementById("transBio").value); // <--- NUEVO: Captura estado
         let c = document.getElementById("transCategory").value;
         
         if (c === 'custom') {
@@ -450,14 +451,28 @@ const app = {
 
         if(!d || a<=0) return Swal.fire({toast:true, position:'top', icon:'warning', title:'Datos incompletos', showConfirmButton:false, timer:1500, background: this.theme==='dark'?'#1e293b':'#fff', color: this.theme==='dark'?'#fff':'#000'});
         
-        this.data.records.unshift({ id: Date.now(), date: new Date().toLocaleDateString('es-AR'), desc: d, amount: a, category: c, type: type });
+        // Guardamos incluyendo el bio-estado (b)
+        this.data.records.unshift({ 
+            id: Date.now(), 
+            date: new Date().toLocaleDateString('es-AR'), 
+            desc: d, 
+            amount: a, 
+            category: c, 
+            type: type,
+            bio: b 
+        });
         
-        document.getElementById("transDesc").value=""; document.getElementById("transAmount").value="";
+        document.getElementById("transDesc").value=""; 
+        document.getElementById("transAmount").value="";
         this.save();
         this.updateCategoryDropdown();
-        document.getElementById("transCategory").value="Ingreso"; document.getElementById("customCategoryInput").classList.add("hidden"); document.getElementById("customCategoryInput").value="";
         
-        Swal.fire({toast:true, position:'bottom-end', icon:'success', title:'Registro Exitoso', showConfirmButton:false, timer:1500, background: this.theme==='dark'?'#1e293b':'#fff', color: this.theme==='dark'?'#fff':'#000'});
+        // Resetear visuales
+        document.getElementById("transCategory").value="Ingreso"; 
+        document.getElementById("customCategoryInput").classList.add("hidden"); 
+        document.getElementById("customCategoryInput").value="";
+        
+        Swal.fire({toast:true, position:'bottom-end', icon:'success', title:'Registro Sincronizado', showConfirmButton:false, timer:1500, background: this.theme==='dark'?'#1e293b':'#fff', color: this.theme==='dark'?'#fff':'#000'});
     },
     
     deleteRecord(id) { this.data.records = this.data.records.filter(r=>r.id!==id); this.save(); },
