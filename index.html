@@ -732,9 +732,27 @@ const app = {
     swapCalc() { const f=document.getElementById("calcFrom"), t=document.getElementById("calcTo"); [f.value, t.value] = [t.value, f.value]; this.calcCurrency(); },
     togglePrivacy(){ this.privacy=!this.privacy; document.body.classList.toggle("privacy-active"); document.getElementById("btnPrivacy").classList.toggle("text-cyan-400"); },
     exportProExcel() { const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([["Fecha","Desc","Cat","Monto"],...this.data.records.map(r=>[r.date,r.desc,r.category,r.amount])]), "Data"); XLSX.writeFile(wb, "ForjaxV30.xlsx"); },
-    initSession(){ const v=document.getElementById("userInput").value; if(v.length>2){localStorage.setItem("currentUser",v);location.reload();} },
-    logout(){ localStorage.removeItem("currentUser");location.reload();}
-};
+    initSession(){ 
+        const v = document.getElementById("userInput").value.trim(); 
+        
+        if(v.length > 2) {
+            // Si el nombre es válido, guardamos y entramos
+            localStorage.setItem("currentUser", v);
+            this.playSound('success'); // ¡Sonido de éxito al loguear!
+            location.reload();
+        } else {
+            // Si es muy corto, tiramos error
+            this.playSound('error');
+            Swal.fire({
+                title: 'ACCESO DENEGADO',
+                text: 'El ID debe tener al menos 3 caracteres.',
+                icon: 'error',
+                background: '#0f172a',
+                color: '#fff',
+                confirmButtonColor: '#ff2d55'
+            });
+        }
+    },
     // Agrega sonido a TODOS los botones automáticamente
 document.addEventListener('click', (e) => {
     if(e.target.closest('button') || e.target.closest('a')) {
